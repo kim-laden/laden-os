@@ -1,0 +1,1441 @@
+From 6cd2ffd44b20935088473e8e37e4478400c6ce93 Mon Sep 17 00:00:00 2001
+From: kim-laden <kim-laden@users.noreply.github.com>
+Date: Mon, 9 Nov 2026 21:29:49 +0100
+Subject: [PATCH] Laden OS branding
+
+---
+ Makefile                                      |  36 +--
+ README.md                                     | 274 +-----------------
+ README.upstream.md                            | 258 +++++++++++++++++
+ po/arch-update.pot                            |   2 +-
+ po/be.po                                      |   4 +-
+ po/bg.po                                      |   4 +-
+ po/ca.po                                      |   4 +-
+ po/de.po                                      |   4 +-
+ po/es.po                                      |   4 +-
+ po/eu.po                                      |   4 +-
+ po/fr.po                                      |   4 +-
+ po/hu.po                                      |   4 +-
+ po/it.po                                      |   4 +-
+ po/ja.po                                      |   4 +-
+ po/ka.po                                      |   4 +-
+ po/nb.po                                      |   4 +-
+ po/nl.po                                      |   4 +-
+ po/pt_BR.po                                   |   4 +-
+ po/pt_PT.po                                   |   4 +-
+ po/ru.po                                      |   4 +-
+ po/sv.po                                      |   4 +-
+ po/tr.po                                      |   4 +-
+ po/vi.po                                      |   4 +-
+ po/zh_CN.po                                   |   4 +-
+ po/zh_TW.po                                   |   4 +-
+ res/desktop/arch-update-tray.desktop          |  34 +--
+ res/desktop/arch-update.desktop               |  34 +--
+ res/icons/cachy-update-blue.svg               |   1 -
+ res/icons/cachy-update-dark.svg               |   1 -
+ res/icons/cachy-update-light.svg              |   1 -
+ res/icons/cachy-update_app-icon.svg           |   1 -
+ ...cachy-update_updates-available-blue-cb.svg |   1 -
+ .../cachy-update_updates-available-blue.svg   |   1 -
+ ...cachy-update_updates-available-dark-cb.svg |   1 -
+ .../cachy-update_updates-available-dark.svg   |   1 -
+ ...achy-update_updates-available-light-cb.svg |   1 -
+ .../cachy-update_updates-available-light.svg  |   1 -
+ res/icons/laden-update-blue.svg               |   8 +
+ res/icons/laden-update-dark.svg               |   7 +
+ res/icons/laden-update-light.svg              |   7 +
+ res/icons/laden-update_app-icon.svg           |   8 +
+ ...laden-update_updates-available-blue-cb.svg |   7 +
+ .../laden-update_updates-available-blue.svg   |   7 +
+ ...laden-update_updates-available-dark-cb.svg |   6 +
+ .../laden-update_updates-available-dark.svg   |   6 +
+ ...aden-update_updates-available-light-cb.svg |   6 +
+ .../laden-update_updates-available-light.svg  |   6 +
+ res/systemd/arch-update.service               |   2 +-
+ res/systemd/arch-update.timer                 |   2 +-
+ src/arch-update.sh                            |   3 +-
+ src/lib/check.sh                              |   2 +-
+ src/lib/common.sh                             |  14 +-
+ src/lib/notification.sh                       |   8 +-
+ src/tray/src/tray.rs                          |   4 +-
+ 54 files changed, 455 insertions(+), 380 deletions(-)
+ create mode 100644 README.upstream.md
+ delete mode 100644 res/icons/cachy-update-blue.svg
+ delete mode 100644 res/icons/cachy-update-dark.svg
+ delete mode 100644 res/icons/cachy-update-light.svg
+ delete mode 100644 res/icons/cachy-update_app-icon.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-blue-cb.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-blue.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-dark-cb.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-dark.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-light-cb.svg
+ delete mode 100644 res/icons/cachy-update_updates-available-light.svg
+ create mode 100644 res/icons/laden-update-blue.svg
+ create mode 100644 res/icons/laden-update-dark.svg
+ create mode 100644 res/icons/laden-update-light.svg
+ create mode 100644 res/icons/laden-update_app-icon.svg
+ create mode 100644 res/icons/laden-update_updates-available-blue-cb.svg
+ create mode 100644 res/icons/laden-update_updates-available-blue.svg
+ create mode 100644 res/icons/laden-update_updates-available-dark-cb.svg
+ create mode 100644 res/icons/laden-update_updates-available-dark.svg
+ create mode 100644 res/icons/laden-update_updates-available-light-cb.svg
+ create mode 100644 res/icons/laden-update_updates-available-light.svg
+
+diff --git a/Makefile b/Makefile
+index cb6c0ba..f76dd95 100644
+--- a/Makefile
++++ b/Makefile
+@@ -40,15 +40,15 @@ ifneq ($(WITH_TRAY),false)
+ endif
+ 
+ 	# Install icons
+-	install -Dm 664 "res/icons/cachy-update-blue.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-blue.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-blue.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-blue.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-blue-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-blue-cb.svg"
+-	install -Dm 664 "res/icons/cachy-update-light.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-light.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-light.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-light.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-light-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-light-cb.svg"
+-	install -Dm 664 "res/icons/cachy-update-dark.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-dark.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-dark.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-dark.svg"
+-	install -Dm 664 "res/icons/cachy-update_updates-available-dark-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-dark-cb.svg"
++	install -Dm 664 "res/icons/laden-update-blue.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-blue.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-blue.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-blue.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-blue-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-blue-cb.svg"
++	install -Dm 664 "res/icons/laden-update-light.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-light.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-light.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-light.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-light-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-light-cb.svg"
++	install -Dm 664 "res/icons/laden-update-dark.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-dark.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-dark.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-dark.svg"
++	install -Dm 664 "res/icons/laden-update_updates-available-dark-cb.svg" "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-dark-cb.svg"
+ 
+ 	# Install .desktop files
+ 	install -Dm 644 "res/desktop/${pkgname}.desktop" "${DESTDIR}${PREFIX}/share/applications/${pkgname}.desktop"
+@@ -103,15 +103,15 @@ uninstall:
+ 	rm -rf "${DESTDIR}${PREFIX}/lib/${pkgname}/"
+ 
+ 	# Delete icons
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-blue.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-blue.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-blue-cb.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-light.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-light.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-light-cb.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update-dark.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-dark.svg"
+-	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/cachy-update_updates-available-dark-cb.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-blue.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-blue.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-blue-cb.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-light.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-light.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-light-cb.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update-dark.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-dark.svg"
++	rm -f "${DESTDIR}${PREFIX}/share/icons/hicolor/scalable/apps/laden-update_updates-available-dark-cb.svg"
+ 
+ 	# Delete .desktop files
+ 	rm -f "${DESTDIR}${PREFIX}/share/applications/${pkgname}.desktop"
+diff --git a/README.md b/README.md
+index 2cd0770..0416e13 100644
+--- a/README.md
++++ b/README.md
+@@ -1,258 +1,16 @@
+-# Cachy-Update (fork of [Arch-Update](https://github.com/Antiz96/arch-update))
+-
+-<p align="center">
+-  <img width="460" height="300" src="https://github.com/user-attachments/assets/5782bd11-084a-4ca3-b599-1c322ee11b84">
+-</p>
+-
+-## Table of contents
+-
+-- [Description](#description)
+-- [Installation](#installation)
+-- [Usage](#usage)
+-- [Documentation](#documentation)
+-- [Tips & tricks and troubleshooting](#tips--tricks-and-troubleshooting)
+-- [Reproduce the pre-compiled tray binary from source](#reproduce-the-pre-compiled-tray-binary-from-source)
+-- [Contributing](#contributing)
+-- [License](#license)
+-
+-## Description
+-
+-An interactive update notifier & applier for CachyOS that assists you with important pre / post update tasks.  
+-Includes a systray applet for an easy integration with any desktop / graphical environment.
+-
+-Cachy-Update is designed to follow usual system maintenance steps, as [described in the Arch Wiki](https://wiki.archlinux.org/title/System_maintenance).
+-
+-Features:
+-
+-- Automatic check and listing of available updates.
+-- Check for recent Arch Linux news (and offers to display them if there are).
+-- Check for orphan packages (and offers to remove them if there are).
+-- Check for old & uninstalled packages in cache (and offers to remove them if there are).
+-- Check for pending kernel update requiring a reboot (and offers to do so if there's one).
+-- Check for services requiring a post upgrade restart (and offers to do so if there are).
+-- Support for `sudo`, `sudo-rs`, `doas` & `run0`.
+-- Extensive CLI.
+-
+-Optional support for:
+-
+-- AUR packages (via `paru`, `yay` or `pikaur`).
+-- Flatpak packages (via `flatpak`).
+-- Desktop notifications (via `libnotify`).
+-- Check for ALHP build queue or outdated mirrors (via `alhp-utils`).
+-
+-## Installation
+-
+-### From Repo
+-
+-Install the [cachy-update](https://packages.cachyos.org/package/cachyos/any/cachy-update) package from CachyOS repos (also check the list of optional dependencies for anything you may want or need):
+-
+-```bash
+-sudo pacman -S cachy-update
+-```
+-
+-Alternative AUR package variants:
+-
+-- [arch-update-bin](https://aur.archlinux.org/packages/arch-update-bin): Arch-Update package including a pre-compiled binary for the systray applet, avoiding the need to compile it locally (only available for the `x86_64` architecture). The pre-compiled binary is distributed as a [release asset](https://github.com/Antiz96/arch-update/releases/latest) (`arch-update-tray-<release_version>-x86_64`) and can be reproduced from source (in the sense of [reproducible builds](https://reproducible-builds.org/)). See [this chapter](#reproduce-the-pre-compiled-tray-binary-from-source) for related instructions.
+-- [arch-update-git](https://aur.archlinux.org/packages/arch-update-git): Unstable version of Arch-Update, built against the latest commit from the main branch. This is mostly used for development and testing purposes, it is not recommended for regular usage.
+-- [arch-update-cli](https://aur.archlinux.org/packages/arch-update-cli): Arch-Update package not including elements related to graphical usage (such as the systray applet, icons, desktop files, etc...). This stripped down version is useful for people that are only using Arch-Update from the CLI (for instance on headless machines / servers), without any use for the other components.
+-
+-### From Source
+-
+-Install required runtime dependencies:
+-
+-```bash
+-sudo pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib glibc libgcc curl fakeroot htmlq diffutils hicolor-icon-theme glib2 xdg-utils util-linux
+-```
+-
+-Additional optional dependencies you might want or need:
+-
+-- [paru](https://aur.archlinux.org/packages/paru): AUR Packages support
+-- [yay](https://aur.archlinux.org/packages/yay): AUR Packages support
+-- [pikaur](https://aur.archlinux.org/packages/pikaur): AUR Packages support
+-- [flatpak](https://archlinux.org/packages/extra/x86_64/flatpak/): Flatpak Packages support
+-- [libnotify](https://archlinux.org/packages/extra/x86_64/libnotify/): Desktop notifications support on new available updates (see <https://wiki.archlinux.org/title/Desktop_notifications>)
+-- [alhp-utils](https://aur.archlinux.org/packages/alhp-utils): Check for ALHP build queue or outdated mirrors
+-- [vim](https://archlinux.org/packages/extra/x86_64/vim/): Default diff program for pacdiff
+-- [neovim](https://archlinux.org/packages/extra/x86_64/neovim/): Default diff program for pacdiff if `EDITOR=nvim`
+-- [sudo](https://archlinux.org/packages/core/x86_64/sudo/): Privilege elevation
+-- [sudo-rs](https://archlinux.org/packages/extra/x86_64/sudo-rs/): Privilege elevation
+-- [opendoas](https://archlinux.org/packages/extra/x86_64/opendoas/): Privilege elevation
+-
+-Install required build and test dependencies:
+-
+-```bash
+-sudo pacman -S --asdeps make scdoc bats cargo pkgconf
+-```
+-
+-Download the archive of the [latest tag](https://github.com/CachyOS/cachy-update/tags) and extract it (alternatively, you can clone this repository with `git`).
+-
+-To build and install `cachy-update`, go into the extracted / cloned directory and run the following commands:
+-
+-```bash
+-make # You can optionally pass the `WITH_TRAY=false` argument to not build the systray applet
+-make test
+-sudo make install # You can optionally pass the `WITH_TRAY=false` argument to not install the systray applet
+-```
+-
+-Once the installation is complete, you may optionally clean up the directory of files generated during installation by running the following command:
+-
+-```bash
+-make clean
+-```
+-
+-To uninstall `cachy-update`, go into the extracted / cloned directory and run the following command:
+-
+-```bash
+-sudo make uninstall
+-```
+-
+-## Usage
+-
+-For desktop machines, the usage consist of starting [the systray applet](#the-systray-applet) and enabling [the automated update checks](#the-automated-update-checks).  
+-For headless machines, `Cachy-Update` includes an extensive CLI.
+-
+-### The systray applet
+-
+-To start the systray applet and enable it automatically at boot, run the following command (preferred method for most environments, uses [XDG Autostart](https://wiki.archlinux.org/title/XDG_Autostart)):
+-
+-```bash
+-cachy-update --tray --enable
+-```
+-
+-In case your graphical environment doesn't support XDG Autostart, add the following command your environment auto-start method instead:
+-
+-*Note that the small startup delay in the form of the `sleep 3` command may not always be required but acts as a useful trick to avoid eventual [race condition](https://en.wikipedia.org/wiki/Race_condition) issues which may lead to the systray applet unexpectedly not starting at boot. I therefore recommend its usage as a safety measure (this small delay is already applied by default with the XDG Autostart / `cachy-update --tray --enable` method).*
+-
+-```bash
+-sleep 3 && cachy-update --tray
+-```
+-
+-The systray icon dynamically changes to indicate the current state of your system ('up to date' or 'updates available'). When clicked, it launches `arch-update` in a terminal window via the [arch-update.desktop](https://github.com/Antiz96/arch-update/blob/main/res/desktop/arch-update.desktop) file.  
+-The systray applet menu shows further information (like the list of pending updates, time of the last and next checks, ...) and allows to trigger specific actions (like running Cachy-Update, check for updates, ...). See [screenshots](#screenshots) for more details.
+-
+-**Notes:**
+-
+-- If clicking the systray applet does nothing, please read [this chapter](#run-arch-update-in-a-specific-terminal-emulator).
+-- GNOME shell does not support systray icons natively, GNOME users need to install the ["AppIndicator and KStatusNotifierItem Support" extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the systray applet to work.
+-
+-### The automated update checks
+-
+-To enable automated and periodic checks for available updates, run the following command:
+-
+-```bash
+-cachy-update --check --enable
+-```
+-
+-By default, a check is performed **at boot and then once a day**. The check cycle can be customized, see [this chapter](#modify-the-check-cycle).
+-
+-### Screenshots
+-
+-Once started, the systray applet appears in the systray area of your panel.  
+-It is the first icon on the left in the screenshot below (note that there are [different color variants available](https://github.com/Antiz96/arch-update/blob/main/res/icons/README.md) for it):
+-
+-![icon](https://github.com/user-attachments/assets/ec5f4ab7-7eb0-4c41-8b2b-9983e789d516)
+-
+-With [the automated update checks](#the-automated-update-checks) enabled, checks for updates are automatically and periodically performed, but you can manually trigger one from the systray applet icon by right-clicking it and then clicking on the `Check for updates` menu entry. You can also see timestamps report for the last and next update checks:
+-
+-![check_for_updates](https://github.com/user-attachments/assets/4b73946d-f9f5-4be6-87b8-42112fca642d)
+-
+-If there are new available updates, the systray icon shows a red circle and a desktop notification indicating the number of available updates is sent. You can directly run Cachy-Update from it or close / dismiss it thanks to the related click actions:
+-
+-![notif](https://github.com/user-attachments/assets/d96b1831-fc11-4343-9f81-eee2a906961b)
+-
+-You can see the list of available updates from the menu by right-clicking the systray icon.  
+-A dropdown menu displaying the number and the list of pending updates is dynamically created for each sources that have some (Packages, AUR, Flatpak).  
+-A "All" dropdown menu gathering the number and the list of pending updates for all sources is dynamically created if at least 2 different sources have pending updates:
+-
+-*Clicking on the entry for a package opens the upstream project's URL in your web browser (except for Flatpak packages).*
+-
+-![all](https://github.com/user-attachments/assets/f1a6a6de-ac06-4234-a0a8-e5dd326bb5a0)
+-
+-![packages](https://github.com/user-attachments/assets/f94dfe9f-95b1-46fc-a5fe-fbc8adc704ad)
+-
+-![aur](https://github.com/user-attachments/assets/cf9cd829-fc97-4a05-9a6a-f5cba1649e29)
+-
+-When the systray icon is left-clicked, `arch-update` is run in a terminal window (alternatively, you can click the "*X* update(s) available" entry or the dedicated "Run Cachy-Update" one from the right-click menu):
+-
+-![run](https://github.com/user-attachments/assets/874e4f9e-4498-41bf-b257-1e5ecb782377)
+-
+-If at least one Arch Linux news has been published since the last run, `Cachy-Update` will offer you to read the latest Arch Linux news directly from the terminal window.  
+-The news published since the last run are tagged as `[NEW]`:
+-
+-![news](https://github.com/user-attachments/assets/42472294-ce87-4d86-87fc-3adb0f6f3e9e)
+-
+-If no news has been published since the last run, `Cachy-Update` directly asks for your confirmation to proceed with update.
+-
+-From there, just let `Cachy-Update` guide you through the various steps required for a complete and proper update of your system! :smile:
+-
+-Certain options can be enabled, disabled or modified via the `arch-update.conf` configuration file. See the [arch-update.conf(5) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.conf.5.scd) for more details.
+-
+-## Documentation
+-
+-### cachy-update
+-
+-See `cachy-update --help` and the [arch-update(1) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.1.scd).
+-
+-### arch-update configuration file
+-
+-See the [arch-update.conf(5) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.conf.5.scd).
+-
+-## Tips & tricks and troubleshooting
+-
+-### Modify the check cycle
+-
+-If you enabled [the automated update checks](#the-automated-update-checks), a check for available updates is automatically launched at boot and then once a day.
+-
+-If you want to customize the check cycle, run `systemctl --user edit --full arch-update.timer` and modify the `OnUnitActiveSec` value to your liking.  
+-For instance, if you want `Cachy-Update` to check for new updates every 4 hours instead:
+-
+-```text
+-[...]
+-[Timer]
+-OnStartupSec=2min
+-RandomizedDelaySec=4h
+-OnUnitActiveSec=1h
+-[...]
+-```
+-
+-Time units are `s` for seconds, `m` for minutes, `h` for hours, `d` for days...  
+-See <https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#Parsing%20Time%20Spans> for more details.
+-
+-In case you want `Cachy-Update` to check for new updates only once at boot, you can simply delete the `OnUnitActiveSec` line completely.
+-
+-### Run Cachy-Update in a specific terminal emulator
+-
+-`gio` (used to launch the `arch-update` terminal application via the `arch-update.desktop` file when the systray applet is clicked) currently has a default limited list of known terminal emulators.  
+-As such, if you don't have any of these "known" terminal emulators installed on your system, you might face an issue where clicking the systray applet does nothing (as `gio` couldn't find a terminal emulator from the said list). Incidentally, you might have multiple terminal emulators installed on your system and you may want to force Cachy-Update to use a specific one. In both cases, you can specify which terminal emulator to use.
+-
+-To do so, install the [xdg-terminal-exec package](https://archlinux.org/packages/?name=xdg-terminal-exec), create the `~/.config/xdg-terminals.list` file and add the name of the `.desktop` file of your terminal emulator of choice in it (e.g. `Alacritty.desktop`).  
+-See <https://github.com/Vladimir-csp/xdg-terminal-exec?tab=readme-ov-file#configuration> for more details.
+-
+-## Reproduce the pre-compiled tray binary from source
+-
+-A pre-compiled binary of the systray applet for the `x86_64 (amd64)` architecture is distributed as a [release asset](https://github.com/Antiz96/arch-update/releases/latest) (`arch-update-tray-<release_version>-x86_64`).  
+-
+-The pre-compiled binary can be reproduced from source (in the sense of [reproducible builds](https://reproducible-builds.org)).  
+-The build environment is created and fully documented via [repro-env](https://github.com/kpcyrd/repro-env), and is tracked in this repository.
+-
+-To reproduce the pre-compiled binary for a given release, [install repro-env](https://github.com/kpcyrd/repro-env#download) and run the following:
+-
+-```bash
+-git clone https://github.com/Antiz96/arch-update.git
+-cd arch-update
+-git checkout <tag> # Where <tag> is the git tag for the targeted release, e.g. "v4.4.0"
+-repro-env build -- cargo build --release
+-sha256sum src/tray/target/release/arch-update-tray
+-```
+-
+-Then, compare the `sha256` hash of the built binary to the one of the pre-compiled release binary (which is also recorded in the `arch-update-tray-<release_version>-x86_64.sha256` file in the release assets). Both hashes should be equal, indicating that the binary has been successfully reproduced.
+-
+-Each release assets are also cryptographically signed, with the detached signature for each asset distributed as `<asset_name>.asc` (see the [MAINTAINERS.md file](https://github.com/Antiz96/arch-update/blob/main/MAINTAINERS.md) for a list of keys expected to emit signatures).
+-
+-## Contributing
+-
+-See the [contributing guidelines](https://github.com/CachyOS/cachy-update/blob/main/CONTRIBUTING.md).
+-
+-## License
+-
+-Arch-Update is licensed under the [GPL-3.0 license](https://github.com/CachyOS/cachy-update/blob/main/LICENSE) (or any later version of that license).
++# Laden Update
++
++The update notifier and applier of **Laden OS** (tray applet, desktop
++notifications, guided `pacman`/AUR/Flatpak updates, news, pacnew, orphan and
++cache handling).
++
++**Based on** [Cachy-Update](https://github.com/CachyOS/cachy-update) by CachyOS,
++which is itself a fork of [Arch-Update](https://github.com/Antiz96/arch-update)
++by Robin Candau (Antiz96) and contributors. All credit for the program goes to
++them; Laden OS only changes the name, icons, desktop entries and notification
++text. The command stays `arch-update` (with a `laden-update` alias) and the
++config file stays `~/.config/arch-update/arch-update.conf`, so documentation
++and configs from upstream keep working.
++
++License: GPL-3.0-or-later (see `LICENSE`, unchanged from upstream).
++Original upstream README: [README.upstream.md](README.upstream.md).
+diff --git a/README.upstream.md b/README.upstream.md
+new file mode 100644
+index 0000000..2cd0770
+--- /dev/null
++++ b/README.upstream.md
+@@ -0,0 +1,258 @@
++# Cachy-Update (fork of [Arch-Update](https://github.com/Antiz96/arch-update))
++
++<p align="center">
++  <img width="460" height="300" src="https://github.com/user-attachments/assets/5782bd11-084a-4ca3-b599-1c322ee11b84">
++</p>
++
++## Table of contents
++
++- [Description](#description)
++- [Installation](#installation)
++- [Usage](#usage)
++- [Documentation](#documentation)
++- [Tips & tricks and troubleshooting](#tips--tricks-and-troubleshooting)
++- [Reproduce the pre-compiled tray binary from source](#reproduce-the-pre-compiled-tray-binary-from-source)
++- [Contributing](#contributing)
++- [License](#license)
++
++## Description
++
++An interactive update notifier & applier for CachyOS that assists you with important pre / post update tasks.  
++Includes a systray applet for an easy integration with any desktop / graphical environment.
++
++Cachy-Update is designed to follow usual system maintenance steps, as [described in the Arch Wiki](https://wiki.archlinux.org/title/System_maintenance).
++
++Features:
++
++- Automatic check and listing of available updates.
++- Check for recent Arch Linux news (and offers to display them if there are).
++- Check for orphan packages (and offers to remove them if there are).
++- Check for old & uninstalled packages in cache (and offers to remove them if there are).
++- Check for pending kernel update requiring a reboot (and offers to do so if there's one).
++- Check for services requiring a post upgrade restart (and offers to do so if there are).
++- Support for `sudo`, `sudo-rs`, `doas` & `run0`.
++- Extensive CLI.
++
++Optional support for:
++
++- AUR packages (via `paru`, `yay` or `pikaur`).
++- Flatpak packages (via `flatpak`).
++- Desktop notifications (via `libnotify`).
++- Check for ALHP build queue or outdated mirrors (via `alhp-utils`).
++
++## Installation
++
++### From Repo
++
++Install the [cachy-update](https://packages.cachyos.org/package/cachyos/any/cachy-update) package from CachyOS repos (also check the list of optional dependencies for anything you may want or need):
++
++```bash
++sudo pacman -S cachy-update
++```
++
++Alternative AUR package variants:
++
++- [arch-update-bin](https://aur.archlinux.org/packages/arch-update-bin): Arch-Update package including a pre-compiled binary for the systray applet, avoiding the need to compile it locally (only available for the `x86_64` architecture). The pre-compiled binary is distributed as a [release asset](https://github.com/Antiz96/arch-update/releases/latest) (`arch-update-tray-<release_version>-x86_64`) and can be reproduced from source (in the sense of [reproducible builds](https://reproducible-builds.org/)). See [this chapter](#reproduce-the-pre-compiled-tray-binary-from-source) for related instructions.
++- [arch-update-git](https://aur.archlinux.org/packages/arch-update-git): Unstable version of Arch-Update, built against the latest commit from the main branch. This is mostly used for development and testing purposes, it is not recommended for regular usage.
++- [arch-update-cli](https://aur.archlinux.org/packages/arch-update-cli): Arch-Update package not including elements related to graphical usage (such as the systray applet, icons, desktop files, etc...). This stripped down version is useful for people that are only using Arch-Update from the CLI (for instance on headless machines / servers), without any use for the other components.
++
++### From Source
++
++Install required runtime dependencies:
++
++```bash
++sudo pacman -S --needed bash systemd pacman pacman-contrib archlinux-contrib glibc libgcc curl fakeroot htmlq diffutils hicolor-icon-theme glib2 xdg-utils util-linux
++```
++
++Additional optional dependencies you might want or need:
++
++- [paru](https://aur.archlinux.org/packages/paru): AUR Packages support
++- [yay](https://aur.archlinux.org/packages/yay): AUR Packages support
++- [pikaur](https://aur.archlinux.org/packages/pikaur): AUR Packages support
++- [flatpak](https://archlinux.org/packages/extra/x86_64/flatpak/): Flatpak Packages support
++- [libnotify](https://archlinux.org/packages/extra/x86_64/libnotify/): Desktop notifications support on new available updates (see <https://wiki.archlinux.org/title/Desktop_notifications>)
++- [alhp-utils](https://aur.archlinux.org/packages/alhp-utils): Check for ALHP build queue or outdated mirrors
++- [vim](https://archlinux.org/packages/extra/x86_64/vim/): Default diff program for pacdiff
++- [neovim](https://archlinux.org/packages/extra/x86_64/neovim/): Default diff program for pacdiff if `EDITOR=nvim`
++- [sudo](https://archlinux.org/packages/core/x86_64/sudo/): Privilege elevation
++- [sudo-rs](https://archlinux.org/packages/extra/x86_64/sudo-rs/): Privilege elevation
++- [opendoas](https://archlinux.org/packages/extra/x86_64/opendoas/): Privilege elevation
++
++Install required build and test dependencies:
++
++```bash
++sudo pacman -S --asdeps make scdoc bats cargo pkgconf
++```
++
++Download the archive of the [latest tag](https://github.com/CachyOS/cachy-update/tags) and extract it (alternatively, you can clone this repository with `git`).
++
++To build and install `cachy-update`, go into the extracted / cloned directory and run the following commands:
++
++```bash
++make # You can optionally pass the `WITH_TRAY=false` argument to not build the systray applet
++make test
++sudo make install # You can optionally pass the `WITH_TRAY=false` argument to not install the systray applet
++```
++
++Once the installation is complete, you may optionally clean up the directory of files generated during installation by running the following command:
++
++```bash
++make clean
++```
++
++To uninstall `cachy-update`, go into the extracted / cloned directory and run the following command:
++
++```bash
++sudo make uninstall
++```
++
++## Usage
++
++For desktop machines, the usage consist of starting [the systray applet](#the-systray-applet) and enabling [the automated update checks](#the-automated-update-checks).  
++For headless machines, `Cachy-Update` includes an extensive CLI.
++
++### The systray applet
++
++To start the systray applet and enable it automatically at boot, run the following command (preferred method for most environments, uses [XDG Autostart](https://wiki.archlinux.org/title/XDG_Autostart)):
++
++```bash
++cachy-update --tray --enable
++```
++
++In case your graphical environment doesn't support XDG Autostart, add the following command your environment auto-start method instead:
++
++*Note that the small startup delay in the form of the `sleep 3` command may not always be required but acts as a useful trick to avoid eventual [race condition](https://en.wikipedia.org/wiki/Race_condition) issues which may lead to the systray applet unexpectedly not starting at boot. I therefore recommend its usage as a safety measure (this small delay is already applied by default with the XDG Autostart / `cachy-update --tray --enable` method).*
++
++```bash
++sleep 3 && cachy-update --tray
++```
++
++The systray icon dynamically changes to indicate the current state of your system ('up to date' or 'updates available'). When clicked, it launches `arch-update` in a terminal window via the [arch-update.desktop](https://github.com/Antiz96/arch-update/blob/main/res/desktop/arch-update.desktop) file.  
++The systray applet menu shows further information (like the list of pending updates, time of the last and next checks, ...) and allows to trigger specific actions (like running Cachy-Update, check for updates, ...). See [screenshots](#screenshots) for more details.
++
++**Notes:**
++
++- If clicking the systray applet does nothing, please read [this chapter](#run-arch-update-in-a-specific-terminal-emulator).
++- GNOME shell does not support systray icons natively, GNOME users need to install the ["AppIndicator and KStatusNotifierItem Support" extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the systray applet to work.
++
++### The automated update checks
++
++To enable automated and periodic checks for available updates, run the following command:
++
++```bash
++cachy-update --check --enable
++```
++
++By default, a check is performed **at boot and then once a day**. The check cycle can be customized, see [this chapter](#modify-the-check-cycle).
++
++### Screenshots
++
++Once started, the systray applet appears in the systray area of your panel.  
++It is the first icon on the left in the screenshot below (note that there are [different color variants available](https://github.com/Antiz96/arch-update/blob/main/res/icons/README.md) for it):
++
++![icon](https://github.com/user-attachments/assets/ec5f4ab7-7eb0-4c41-8b2b-9983e789d516)
++
++With [the automated update checks](#the-automated-update-checks) enabled, checks for updates are automatically and periodically performed, but you can manually trigger one from the systray applet icon by right-clicking it and then clicking on the `Check for updates` menu entry. You can also see timestamps report for the last and next update checks:
++
++![check_for_updates](https://github.com/user-attachments/assets/4b73946d-f9f5-4be6-87b8-42112fca642d)
++
++If there are new available updates, the systray icon shows a red circle and a desktop notification indicating the number of available updates is sent. You can directly run Cachy-Update from it or close / dismiss it thanks to the related click actions:
++
++![notif](https://github.com/user-attachments/assets/d96b1831-fc11-4343-9f81-eee2a906961b)
++
++You can see the list of available updates from the menu by right-clicking the systray icon.  
++A dropdown menu displaying the number and the list of pending updates is dynamically created for each sources that have some (Packages, AUR, Flatpak).  
++A "All" dropdown menu gathering the number and the list of pending updates for all sources is dynamically created if at least 2 different sources have pending updates:
++
++*Clicking on the entry for a package opens the upstream project's URL in your web browser (except for Flatpak packages).*
++
++![all](https://github.com/user-attachments/assets/f1a6a6de-ac06-4234-a0a8-e5dd326bb5a0)
++
++![packages](https://github.com/user-attachments/assets/f94dfe9f-95b1-46fc-a5fe-fbc8adc704ad)
++
++![aur](https://github.com/user-attachments/assets/cf9cd829-fc97-4a05-9a6a-f5cba1649e29)
++
++When the systray icon is left-clicked, `arch-update` is run in a terminal window (alternatively, you can click the "*X* update(s) available" entry or the dedicated "Run Cachy-Update" one from the right-click menu):
++
++![run](https://github.com/user-attachments/assets/874e4f9e-4498-41bf-b257-1e5ecb782377)
++
++If at least one Arch Linux news has been published since the last run, `Cachy-Update` will offer you to read the latest Arch Linux news directly from the terminal window.  
++The news published since the last run are tagged as `[NEW]`:
++
++![news](https://github.com/user-attachments/assets/42472294-ce87-4d86-87fc-3adb0f6f3e9e)
++
++If no news has been published since the last run, `Cachy-Update` directly asks for your confirmation to proceed with update.
++
++From there, just let `Cachy-Update` guide you through the various steps required for a complete and proper update of your system! :smile:
++
++Certain options can be enabled, disabled or modified via the `arch-update.conf` configuration file. See the [arch-update.conf(5) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.conf.5.scd) for more details.
++
++## Documentation
++
++### cachy-update
++
++See `cachy-update --help` and the [arch-update(1) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.1.scd).
++
++### arch-update configuration file
++
++See the [arch-update.conf(5) man page](https://raw.githubusercontent.com/CachyOS/cachy-update/refs/heads/main/doc/man/arch-update.conf.5.scd).
++
++## Tips & tricks and troubleshooting
++
++### Modify the check cycle
++
++If you enabled [the automated update checks](#the-automated-update-checks), a check for available updates is automatically launched at boot and then once a day.
++
++If you want to customize the check cycle, run `systemctl --user edit --full arch-update.timer` and modify the `OnUnitActiveSec` value to your liking.  
++For instance, if you want `Cachy-Update` to check for new updates every 4 hours instead:
++
++```text
++[...]
++[Timer]
++OnStartupSec=2min
++RandomizedDelaySec=4h
++OnUnitActiveSec=1h
++[...]
++```
++
++Time units are `s` for seconds, `m` for minutes, `h` for hours, `d` for days...  
++See <https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#Parsing%20Time%20Spans> for more details.
++
++In case you want `Cachy-Update` to check for new updates only once at boot, you can simply delete the `OnUnitActiveSec` line completely.
++
++### Run Cachy-Update in a specific terminal emulator
++
++`gio` (used to launch the `arch-update` terminal application via the `arch-update.desktop` file when the systray applet is clicked) currently has a default limited list of known terminal emulators.  
++As such, if you don't have any of these "known" terminal emulators installed on your system, you might face an issue where clicking the systray applet does nothing (as `gio` couldn't find a terminal emulator from the said list). Incidentally, you might have multiple terminal emulators installed on your system and you may want to force Cachy-Update to use a specific one. In both cases, you can specify which terminal emulator to use.
++
++To do so, install the [xdg-terminal-exec package](https://archlinux.org/packages/?name=xdg-terminal-exec), create the `~/.config/xdg-terminals.list` file and add the name of the `.desktop` file of your terminal emulator of choice in it (e.g. `Alacritty.desktop`).  
++See <https://github.com/Vladimir-csp/xdg-terminal-exec?tab=readme-ov-file#configuration> for more details.
++
++## Reproduce the pre-compiled tray binary from source
++
++A pre-compiled binary of the systray applet for the `x86_64 (amd64)` architecture is distributed as a [release asset](https://github.com/Antiz96/arch-update/releases/latest) (`arch-update-tray-<release_version>-x86_64`).  
++
++The pre-compiled binary can be reproduced from source (in the sense of [reproducible builds](https://reproducible-builds.org)).  
++The build environment is created and fully documented via [repro-env](https://github.com/kpcyrd/repro-env), and is tracked in this repository.
++
++To reproduce the pre-compiled binary for a given release, [install repro-env](https://github.com/kpcyrd/repro-env#download) and run the following:
++
++```bash
++git clone https://github.com/Antiz96/arch-update.git
++cd arch-update
++git checkout <tag> # Where <tag> is the git tag for the targeted release, e.g. "v4.4.0"
++repro-env build -- cargo build --release
++sha256sum src/tray/target/release/arch-update-tray
++```
++
++Then, compare the `sha256` hash of the built binary to the one of the pre-compiled release binary (which is also recorded in the `arch-update-tray-<release_version>-x86_64.sha256` file in the release assets). Both hashes should be equal, indicating that the binary has been successfully reproduced.
++
++Each release assets are also cryptographically signed, with the detached signature for each asset distributed as `<asset_name>.asc` (see the [MAINTAINERS.md file](https://github.com/Antiz96/arch-update/blob/main/MAINTAINERS.md) for a list of keys expected to emit signatures).
++
++## Contributing
++
++See the [contributing guidelines](https://github.com/CachyOS/cachy-update/blob/main/CONTRIBUTING.md).
++
++## License
++
++Arch-Update is licensed under the [GPL-3.0 license](https://github.com/CachyOS/cachy-update/blob/main/LICENSE) (or any later version of that license).
+diff --git a/po/arch-update.pot b/po/arch-update.pot
+index 3f5f59a..47d08a0 100644
+--- a/po/arch-update.pot
++++ b/po/arch-update.pot
+@@ -494,7 +494,7 @@ msgstr ""
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
++msgid "Run Laden Update"
+ msgstr ""
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+diff --git a/po/be.po b/po/be.po
+index 2847dd5..23a7b3f 100644
+--- a/po/be.po
++++ b/po/be.po
+@@ -559,8 +559,8 @@ msgstr "Даступна 1 абнаўленне"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Запусціць Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Запусціць Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/bg.po b/po/bg.po
+index 762a8d8..54692fc 100644
+--- a/po/bg.po
++++ b/po/bg.po
+@@ -561,8 +561,8 @@ msgstr "1 налична актуализация"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Стартиране на Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Стартиране на Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/ca.po b/po/ca.po
+index 7ced37c..b249a4d 100644
+--- a/po/ca.po
++++ b/po/ca.po
+@@ -574,8 +574,8 @@ msgstr "1 actualització disponible"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Executa Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Executa Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/de.po b/po/de.po
+index 0ff0660..cc71a7f 100644
+--- a/po/de.po
++++ b/po/de.po
+@@ -569,8 +569,8 @@ msgstr "1 Update verfügbar"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update ausführen"
++msgid "Run Laden Update"
++msgstr "Laden Update ausführen"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/es.po b/po/es.po
+index e087e04..ed32d45 100644
+--- a/po/es.po
++++ b/po/es.po
+@@ -574,8 +574,8 @@ msgstr "1 actualización disponible"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Ejecutar Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Ejecutar Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/eu.po b/po/eu.po
+index 2ece013..e4b791d 100644
+--- a/po/eu.po
++++ b/po/eu.po
+@@ -568,8 +568,8 @@ msgstr "Eguneraketa 1 erabilgarri"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Exekutatu Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Exekutatu Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/fr.po b/po/fr.po
+index 1c67acd..efbc16f 100644
+--- a/po/fr.po
++++ b/po/fr.po
+@@ -573,8 +573,8 @@ msgstr "1 mise à jour disponible"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Lancer Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Lancer Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/hu.po b/po/hu.po
+index c140d76..29af806 100644
+--- a/po/hu.po
++++ b/po/hu.po
+@@ -565,8 +565,8 @@ msgstr "1 frissítés érhető el"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update futtatása"
++msgid "Run Laden Update"
++msgstr "Laden Update futtatása"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/it.po b/po/it.po
+index 5cb7440..f1e87c9 100644
+--- a/po/it.po
++++ b/po/it.po
+@@ -575,8 +575,8 @@ msgstr "1 aggiornamento disponibile"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Avvia Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Avvia Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/ja.po b/po/ja.po
+index 58f913b..6021536 100644
+--- a/po/ja.po
++++ b/po/ja.po
+@@ -555,8 +555,8 @@ msgstr "1 件のアップデートがあります"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update を実行"
++msgid "Run Laden Update"
++msgstr "Laden Update を実行"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/ka.po b/po/ka.po
+index 0c52989..b9d99af 100644
+--- a/po/ka.po
++++ b/po/ka.po
+@@ -563,8 +563,8 @@ msgstr "ხელმისაწვდომია 1 განახლება
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update-ის გაშვება"
++msgid "Run Laden Update"
++msgstr "Laden Update-ის გაშვება"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/nb.po b/po/nb.po
+index f745786..91b8055 100644
+--- a/po/nb.po
++++ b/po/nb.po
+@@ -562,8 +562,8 @@ msgstr "1 oppdatering tilgjengelig"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Kjør Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Kjør Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/nl.po b/po/nl.po
+index 9018978..4e0c6a5 100644
+--- a/po/nl.po
++++ b/po/nl.po
+@@ -564,8 +564,8 @@ msgstr "Er is 1 update beschikbaar"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update starten"
++msgid "Run Laden Update"
++msgstr "Laden Update starten"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/pt_BR.po b/po/pt_BR.po
+index eb6ff92..56e0951 100644
+--- a/po/pt_BR.po
++++ b/po/pt_BR.po
+@@ -570,8 +570,8 @@ msgstr "1 atualização disponível"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Executar Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Executar Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/pt_PT.po b/po/pt_PT.po
+index b74b3f9..bff8096 100644
+--- a/po/pt_PT.po
++++ b/po/pt_PT.po
+@@ -568,8 +568,8 @@ msgstr "1 atualização disponível"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Executar Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Executar Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/ru.po b/po/ru.po
+index f9e345c..de3d4e3 100644
+--- a/po/ru.po
++++ b/po/ru.po
+@@ -545,8 +545,8 @@ msgstr "Доступно 1 обновление"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Запустить Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Запустить Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/sv.po b/po/sv.po
+index 521edfb..86cbdf3 100644
+--- a/po/sv.po
++++ b/po/sv.po
+@@ -564,8 +564,8 @@ msgstr "1 uppdatering tillgänglig"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Kör Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Kör Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/tr.po b/po/tr.po
+index e3c70bb..298e6da 100644
+--- a/po/tr.po
++++ b/po/tr.po
+@@ -566,8 +566,8 @@ msgstr "1 güncelleme var"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Cachy-Update'i çalıştır"
++msgid "Run Laden Update"
++msgstr "Laden Update'i çalıştır"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/vi.po b/po/vi.po
+index 7b9b656..0945c04 100644
+--- a/po/vi.po
++++ b/po/vi.po
+@@ -560,8 +560,8 @@ msgstr "1 cập nhật khả dụng"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "Chạy Cachy-Update"
++msgid "Run Laden Update"
++msgstr "Chạy Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/zh_CN.po b/po/zh_CN.po
+index 6e345c6..813fd53 100644
+--- a/po/zh_CN.po
++++ b/po/zh_CN.po
+@@ -522,8 +522,8 @@ msgstr "1 个更新可用"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "运行 Cachy-Update"
++msgid "Run Laden Update"
++msgstr "运行 Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/po/zh_TW.po b/po/zh_TW.po
+index e644f30..343d849 100644
+--- a/po/zh_TW.po
++++ b/po/zh_TW.po
+@@ -520,8 +520,8 @@ msgstr "1 個更新可用"
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+ #: src/tray/src/tray.rs:250
+ #, sh-format
+-msgid "Run Cachy-Update"
+-msgstr "執行 Cachy-Update"
++msgid "Run Laden Update"
++msgstr "執行 Laden Update"
+ 
+ #: src/lib/notification.sh:16 src/lib/notification.sh:19
+ #: src/lib/notification.sh:23 src/lib/notification.sh:25
+diff --git a/res/desktop/arch-update-tray.desktop b/res/desktop/arch-update-tray.desktop
+index 61d1ca3..126dae6 100644
+--- a/res/desktop/arch-update-tray.desktop
++++ b/res/desktop/arch-update-tray.desktop
+@@ -1,21 +1,21 @@
+ [Desktop Entry]
+-Name=Cachy-Update Systray Applet
+-Comment=Systray applet for Cachy-Update
+-Comment[be]=Аплет сістэмнага трэя для Cachy-Update
+-Comment[bg]=Аплет в системния трей за Cachy-Update
+-Comment[de]=Cachy-Update-Minianwendung für den Benachrichtigungsbereich
+-Comment[es]=Applet de bandeja del sistema para Cachy-Update
+-Comment[eu]=Cachy-Updaterako systray applet-a
+-Comment[fr]=Applet systray pour Cachy-Update
+-Comment[it]=Applet del vassoio di sistema per Cachy-Update
+-Comment[ja]=Cachy-Update 用のシステムトレイアプレット
+-Comment[ka]=Cachy-Update-ის აპლეტი სისტემურ საათთან
+-Comment[nb]=Miniprogam for å legge Cachy-Update i systemkurven
+-Comment[ru]=Апплет Cachy-Update в системном трее
+-Comment[tr]=Cachy-Update sistem tepsisi uygulaması
+-Comment[vi]=Ứng dụng con khay hệ thống cho Cachy-Update
+-Comment[zh_CN]=Cachy-Update 的系统托盘小程序
+-Icon=cachy-update_updates-available-blue
++Name=Laden Update Systray Applet
++Comment=Systray applet for Laden Update
++Comment[be]=Аплет сістэмнага трэя для Laden Update
++Comment[bg]=Аплет в системния трей за Laden Update
++Comment[de]=Laden Update-Minianwendung für den Benachrichtigungsbereich
++Comment[es]=Applet de bandeja del sistema para Laden Update
++Comment[eu]=Laden Updaterako systray applet-a
++Comment[fr]=Applet systray pour Laden Update
++Comment[it]=Applet del vassoio di sistema per Laden Update
++Comment[ja]=Laden Update 用のシステムトレイアプレット
++Comment[ka]=Laden Update-ის აპლეტი სისტემურ საათთან
++Comment[nb]=Miniprogam for å legge Laden Update i systemkurven
++Comment[ru]=Апплет Laden Update в системном трее
++Comment[tr]=Laden Update sistem tepsisi uygulaması
++Comment[vi]=Ứng dụng con khay hệ thống cho Laden Update
++Comment[zh_CN]=Laden Update 的系统托盘小程序
++Icon=laden-update_updates-available-blue
+ Type=Application
+ Exec=/bin/sh -c "sleep 3 && arch-update --tray"
+ Categories=Utility
+diff --git a/res/desktop/arch-update.desktop b/res/desktop/arch-update.desktop
+index 1595f70..62e7e2c 100644
+--- a/res/desktop/arch-update.desktop
++++ b/res/desktop/arch-update.desktop
+@@ -1,21 +1,21 @@
+ [Desktop Entry]
+-Name=Cachy-Update
+-Comment=An interactive update notifier & applier for CachyOS
+-Comment[be]=Інтэрактыўны апавяшчальнік і ўсталёўшчык абнаўленняў для CachyOS
+-Comment[bg]=Интерактивен нотификатор и инструмент за актуализиране за CachyOS
+-Comment[de]=Ein interaktiver Update-Benachrichtiger und -Anwender für CachyOS
+-Comment[es]=Notificador y gestor de actualizaciones para CachyOS
+-Comment[eu]=CachyOSrako eguneraketa-jakinarazle eta aplikatzaile interaktiboa.
+-Comment[fr]=Un notificateur & applicateur de mises à jour interactif pour CachyOS
+-Comment[it]=Un sistema interattivo di notifica & applicazione degli aggiornamenti per CachyOS
+-Comment[ja]=CachyOS 用の対話式アップデート通知 & 適用システム
+-Comment[ka]=ინტერაქტიური განახლებების შეტყობინება და გადატარება CachyOS-ისთვის
+-Comment[nb]=En interaktiv oppdateringsvarsler og -gjennomfører for CachyOS
+-Comment[ru]=Интерактивный помощник по обновлению CachyOS: уведомляет об обновлениях и устанавливает их
+-Comment[tr]=CachyOS için etkileşimli bir güncelleme bildiricisi ve uygulayıcısı
+-Comment[vi]=Công cụ thông báo & cập nhật tương tác cho CachyOS
+-Comment[zh_CN]=CachyOS 的交互式更新通知 & 应用工具
+-Icon=cachy-update-blue
++Name=Laden Update
++Comment=An interactive update notifier & applier for Laden OS
++Comment[be]=Інтэрактыўны апавяшчальнік і ўсталёўшчык абнаўленняў для Laden OS
++Comment[bg]=Интерактивен нотификатор и инструмент за актуализиране за Laden OS
++Comment[de]=Ein interaktiver Update-Benachrichtiger und -Anwender für Laden OS
++Comment[es]=Notificador y gestor de actualizaciones para Laden OS
++Comment[eu]=Laden OSrako eguneraketa-jakinarazle eta aplikatzaile interaktiboa.
++Comment[fr]=Un notificateur & applicateur de mises à jour interactif pour Laden OS
++Comment[it]=Un sistema interattivo di notifica & applicazione degli aggiornamenti per Laden OS
++Comment[ja]=Laden OS 用の対話式アップデート通知 & 適用システム
++Comment[ka]=ინტერაქტიური განახლებების შეტყობინება და გადატარება Laden OS-ისთვის
++Comment[nb]=En interaktiv oppdateringsvarsler og -gjennomfører for Laden OS
++Comment[ru]=Интерактивный помощник по обновлению Laden OS: уведомляет об обновлениях и устанавливает их
++Comment[tr]=Laden OS için etkileşimli bir güncelleme bildiricisi ve uygulayıcısı
++Comment[vi]=Công cụ thông báo & cập nhật tương tác cho Laden OS
++Comment[zh_CN]=Laden OS 的交互式更新通知 & 应用工具
++Icon=laden-update-blue
+ Type=Application
+ Terminal=true
+ Exec=arch-update
+diff --git a/res/icons/cachy-update-blue.svg b/res/icons/cachy-update-blue.svg
+deleted file mode 100644
+index 7bfc1c3..0000000
+--- a/res/icons/cachy-update-blue.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 24 24"><defs><linearGradient id="linear-gradient" x1="1000.5343" x2="995.5818" y1="-1390.0707" y2="-1399.4018" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3352" stop-color="#020202"/><stop offset=".8098" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient1" x1="1015.3518" x2="1007.991" y1="-1423.6914" y2="-1410.3158" gradientTransform="matrix(.5484 0 0 -.5484 -541.3418 -772.6634)" gradientUnits="userSpaceOnUse"><stop offset=".0665" stop-color="#020202"/><stop offset=".4109" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient2" x1="1002.815" x2="986.8938" y1="-1401.3331" y2="-1401.3331" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".4827" stop-color="#020202"/><stop offset=".6928" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient3" x1="988.1104" x2="994.9092" y1="-1420.8641" y2="-1420.8559" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3268" stop-color="#020202"/><stop offset=".8194" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient4" x1="990.9435" x2="988.0155" y1="-1415.3901" y2="-1409.6522" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5023" stop-color="#020202"/><stop offset=".7545" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient5" x1="997.8173" x2="987.0303" y1="-1419.786" y2="-1400.0646" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5593" stop-color="#020202"/><stop offset=".7624" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient6" x1="997.0375" x2="989.7095" y1="-1396.3917" y2="-1420.192" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".6182" stop-color="#020202"/><stop offset=".8324" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient7" x1="995.9376" x2="999.5122" y1="-1422.2953" y2="-1415.8466" gradientTransform="matrix(.5484 0 0 -.5484 -537.1039 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".422" stop-color="#020202"/><stop offset=".7868" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient8" x1="17" x2="17" y1="18.4646" y2="11.3075" gradientUnits="userSpaceOnUse"><stop offset=".1976" stop-color="#0fc"/><stop offset=".2704" stop-color="#00f8c6" stop-opacity=".9471"/><stop offset=".4067" stop-color="#00e6b8" stop-opacity=".8074"/><stop offset=".5919" stop-color="#00c9a1" stop-opacity=".5812"/><stop offset=".8161" stop-color="#00a281" stop-opacity=".273"/><stop offset="1" stop-color="#008066" stop-opacity="0"/></linearGradient><style>.st8{fill:#0a8}.st9{fill:#0cf}</style></defs><path d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801" class="st9"/><path id="path6337" d="m7.0829 3 5.567 3.1216L18.2764 3z" class="st8"/><path id="path5111" fill="url(#linear-gradient)" d="M12.6499 6.1216 7.0829 3l2.6472 4.7415z"/><path id="path8399-8" fill="url(#linear-gradient1)" d="M7.0829 3h11.1934l-2.7375 4.7415H9.7301z"/><path id="path8399" d="M9.7301 7.7415 18.2764 3l-2.7375 4.7415H9.7302Z" class="st8"/><path d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m.1108 7.3437-.6561.6561q-.1352.1353-.3283.1354c-.1931.0001-.2381-.0453-.3282-.1354l-.6561-.6561-1.7471-1.747q-.135-.135-.1351-.328c-.0001-.193.0451-.2381.1351-.3282l.6564-.6564q.135-.1351.3282-.1351c.1932 0 .2378.045.328.1351l1.4189 1.4237 3.1658-3.1706q.135-.1351.3282-.1351c.1932 0 .2381.045.3283.1351l.6561.6561q.135.135.1351.3282c.0001.1932-.0451.2381-.1351.3283z" class="st9"/><path id="path8568" d="m2 11.8039 5.2366-2.752.0732 2.8817z" class="st8"/><path id="path8467" d="M9.7301 7.7415 7.0829 3l.2268 8.9337z" class="st8"/><path id="path11629" fill="url(#linear-gradient2)" d="M7.0829 3 2 11.8039l5.3098.1298z"/><path id="path12053" d="m7.3096 15.3497-4.0593-1.3802L7.3093 21z" class="st8"/><path id="path13729" fill="url(#linear-gradient3)" d="M7.3098 15.3497 7.3094 21l2.4544-4.8158-2.4541-.8345Z"/><path id="path12347" fill="url(#linear-gradient4)" d="m3.2503 13.9695 4.0594-2.0358-5.3098-.1298z"/><path id="path13027" d="m3.2503 13.9695 6.5135 2.2147-2.454-4.2505z" class="st8"/><path id="path11882" fill="url(#linear-gradient5)" d="m2 11.8039 5.2366-2.752L7.0829 3z"/><path id="path13350" fill="url(#linear-gradient6)" d="m9.7638 16.1842-6.5135-2.2147L7.3093 21z"/><path fill="url(#linear-gradient7)" d="M11.0072 16.1842H9.7639l1.3072.7363-.0001-.0006c-.0383-.247-.056-.492-.0637-.7357Z"/><path d="m11.071 16.9205-1.3072-.7363L7.3093 21h6.3864c-1.3602-.8994-2.3549-2.3412-2.6247-4.0795" class="st8"/><path fill="url(#linear-gradient8)" d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m.1108 7.3437-.6561.6561q-.1352.1353-.3283.1354c-.1931.0001-.2381-.0453-.3282-.1354l-.6561-.6561-1.7471-1.747q-.135-.135-.1351-.328c-.0001-.193.0451-.2381.1351-.3282l.6564-.6564q.135-.1351.3282-.1351c.1932 0 .2378.045.328.1351l1.4189 1.4237 3.1658-3.1706q.135-.1351.3282-.1351c.1932 0 .2381.045.3283.1351l.6561.6561q.135.135.1351.3282c.0001.1932-.0451.2381-.1351.3283z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update-dark.svg b/res/icons/cachy-update-dark.svg
+deleted file mode 100644
+index f64c1da..0000000
+--- a/res/icons/cachy-update-dark.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m.1108 7.3437-.6561.6561q-.1352.1353-.3283.1354c-.1931.0001-.2381-.0453-.3282-.1354l-.6561-.6561-1.7471-1.747q-.135-.135-.1351-.328c-.0001-.193.0451-.2381.1351-.3282l.6564-.6564q.135-.1351.3282-.1351c.1932 0 .2378.045.328.1351l1.4189 1.4237 3.1658-3.1706q.135-.1351.3282-.1351c.1932 0 .2381.045.3283.1351l.6561.6561q.135.135.1351.3282c.0001.1932-.0451.2381-.1351.3283z"/></svg>
+diff --git a/res/icons/cachy-update-light.svg b/res/icons/cachy-update-light.svg
+deleted file mode 100644
+index b762899..0000000
+--- a/res/icons/cachy-update-light.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 24 24"><defs><style>.st0{fill:#fff}</style></defs><path d="M11.3618 16.9199c-.0383-.247-.056-.492-.0637-.7357h-1.2433l-2.4541-4.2505 2.4203-4.1921h5.8087L18.5672 3H7.3739l-5.083 8.8039L7.6002 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801" class="st0"/><path d="M17.2909 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m.1108 7.3437-.6561.6561q-.1352.1353-.3283.1354c-.1931.0001-.2381-.0453-.3282-.1354l-.6561-.6561-1.7471-1.747q-.135-.135-.1351-.328c-.0001-.193.0451-.2381.1351-.3282l.6564-.6564q.135-.1351.3282-.1351c.1932 0 .2378.045.328.1351l1.4189 1.4237 3.1658-3.1706q.135-.1351.3282-.1351c.1932 0 .2381.045.3283.1351l.6561.6561q.135.135.1351.3282c.0001.1932-.0451.2381-.1351.3283z" class="st0"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_app-icon.svg b/res/icons/cachy-update_app-icon.svg
+deleted file mode 100644
+index 13d8ffa..0000000
+--- a/res/icons/cachy-update_app-icon.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 128 128"><defs><linearGradient id="linear-gradient" x1="1126.0695" x2="1094.7032" y1="-1380.7382" y2="-1439.8358" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3352" stop-color="#020202"/><stop offset=".8098" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient1" x1="1178.7003" x2="1132.0819" y1="-1480.6572" y2="-1395.9451" gradientTransform="matrix(.5484 0 0 -.5484 -560.3085 -772.6634)" gradientUnits="userSpaceOnUse"><stop offset=".0665" stop-color="#020202"/><stop offset=".4109" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient2" x1="1140.514" x2="1039.6793" y1="-1452.067" y2="-1452.067" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".4827" stop-color="#020202"/><stop offset=".6928" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient3" x1="1047.3845" x2="1090.4438" y1="-1575.7636" y2="-1575.7115" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3268" stop-color="#020202"/><stop offset=".8194" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient4" x1="1065.3275" x2="1046.7834" y1="-1541.0945" y2="-1504.7548" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5023" stop-color="#020202"/><stop offset=".7545" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient5" x1="1108.8616" x2="1040.5443" y1="-1568.9352" y2="-1444.0333" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5593" stop-color="#020202"/><stop offset=".7624" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient6" x1="1103.9229" x2="1057.5125" y1="-1420.7717" y2="-1571.5066" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".6182" stop-color="#020202"/><stop offset=".8324" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient7" x1="1096.957" x2="1119.5959" y1="-1584.8276" y2="-1543.986" gradientTransform="matrix(.5484 0 0 -.5484 -556.0706 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".422" stop-color="#020202"/><stop offset=".7868" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient8" x1="95.6667" x2="95.6667" y1="104.9426" y2="59.6143" gradientUnits="userSpaceOnUse"><stop offset=".1976" stop-color="#0fc"/><stop offset=".2704" stop-color="#00f8c6" stop-opacity=".9471"/><stop offset=".4067" stop-color="#00e6b8" stop-opacity=".8074"/><stop offset=".5919" stop-color="#00c9a1" stop-opacity=".5812"/><stop offset=".8161" stop-color="#00a281" stop-opacity=".273"/><stop offset="1" stop-color="#008066" stop-opacity="0"/></linearGradient><style>.st8{fill:#0a8}.st9{fill:#0cf}</style></defs><path d="M58.1158 95.1591c-.2428-1.5644-.3545-3.116-.4036-4.6592h-7.8745L34.2951 63.5798 49.624 37.03h36.7885L103.7499 7H32.8587L.6667 62.758 34.2924 121h40.4473c-8.6156-5.6971-14.9153-14.8298-16.6238-25.8409Z" class="st9"/><path id="path6337" d="M32.8586 7 68.116 26.7702 103.7502 7z" class="st8"/><path id="path5111" fill="url(#linear-gradient)" d="M68.116 26.7702 32.8586 7l16.7653 30.0298z"/><path id="path8399-8" fill="url(#linear-gradient1)" d="M32.8586 7h70.8916L86.4125 37.0298H49.6239z"/><path id="path8399" d="M49.6239 37.0298 103.7502 7 86.4125 37.0298z" class="st8"/><path d="M95.6667 57.6667C78.1776 57.6667 64 71.8443 64 89.3334s14.1776 31.6667 31.6667 31.6667 31.6667-14.1776 31.6667-31.6667-14.1776-31.6667-31.6667-31.6667m.7016 46.5104-4.1555 4.1555c-.5708.5708-1.264.8575-2.079.8575s-1.5082-.2867-2.0784-.8575l-4.1555-4.1555-11.0652-11.0645c-.5702-.5708-.8556-1.2621-.8556-2.0771s.2854-1.5082.8556-2.0784l4.1574-4.1574c.5702-.5708 1.2634-.8556 2.0784-.8556s1.5063.2848 2.0771.8556l8.9861 9.0171 20.05-20.0803c.5702-.5708 1.2634-.8556 2.0784-.8556s1.5082.2848 2.079.8556l4.1555 4.1555c.5702.5702.8556 1.2634.8556 2.0784s-.2854 1.5082-.8556 2.079l-22.1284 22.1278Z" class="st9"/><path id="path8568" d="M.6667 62.7582 33.8318 45.329l.4634 18.251z" class="st8"/><path id="path8467" d="M49.6239 37.0298 32.8586 7l1.4365 56.5799z" class="st8"/><path id="path11629" fill="url(#linear-gradient2)" d="M32.8586 7 .6667 62.7582l33.6285.8218-1.4365-56.5799Z"/><path id="path12053" d="M34.2942 85.215 8.5853 76.4736l25.7073 44.5263.0016-35.785Z" class="st8"/><path id="path13729" fill="url(#linear-gradient3)" d="M34.2951 85.215 34.2926 121l15.5448-30.5-15.5423-5.2849Z"/><path id="path12347" fill="url(#linear-gradient4)" d="M8.5853 76.4737 34.2951 63.58.6666 62.7582z"/><path id="path13027" d="M8.5853 76.4737 49.8374 90.5 34.2951 63.58z" class="st8"/><path id="path11882" fill="url(#linear-gradient5)" d="M.6667 62.7582 33.8318 45.329 32.8587 7z"/><path id="path13350" fill="url(#linear-gradient6)" d="M49.8374 90.5 8.5853 76.4737 34.2926 121z"/><path fill="url(#linear-gradient7)" d="M57.7123 90.5h-7.8745l8.2789 4.663q-.0004-.002-.0008-.0039c-.2428-1.5644-.3545-3.116-.4036-4.6592Z"/><path d="M58.1166 95.163 49.8377 90.5 34.2924 121h40.4473c-8.6144-5.6963-14.9141-14.8275-16.6231-25.837" class="st8"/><path fill="url(#linear-gradient8)" d="M95.6667 57.6667C78.1776 57.6667 64 71.8443 64 89.3334s14.1776 31.6667 31.6667 31.6667 31.6667-14.1776 31.6667-31.6667-14.1776-31.6667-31.6667-31.6667m.7016 46.5104-4.1555 4.1555c-.5708.5708-1.264.8575-2.079.8575s-1.5082-.2867-2.0784-.8575l-4.1555-4.1555-11.0652-11.0645c-.5702-.5708-.8556-1.2621-.8556-2.0771s.2854-1.5082.8556-2.0784l4.1574-4.1574c.5702-.5708 1.2634-.8556 2.0784-.8556s1.5063.2848 2.0771.8556l8.9861 9.0171 20.05-20.0803c.5702-.5708 1.2634-.8556 2.0784-.8556s1.5082.2848 2.079.8556l4.1555 4.1555c.5702.5702.8556 1.2634.8556 2.0784s-.2854 1.5082-.8556 2.079l-22.1284 22.1278Z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-blue-cb.svg b/res/icons/cachy-update_updates-available-blue-cb.svg
+deleted file mode 100644
+index 0cf0d5d..0000000
+--- a/res/icons/cachy-update_updates-available-blue-cb.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 24 24"><defs><linearGradient id="linear-gradient" x1="964.3028" x2="959.3503" y1="-1390.0707" y2="-1399.4018" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3352" stop-color="#020202"/><stop offset=".8098" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient1" x1="979.1204" x2="971.7596" y1="-1423.6914" y2="-1410.3158" gradientTransform="matrix(.5484 0 0 -.5484 -521.472 -772.6634)" gradientUnits="userSpaceOnUse"><stop offset=".0665" stop-color="#020202"/><stop offset=".4109" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient2" x1="966.5836" x2="950.6623" y1="-1401.3331" y2="-1401.3331" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".4827" stop-color="#020202"/><stop offset=".6928" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient3" x1="951.8789" x2="958.6777" y1="-1420.8641" y2="-1420.8559" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3268" stop-color="#020202"/><stop offset=".8194" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient4" x1="954.712" x2="951.784" y1="-1415.3901" y2="-1409.6522" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5023" stop-color="#020202"/><stop offset=".7545" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient5" x1="961.5858" x2="950.7989" y1="-1419.786" y2="-1400.0646" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5593" stop-color="#020202"/><stop offset=".7624" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient6" x1="960.806" x2="953.4781" y1="-1396.3917" y2="-1420.192" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".6182" stop-color="#020202"/><stop offset=".8324" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient7" x1="959.7061" x2="963.2807" y1="-1422.2953" y2="-1415.8466" gradientTransform="matrix(.5484 0 0 -.5484 -517.2341 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".422" stop-color="#020202"/><stop offset=".7868" stop-color="#020202" stop-opacity="0"/></linearGradient><style>.st7{fill:#0a8}</style></defs><path fill="#0cf" d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#ffc107" d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/><path id="path6337" d="m7.0829 3 5.567 3.1216L18.2764 3z" class="st7"/><path id="path5111" fill="url(#linear-gradient)" d="M12.6499 6.1216 7.0829 3l2.6472 4.7415z"/><path id="path8399-8" fill="url(#linear-gradient1)" d="M7.0829 3h11.1934l-2.7375 4.7415H9.7301z"/><path id="path8399" d="M9.7301 7.7415 18.2764 3l-2.7375 4.7415H9.7302Z" class="st7"/><path id="path8568" d="m2 11.8039 5.2366-2.752.0732 2.8817z" class="st7"/><path id="path8467" d="M9.7301 7.7415 7.0829 3l.2268 8.9337z" class="st7"/><path id="path11629" fill="url(#linear-gradient2)" d="M7.0829 3 2 11.8039l5.3098.1298z"/><path id="path12053" d="m7.3096 15.3497-4.0593-1.3802L7.3093 21z" class="st7"/><path id="path13729" fill="url(#linear-gradient3)" d="M7.3098 15.3497 7.3094 21l2.4544-4.8158-2.4541-.8345Z"/><path id="path12347" fill="url(#linear-gradient4)" d="m3.2503 13.9695 4.0594-2.0358-5.3098-.1298z"/><path id="path13027" d="m3.2503 13.9695 6.5135 2.2147-2.454-4.2505z" class="st7"/><path id="path11882" fill="url(#linear-gradient5)" d="m2 11.8039 5.2366-2.752L7.0829 3z"/><path id="path13350" fill="url(#linear-gradient6)" d="m9.7638 16.1842-6.5135-2.2147L7.3093 21z"/><path fill="url(#linear-gradient7)" d="M11.0072 16.1842H9.7639l1.3072.7363-.0001-.0006c-.0383-.247-.056-.492-.0637-.7357Z"/><path d="m11.071 16.9205-1.3072-.7363L7.3093 21h6.3864c-1.3602-.8994-2.3549-2.3412-2.6247-4.0795" class="st7"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-blue.svg b/res/icons/cachy-update_updates-available-blue.svg
+deleted file mode 100644
+index 2d43acc..0000000
+--- a/res/icons/cachy-update_updates-available-blue.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 24 24"><defs><linearGradient id="linear-gradient" x1="928.0714" x2="923.1188" y1="-1390.0707" y2="-1399.4018" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3352" stop-color="#020202"/><stop offset=".8098" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient1" x1="942.8889" x2="935.5281" y1="-1423.6914" y2="-1410.3158" gradientTransform="matrix(.5484 0 0 -.5484 -501.6022 -772.6634)" gradientUnits="userSpaceOnUse"><stop offset=".0665" stop-color="#020202"/><stop offset=".4109" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient2" x1="930.3521" x2="914.4308" y1="-1401.3331" y2="-1401.3331" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".4827" stop-color="#020202"/><stop offset=".6928" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient3" x1="915.6474" x2="922.4462" y1="-1420.8641" y2="-1420.8559" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".3268" stop-color="#020202"/><stop offset=".8194" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient4" x1="918.4805" x2="915.5525" y1="-1415.3901" y2="-1409.6522" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5023" stop-color="#020202"/><stop offset=".7545" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient5" x1="925.3543" x2="914.5674" y1="-1419.786" y2="-1400.0646" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".5593" stop-color="#020202"/><stop offset=".7624" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient6" x1="924.5745" x2="917.2466" y1="-1396.3917" y2="-1420.192" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".6182" stop-color="#020202"/><stop offset=".8324" stop-color="#020202" stop-opacity="0"/></linearGradient><linearGradient id="linear-gradient7" x1="923.4746" x2="927.0492" y1="-1422.2953" y2="-1415.8466" gradientTransform="matrix(.5484 0 0 -.5484 -497.3643 -761.0426)" gradientUnits="userSpaceOnUse"><stop offset=".422" stop-color="#020202"/><stop offset=".7868" stop-color="#020202" stop-opacity="0"/></linearGradient><style>.st7{fill:#0a8}</style></defs><path fill="#0cf" d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#f93a30" d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/><path id="path6337" d="m7.0829 3 5.567 3.1216L18.2764 3z" class="st7"/><path id="path5111" fill="url(#linear-gradient)" d="M12.6499 6.1216 7.0829 3l2.6472 4.7415z"/><path id="path8399-8" fill="url(#linear-gradient1)" d="M7.0829 3h11.1934l-2.7375 4.7415H9.7301z"/><path id="path8399" d="M9.7301 7.7415 18.2764 3l-2.7375 4.7415H9.7302Z" class="st7"/><path id="path8568" d="m2 11.8039 5.2366-2.752.0732 2.8817z" class="st7"/><path id="path8467" d="M9.7301 7.7415 7.0829 3l.2268 8.9337z" class="st7"/><path id="path11629" fill="url(#linear-gradient2)" d="M7.0829 3 2 11.8039l5.3098.1298z"/><path id="path12053" d="m7.3096 15.3497-4.0593-1.3802L7.3093 21z" class="st7"/><path id="path13729" fill="url(#linear-gradient3)" d="M7.3098 15.3497 7.3094 21l2.4544-4.8158-2.4541-.8345Z"/><path id="path12347" fill="url(#linear-gradient4)" d="m3.2503 13.9695 4.0594-2.0358-5.3098-.1298z"/><path id="path13027" d="m3.2503 13.9695 6.5135 2.2147-2.454-4.2505z" class="st7"/><path id="path11882" fill="url(#linear-gradient5)" d="m2 11.8039 5.2366-2.752L7.0829 3z"/><path id="path13350" fill="url(#linear-gradient6)" d="m9.7638 16.1842-6.5135-2.2147L7.3093 21z"/><path fill="url(#linear-gradient7)" d="M11.0072 16.1842H9.7639l1.3072.7363-.0001-.0006c-.0383-.247-.056-.492-.0637-.7357Z"/><path d="m11.071 16.9205-1.3072-.7363L7.3093 21h6.3864c-1.3602-.8994-2.3549-2.3412-2.6247-4.0795" class="st7"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-dark-cb.svg b/res/icons/cachy-update_updates-available-dark-cb.svg
+deleted file mode 100644
+index b96cec7..0000000
+--- a/res/icons/cachy-update_updates-available-dark-cb.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#ffc107" d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-dark.svg b/res/icons/cachy-update_updates-available-dark.svg
+deleted file mode 100644
+index 4bc2715..0000000
+--- a/res/icons/cachy-update_updates-available-dark.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.0709 16.9199c-.0383-.247-.056-.492-.0637-.7357H9.7639l-2.4541-4.2505 2.4203-4.1921h5.8087L18.2763 3H7.0829L2 11.8039 7.3093 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#f93a30" d="M17 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-light-cb.svg b/res/icons/cachy-update_updates-available-light-cb.svg
+deleted file mode 100644
+index 6de71bc..0000000
+--- a/res/icons/cachy-update_updates-available-light-cb.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M11.3618 16.9199c-.0383-.247-.056-.492-.0637-.7357h-1.2433l-2.4541-4.2505 2.4203-4.1921h5.8087L18.5672 3H7.3739l-5.083 8.8039L7.6002 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#ffc107" d="M17.2909 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/cachy-update_updates-available-light.svg b/res/icons/cachy-update_updates-available-light.svg
+deleted file mode 100644
+index 64ff241..0000000
+--- a/res/icons/cachy-update_updates-available-light.svg
++++ /dev/null
+@@ -1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M11.3618 16.9199c-.0383-.247-.056-.492-.0637-.7357h-1.2433l-2.4541-4.2505 2.4203-4.1921h5.8087L18.5672 3H7.3739l-5.083 8.8039L7.6002 21h6.3864c-1.3604-.8995-2.355-2.3416-2.6248-4.0801"/><path fill="#f93a30" d="M17.2909 11c-2.7614 0-5 2.2386-5 5s2.2386 5 5 5 5-2.2386 5-5-2.2386-5-5-5m3.2422 5.2995-2.3568 2.3568-.5925.5924q-.1172.1173-.293.1173c-.1758 0-.2148-.0391-.293-.1173l-.5924-.5924-2.3568-2.3568q-.1172-.1172-.1172-.293c0-.1758.0391-.2148.1172-.293l.5925-.5924q.1172-.1172.293-.1172c.1758 0 .2148.0391.293.1172l1.2305 1.2305v-3.2682q0-.1692.1237-.293.1237-.1236.293-.1237h.8333q.1693 0 .293.1237t.1237.293v3.2682l1.2305-1.2305q.1237-.1236.293-.1237c.1693-.0001.2105.0412.293.1237l.5924.5924q.1172.1172.1172.293c0 .1758-.0391.2148-.1172.293Z"/></svg>
+\ No newline at end of file
+diff --git a/res/icons/laden-update-blue.svg b/res/icons/laden-update-blue.svg
+new file mode 100644
+index 0000000..c0bd48c
+--- /dev/null
++++ b/res/icons/laden-update-blue.svg
+@@ -0,0 +1,8 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect width="64" height="64" rx="16" fill="#071210"/>
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#39ffb0" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <path d="M40 18h6" stroke="#39ffb0" stroke-width="1.6" stroke-linecap="round"/>
++  <circle cx="48.5" cy="18" r="2.2" fill="#39ffb0"/>
++</svg>
+diff --git a/res/icons/laden-update-dark.svg b/res/icons/laden-update-dark.svg
+new file mode 100644
+index 0000000..bf4980d
+--- /dev/null
++++ b/res/icons/laden-update-dark.svg
+@@ -0,0 +1,7 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#071210" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#071210"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#071210"/>
++  <path d="M40 18h6" stroke="#0b7a55" stroke-width="1.6" stroke-linecap="round"/>
++  <circle cx="48.5" cy="18" r="2.2" fill="#0b7a55"/>
++</svg>
+diff --git a/res/icons/laden-update-light.svg b/res/icons/laden-update-light.svg
+new file mode 100644
+index 0000000..cbed491
+--- /dev/null
++++ b/res/icons/laden-update-light.svg
+@@ -0,0 +1,7 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#f4fff9" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <path d="M40 18h6" stroke="#39ffb0" stroke-width="1.6" stroke-linecap="round"/>
++  <circle cx="48.5" cy="18" r="2.2" fill="#39ffb0"/>
++</svg>
+diff --git a/res/icons/laden-update_app-icon.svg b/res/icons/laden-update_app-icon.svg
+new file mode 100644
+index 0000000..c0bd48c
+--- /dev/null
++++ b/res/icons/laden-update_app-icon.svg
+@@ -0,0 +1,8 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect width="64" height="64" rx="16" fill="#071210"/>
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#39ffb0" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <path d="M40 18h6" stroke="#39ffb0" stroke-width="1.6" stroke-linecap="round"/>
++  <circle cx="48.5" cy="18" r="2.2" fill="#39ffb0"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-blue-cb.svg b/res/icons/laden-update_updates-available-blue-cb.svg
+new file mode 100644
+index 0000000..a56f3d8
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-blue-cb.svg
+@@ -0,0 +1,7 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect width="64" height="64" rx="16" fill="#071210"/>
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#39ffb0" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <circle cx="47" cy="17" r="12" fill="#2f80ff" stroke="#071210" stroke-width="2"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-blue.svg b/res/icons/laden-update_updates-available-blue.svg
+new file mode 100644
+index 0000000..63182c9
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-blue.svg
+@@ -0,0 +1,7 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect width="64" height="64" rx="16" fill="#071210"/>
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#39ffb0" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <circle cx="47" cy="17" r="12" fill="#ff3b30" stroke="#071210" stroke-width="2"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-dark-cb.svg b/res/icons/laden-update_updates-available-dark-cb.svg
+new file mode 100644
+index 0000000..36e397c
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-dark-cb.svg
+@@ -0,0 +1,6 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#071210" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#071210"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#071210"/>
++  <circle cx="47" cy="17" r="12" fill="#2f80ff" stroke="#ffffff" stroke-width="2"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-dark.svg b/res/icons/laden-update_updates-available-dark.svg
+new file mode 100644
+index 0000000..def8736
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-dark.svg
+@@ -0,0 +1,6 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#071210" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#071210"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#071210"/>
++  <circle cx="47" cy="17" r="12" fill="#ff3b30" stroke="#ffffff" stroke-width="2"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-light-cb.svg b/res/icons/laden-update_updates-available-light-cb.svg
+new file mode 100644
+index 0000000..0ebb05c
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-light-cb.svg
+@@ -0,0 +1,6 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#f4fff9" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <circle cx="47" cy="17" r="12" fill="#2f80ff" stroke="#071210" stroke-width="2"/>
++</svg>
+diff --git a/res/icons/laden-update_updates-available-light.svg b/res/icons/laden-update_updates-available-light.svg
+new file mode 100644
+index 0000000..91f4a0b
+--- /dev/null
++++ b/res/icons/laden-update_updates-available-light.svg
+@@ -0,0 +1,6 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#f4fff9" stroke-width="2.5"/>
++  <rect x="18" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="18" y="42" width="28" height="8" rx="1.2" fill="#f4fff9"/>
++  <circle cx="47" cy="17" r="12" fill="#ff3b30" stroke="#071210" stroke-width="2"/>
++</svg>
+diff --git a/res/systemd/arch-update.service b/res/systemd/arch-update.service
+index 89afb2a..d773406 100644
+--- a/res/systemd/arch-update.service
++++ b/res/systemd/arch-update.service
+@@ -1,5 +1,5 @@
+ [Unit]
+-Description=Run arch-update auto check
++Description=Laden Update: check for updates
+ After=network-online.target
+ 
+ [Service]
+diff --git a/res/systemd/arch-update.timer b/res/systemd/arch-update.timer
+index f9a26b4..4fd7010 100644
+--- a/res/systemd/arch-update.timer
++++ b/res/systemd/arch-update.timer
+@@ -1,5 +1,5 @@
+ [Unit]
+-Description=Run arch-update auto check at boot and then once a day
++Description=Laden Update: run arch-update auto check at boot and then once a day
+ 
+ [Timer]
+ OnStartupSec=2min
+diff --git a/src/arch-update.sh b/src/arch-update.sh
+index 212a62d..0f6f952 100755
+--- a/src/arch-update.sh
++++ b/src/arch-update.sh
+@@ -6,7 +6,8 @@
+ 
+ # General variables
+ name="arch-update"
+-_name="Arch-Update"
++_name="Laden Update"
++_textdomain="Arch-Update"
+ version="4.4.7"
+ option="${1}"
+ 
+diff --git a/src/lib/check.sh b/src/lib/check.sh
+index f395e79..210941b 100755
+--- a/src/lib/check.sh
++++ b/src/lib/check.sh
+@@ -96,7 +96,7 @@ if [ -n "${update_available}" ] && [ -n "${notification_support}" ] && ! diff "$
+ 	systemd-run --user --unit="${name}-notification" --quiet \
+ 		--setenv=DISPLAY="${DISPLAY}" \
+ 		--setenv=DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS}" \
+-		--setenv=TEXTDOMAIN="${_name}" \
++		--setenv=TEXTDOMAIN="${_textdomain}" \
+ 		--setenv=TEXTDOMAINDIR="${TEXTDOMAINDIR}" \
+ 		--setenv=LANG="${LANG}" \
+ 		--setenv=LANGUAGE="${LANGUAGE}" \
+diff --git a/src/lib/common.sh b/src/lib/common.sh
+index f9878e9..88c9afd 100755
+--- a/src/lib/common.sh
++++ b/src/lib/common.sh
+@@ -36,15 +36,15 @@ checkupdates_db_tmpdir_prefix="${tmpdir}/checkupdates-"
+ . gettext.sh
+ # Using "Arch-Update" as TEXTDOMAIN to avoid conflicting with the "arch-update" TEXTDOMAIN used by the "Arch Linux Updates Indicator" Gnome extension (https://extensions.gnome.org/extension/1010/archlinux-updates-indicator/)
+ # shellcheck disable=SC2154
+-export TEXTDOMAIN="${_name}"
++export TEXTDOMAIN="${_textdomain}"
+ # Check where the translation files are installed (depending on the PREFIX used during the installation) to see if the default TEXTDOMAINDIR path (/usr/share/locale) should be superseded
+-if [ -f "${XDG_DATA_HOME}/locale/fr/LC_MESSAGES/${_name}.mo" ]; then
++if [ -f "${XDG_DATA_HOME}/locale/fr/LC_MESSAGES/${_textdomain}.mo" ]; then
+ 	export TEXTDOMAINDIR="${XDG_DATA_HOME}/locale"
+-elif [ -f "${HOME}/.local/share/locale/fr/LC_MESSAGES/${_name}.mo" ]; then
++elif [ -f "${HOME}/.local/share/locale/fr/LC_MESSAGES/${_textdomain}.mo" ]; then
+ 	export TEXTDOMAINDIR="${HOME}/.local/share/locale"
+-elif [ -f "${XDG_DATA_DIRS}/locale/fr/LC_MESSAGES/${_name}.mo" ]; then
++elif [ -f "${XDG_DATA_DIRS}/locale/fr/LC_MESSAGES/${_textdomain}.mo" ]; then
+ 	export TEXTDOMAINDIR="${XDG_DATA_DIRS}/locale"
+-elif [ -f "/usr/local/share/locale/fr/LC_MESSAGES/${_name}.mo" ]; then
++elif [ -f "/usr/local/share/locale/fr/LC_MESSAGES/${_textdomain}.mo" ]; then
+ 	export TEXTDOMAINDIR="/usr/local/share/locale"
+ fi
+ 
+@@ -206,13 +206,13 @@ check_diff_prog () {
+ # Definition of the icon_up-to-date function: Change tray icon to "up to date"
+ icon_up-to-date() {
+ 	# shellcheck disable=SC2154
+-	echo "cachy-update-${tray_icon_style}" > "${statedir}/tray_icon"
++	echo "laden-update-${tray_icon_style}" > "${statedir}/tray_icon"
+ }
+ 
+ # Definition of the icon_updates-available function: Change tray icon to "updates available"
+ icon_updates-available() {
+ 	# shellcheck disable=SC2154
+-	echo "cachy-update_updates-available-${tray_icon_style}${colorblind_mode}" > "${statedir}/tray_icon"
++	echo "laden-update_updates-available-${tray_icon_style}${colorblind_mode}" > "${statedir}/tray_icon"
+ }
+ 
+ # Definition of commands to always run on exit (e.g. cleanup of files / dirs which have no purpose being kept)
+diff --git a/src/lib/notification.sh b/src/lib/notification.sh
+index 35b45e8..d6b1c99 100755
+--- a/src/lib/notification.sh
++++ b/src/lib/notification.sh
+@@ -13,16 +13,16 @@
+ if [ "${update_number}" -eq 1 ]; then
+ 	if [ -z "${last_notif_id}" ]; then
+ 		# shellcheck disable=SC2154
+-		notify-send -p -a "Cachy-Update" -n "cachy-update_updates-available-${tray_icon_style}${colorblind_mode}" "Cachy-Update" "$(eval_gettext "1 update available")" -A "run=$(eval_gettext "Run Cachy-Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
++		notify-send -p -a "Laden Update" -n "laden-update_updates-available-${tray_icon_style}${colorblind_mode}" "Laden Update" "$(eval_gettext "1 update available")" -A "run=$(eval_gettext "Run Laden Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
+ 	else
+ 		# shellcheck disable=SC2154
+-		notify-send -p -r "${last_notif_id}" -a "Cachy-Update" -n "cachy-update_updates-available-${tray_icon_style}${colorblind_mode}" "Cachy-Update" "$(eval_gettext "1 update available")" -A "run=$(eval_gettext "Run Cachy-Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
++		notify-send -p -r "${last_notif_id}" -a "Laden Update" -n "laden-update_updates-available-${tray_icon_style}${colorblind_mode}" "Laden Update" "$(eval_gettext "1 update available")" -A "run=$(eval_gettext "Run Laden Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
+ 	fi
+ else
+ 	if [ -z "${last_notif_id}" ]; then
+-		notify-send -p -a "Cachy-Update" -n "cachy-update_updates-available-${tray_icon_style}${colorblind_mode}" "Cachy-Update" "$(eval_gettext "\${update_number} updates available")" -A "run=$(eval_gettext "Run Cachy-Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
++		notify-send -p -a "Laden Update" -n "laden-update_updates-available-${tray_icon_style}${colorblind_mode}" "Laden Update" "$(eval_gettext "\${update_number} updates available")" -A "run=$(eval_gettext "Run Laden Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
+ 	else
+-		notify-send -p -r "${last_notif_id}" -a "Cachy-Update" -n "cachy-update_updates-available-${tray_icon_style}${colorblind_mode}" "Cachy-Update" "$(eval_gettext "\${update_number} updates available")" -A "run=$(eval_gettext "Run Cachy-Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
++		notify-send -p -r "${last_notif_id}" -a "Laden Update" -n "laden-update_updates-available-${tray_icon_style}${colorblind_mode}" "Laden Update" "$(eval_gettext "\${update_number} updates available")" -A "run=$(eval_gettext "Run Laden Update")" -A "close=$(eval_gettext "Close")" > "${tmpdir}/notif_param"
+ 	fi
+ fi
+ 
+diff --git a/src/tray/src/tray.rs b/src/tray/src/tray.rs
+index 96597c2..de2d011 100644
+--- a/src/tray/src/tray.rs
++++ b/src/tray/src/tray.rs
+@@ -27,7 +27,7 @@ pub struct ArchUpdateTray {
+ impl ksni::Tray for ArchUpdateTray {
+     // Set id
+     fn id(&self) -> String {
+-        "Cachy-Update".into()
++        "Laden Update".into()
+     }
+ 
+     // Set category
+@@ -247,7 +247,7 @@ impl ksni::Tray for ArchUpdateTray {
+         menu.extend([
+             MenuItem::Separator,
+             StandardItem {
+-                label: gettext("Run Cachy-Update"),
++                label: gettext("Run Laden Update"),
+                 activate: Box::new(move |_| {
+                     tray_helpers::launch_arch_update(&desktop_file);
+                 }),
+-- 
+2.56.0
+

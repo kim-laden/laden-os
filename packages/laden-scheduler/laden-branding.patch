@@ -1,0 +1,654 @@
+From 0e3f8a52bab8f7425142bd7c089140dd4e968768 Mon Sep 17 00:00:00 2001
+From: kim-laden <kim-laden@users.noreply.github.com>
+Date: Mon, 9 Nov 2026 21:30:45 +0100
+Subject: [PATCH] Laden OS branding: Laden Scheduler
+
+---
+ CMakeLists.txt                   |   6 +++---
+ laden-scheduler.svg              |   9 +++++++++
+ lang/scx-manager_bg.ts           |   2 +-
+ lang/scx-manager_ca.ts           |   2 +-
+ lang/scx-manager_cs.ts           |   2 +-
+ lang/scx-manager_de.ts           |   2 +-
+ lang/scx-manager_es.ts           |   2 +-
+ lang/scx-manager_fr.ts           |   2 +-
+ lang/scx-manager_id.ts           |   2 +-
+ lang/scx-manager_ja.ts           |   2 +-
+ lang/scx-manager_pl.ts           |   2 +-
+ lang/scx-manager_ru.ts           |   2 +-
+ lang/scx-manager_sk.ts           |   2 +-
+ lang/scx-manager_tr.ts           |   2 +-
+ lang/scx-manager_zh_CN.ts        |   2 +-
+ lang/scx-manager_zh_TW.ts        |   2 +-
+ org.cachyos.scx-manager.desktop  |  20 --------------------
+ org.cachyos.scx-manager.png      | Bin 160947 -> 0 bytes
+ org.laden.Scheduler.desktop      |  13 +++++++++++++
+ src/main.cpp                     |   8 ++++----
+ src/schedext-window-internal.cpp |  10 +++++-----
+ src/schedext-window.ui           |   4 ++--
+ 22 files changed, 50 insertions(+), 48 deletions(-)
+ create mode 100644 laden-scheduler.svg
+ delete mode 100644 org.cachyos.scx-manager.desktop
+ delete mode 100644 org.cachyos.scx-manager.png
+ create mode 100644 org.laden.Scheduler.desktop
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0058e55..c2ee191 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,7 +6,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+ ## PROJECT
+ ## name and version
+ ##
+-project(scx-manager
++project(laden-scheduler
+         VERSION 1.16.0
+         LANGUAGES CXX)
+ 
+@@ -170,10 +170,10 @@ install(
+ )
+ 
+ install(
+-   FILES org.cachyos.scx-manager.desktop
++   FILES org.laden.Scheduler.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+ )
+ install(
+-   FILES ${CMAKE_SOURCE_DIR}/org.cachyos.scx-manager.png
++   FILES ${CMAKE_SOURCE_DIR}/laden-scheduler.svg
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
+ )
+diff --git a/laden-scheduler.svg b/laden-scheduler.svg
+new file mode 100644
+index 0000000..6fe7bb0
+--- /dev/null
++++ b/laden-scheduler.svg
+@@ -0,0 +1,9 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
++  <rect width="64" height="64" rx="16" fill="#071210"/>
++  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14.5" fill="none" stroke="#39ffb0" stroke-width="1.5"/>
++  <rect x="14" y="14" width="8" height="36" rx="1.2" fill="#f4fff9"/>
++  <rect x="14" y="42" width="24" height="8" rx="1.2" fill="#f4fff9"/>
++  <rect x="34" y="26" width="5" height="10" rx="1" fill="#39ffb0"/>
++  <rect x="42" y="18" width="5" height="18" rx="1" fill="#39ffb0"/>
++  <rect x="50" y="11" width="5" height="25" rx="1" fill="#39ffb0"/>
++</svg>
+diff --git a/lang/scx-manager_bg.ts b/lang/scx-manager_bg.ts
+index 3cad8aa..962ca68 100644
+--- a/lang/scx-manager_bg.ts
++++ b/lang/scx-manager_bg.ts
+@@ -5,7 +5,7 @@
+ <name>SchedExtWindow</name>
+ <message>
+ <location filename="../src/schedext-window.ui" line="17"/>
+-<source>CachyOS Configure sched-ext</source>
++<source>Laden Scheduler</source>
+ <translation>Настройка на sched-ext в CachyOS</translation>
+ </message>
+ <message>
+diff --git a/lang/scx-manager_ca.ts b/lang/scx-manager_ca.ts
+index 57cee50..5ddeae0 100644
+--- a/lang/scx-manager_ca.ts
++++ b/lang/scx-manager_ca.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>Configuració de sched-ext del CachyOS</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_cs.ts b/lang/scx-manager_cs.ts
+index 0e27213..26f1dd8 100644
+--- a/lang/scx-manager_cs.ts
++++ b/lang/scx-manager_cs.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation type="unfinished"></translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_de.ts b/lang/scx-manager_de.ts
+index 9e37de6..3afb619 100644
+--- a/lang/scx-manager_de.ts
++++ b/lang/scx-manager_de.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation type="unfinished"></translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_es.ts b/lang/scx-manager_es.ts
+index 2d8c551..77d352b 100644
+--- a/lang/scx-manager_es.ts
++++ b/lang/scx-manager_es.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>Configuración de sched-ext de CachyOS</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_fr.ts b/lang/scx-manager_fr.ts
+index 5b624e0..6d5fdba 100644
+--- a/lang/scx-manager_fr.ts
++++ b/lang/scx-manager_fr.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>Configuration sched-ext de CachyOS</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_id.ts b/lang/scx-manager_id.ts
+index 85f0a38..c633e64 100644
+--- a/lang/scx-manager_id.ts
++++ b/lang/scx-manager_id.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>CachyOS Konfigurasi sched-ext</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_ja.ts b/lang/scx-manager_ja.ts
+index 4151112..2a2422e 100644
+--- a/lang/scx-manager_ja.ts
++++ b/lang/scx-manager_ja.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>CachyOS sched-ext 設定</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_pl.ts b/lang/scx-manager_pl.ts
+index 9a8cf4d..3029698 100644
+--- a/lang/scx-manager_pl.ts
++++ b/lang/scx-manager_pl.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>CachyOS Skonfiguruj sched-ext</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_ru.ts b/lang/scx-manager_ru.ts
+index e60cd6f..383d1e5 100644
+--- a/lang/scx-manager_ru.ts
++++ b/lang/scx-manager_ru.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation></translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_sk.ts b/lang/scx-manager_sk.ts
+index cbbb5a9..ebe9399 100644
+--- a/lang/scx-manager_sk.ts
++++ b/lang/scx-manager_sk.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation type="unfinished"></translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_tr.ts b/lang/scx-manager_tr.ts
+index d4be65a..8acaa74 100644
+--- a/lang/scx-manager_tr.ts
++++ b/lang/scx-manager_tr.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation type="unfinished"></translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_zh_CN.ts b/lang/scx-manager_zh_CN.ts
+index 1a8ebcd..2648ee1 100644
+--- a/lang/scx-manager_zh_CN.ts
++++ b/lang/scx-manager_zh_CN.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>CachyOS sched-ext 配置</translation>
+     </message>
+     <message>
+diff --git a/lang/scx-manager_zh_TW.ts b/lang/scx-manager_zh_TW.ts
+index 79e9ee5..7dec48c 100644
+--- a/lang/scx-manager_zh_TW.ts
++++ b/lang/scx-manager_zh_TW.ts
+@@ -5,7 +5,7 @@
+     <name>SchedExtWindow</name>
+     <message>
+         <location filename="../src/schedext-window.ui" line="17"/>
+-        <source>CachyOS Configure sched-ext</source>
++        <source>Laden Scheduler</source>
+         <translation>CachyOS sched-ext 設定</translation>
+     </message>
+     <message>
+diff --git a/org.cachyos.scx-manager.desktop b/org.cachyos.scx-manager.desktop
+deleted file mode 100644
+index 8d88f35..0000000
+--- a/org.cachyos.scx-manager.desktop
++++ /dev/null
+@@ -1,20 +0,0 @@
+-[Desktop Entry]
+-Type=Application
+-Version=1.0
+-Name=SchedExt GUI Manager
+-Name[ja]=SchedExt GUI マネージャー
+-Name[fr]=Gestionnaire graphique SchedExt
+-GenericName=SCX Manager
+-GenericName[ja]=SCX マネージャー
+-GenericName[fr]=Gestionnaire SCX
+-Keywords=cachyos;system;kernel;
+-Keywords[ja]=cachyos;system;kernel;システム;カーネル
+-Keywords[fr]=cachyos;système;noyau;
+-Exec=scx-manager
+-Comment=Manage scx schedulers
+-Comment[fr]=Gérer les ordonnanceurs scx
+-Icon=org.cachyos.scx-manager
+-Terminal=false
+-StartupNotify=false
+-Categories=Qt;System;
+-X-AppStream-Ignore=true
+diff --git a/org.cachyos.scx-manager.png b/org.cachyos.scx-manager.png
+deleted file mode 100644
+index e7a31729c32e91111888a6173d6e49707670ebca..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 160947
+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
+
+diff --git a/org.laden.Scheduler.desktop b/org.laden.Scheduler.desktop
+new file mode 100644
+index 0000000..019a912
+--- /dev/null
++++ b/org.laden.Scheduler.desktop
+@@ -0,0 +1,13 @@
++[Desktop Entry]
++Type=Application
++Version=1.0
++Name=Laden Scheduler
++GenericName=CPU Scheduler Manager
++Keywords=laden;system;kernel;scheduler;scx;sched-ext;
++Exec=laden-scheduler
++Comment=Manage sched-ext (scx) CPU schedulers on Laden OS
++Icon=laden-scheduler
++Terminal=false
++StartupNotify=false
++Categories=Qt;System;
++X-AppStream-Ignore=true
+diff --git a/src/main.cpp b/src/main.cpp
+index c3e5cb6..45e0f61 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -102,10 +102,10 @@ auto main(int argc, char** argv) -> std::int32_t {
+ #endif
+ 
+     /// 2. Application identification
+-    QApplication::setOrganizationName("CachyOS");
+-    QApplication::setOrganizationDomain("cachyos.org");
+-    QApplication::setApplicationName("scx-manager");
+-    QApplication::setDesktopFileName("org.cachyos.scx-manager");
++    QApplication::setOrganizationName("Laden OS");
++    QApplication::setOrganizationDomain("laden.no");
++    QApplication::setApplicationName("laden-scheduler");
++    QApplication::setDesktopFileName("org.laden.Scheduler");
+ 
+     // Set application attributes
+     const QApplication app(argc, argv);
+diff --git a/src/schedext-window-internal.cpp b/src/schedext-window-internal.cpp
+index 086b9f6..5b14903 100644
+--- a/src/schedext-window-internal.cpp
++++ b/src/schedext-window-internal.cpp
+@@ -119,7 +119,7 @@ SchedExtWindow::SchedExtWindow(QWidget* parent)
+         if (loader_config.has_value()) {
+             m_scx_config = std::make_unique<scx::loader::Config>(std::move(*loader_config));
+         } else {
+-            QMessageBox::critical(this, "CachyOS Kernel Manager", tr("Cannot initialize scx_loader configuration"));
++            QMessageBox::critical(this, "Laden Scheduler", tr("Cannot initialize scx_loader configuration"));
+             return;
+         }
+     }
+@@ -135,7 +135,7 @@ SchedExtWindow::SchedExtWindow(QWidget* parent)
+     if (supported_scheds.has_value()) {
+         m_ui->schedext_combo_box->addItems(*supported_scheds);
+     } else {
+-        QMessageBox::critical(this, "CachyOS Kernel Manager", tr("Cannot get information from scx_loader!\nIs it working?\nThis is needed for the app to work properly"));
++        QMessageBox::critical(this, "Laden Scheduler", tr("Cannot get information from scx_loader!\nIs it working?\nThis is needed for the app to work properly"));
+ 
+         // hide all components which depends on scheduler management
+         m_ui->schedext_combo_box->setHidden(true);
+@@ -203,7 +203,7 @@ void SchedExtWindow::on_disable() noexcept {
+     m_ui->apply_button->setEnabled(false);
+ 
+     if (!m_scx_config->disable_scheduler(m_config_path)) {
+-        QMessageBox::critical(this, "CachyOS Kernel Manager", tr("Cannot disable scx_loader"));
++        QMessageBox::critical(this, "Laden Scheduler", tr("Cannot disable scx_loader"));
+     }
+ 
+     m_ui->disable_button->setEnabled(true);
+@@ -221,7 +221,7 @@ void SchedExtWindow::on_sched_profile_changed() noexcept {
+             sched_args << std::move(*scx_flags_for_mode);
+         }
+     } else {
+-        QMessageBox::critical(this, "CachyOS Kernel Manager", tr("Cannot get scx flags from scx_loader configuration!"));
++        QMessageBox::critical(this, "Laden Scheduler", tr("Cannot get scx flags from scx_loader configuration!"));
+     }
+ 
+     m_ui->schedext_flags_edit->setText(sched_args.join(' '));
+@@ -257,7 +257,7 @@ void SchedExtWindow::on_apply() noexcept {
+     const auto& scx_mode         = get_scx_mode_from_str(current_profile);
+ 
+     if (!m_scx_config->apply_scheduler_change(current_selected, scx_mode, extra_flags, m_config_path)) {
+-        QMessageBox::critical(this, "CachyOS Kernel Manager", tr("Cannot set default scx scheduler with mode! Scheduler %1 with mode %2").arg(QString::fromStdString(current_selected), QString::fromStdString(current_profile)));
++        QMessageBox::critical(this, "Laden Scheduler", tr("Cannot set default scx scheduler with mode! Scheduler %1 with mode %2").arg(QString::fromStdString(current_selected), QString::fromStdString(current_profile)));
+     }
+ 
+     m_ui->disable_button->setEnabled(true);
+diff --git a/src/schedext-window.ui b/src/schedext-window.ui
+index 9c16ce5..3e3bf0c 100644
+--- a/src/schedext-window.ui
++++ b/src/schedext-window.ui
+@@ -14,10 +14,10 @@
+    </rect>
+   </property>
+   <property name="windowTitle">
+-   <string>CachyOS Configure sched-ext</string>
++   <string>Laden Scheduler</string>
+   </property>
+   <property name="windowIcon">
+-   <iconset theme="cachyos-kernel-manager"/>
++   <iconset theme="laden-scheduler"/>
+   </property>
+   <widget class="QWidget" name="central_widget">
+    <layout class="QVBoxLayout" name="verticalLayout">
+-- 
+2.56.0
+

@@ -1,0 +1,45 @@
+# Maintainer: Laden OS <admin@laden.no>
+# Based on scx-manager by Vladislav Nepogodin (CachyOS)
+
+pkgname=laden-scheduler
+pkgver=1.16.0
+pkgrel=1
+_commit=121bae02d66334191a72c87d1b5139485564330e   # CachyOS/scx-manager v1.16.0
+pkgdesc="Laden OS sched-ext (scx) scheduler manager, based on scx-manager"
+arch=('x86_64')
+url="https://github.com/CachyOS/scx-manager"
+license=('GPL-3.0-or-later')
+depends=('qt6-base' 'polkit' 'scx-scheds' 'scx-tools')
+makedepends=('cmake' 'ninja' 'git' 'python' 'qt6-tools' 'cargo' 'lld' 'clang' 'llvm')
+provides=("scx-manager=${pkgver}" 'libscxctl-ui.so')
+conflicts=('scx-manager')
+replaces=('scx-manager')
+source=("scx-manager::git+${url}.git#commit=${_commit}"
+        laden-branding.patch)
+sha256sums=('SKIP'
+            '52066ff6a0d7654691a968088a11885e1112fe863a1ee26d28ca5c81a1772670')
+
+_llvm_env() {
+  export AR=llvm-ar CC=clang CXX=clang++ NM=llvm-nm RANLIB=llvm-ranlib
+  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld"
+}
+
+prepare() {
+  cd scx-manager
+  git apply --whitespace=nowarn ../laden-branding.patch
+}
+
+build() {
+  cd scx-manager
+  _llvm_env
+  cmake -S . -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
+  cmake --build build
+}
+
+package() {
+  cd scx-manager
+  _llvm_env
+  DESTDIR="${pkgdir}" cmake --build build --target install
+  ln -s laden-scheduler "${pkgdir}/usr/bin/scx-manager"
+  install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

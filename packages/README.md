@@ -16,12 +16,13 @@ is one copy of every image in git.
 ## Files owned by other packages
 
 `/usr/lib/os-release` (filesystem), `/etc/lsb-release` (lsb-release),
-`/usr/share/icons/cachyos.svg` (cachyos-settings), cachy-update's
-`/etc/xdg/autostart/arch-update-tray.desktop` and `cachy-update*.svg` icons are
-**not** claimed. Laden content lives under `/usr/share/laden` and is overlaid by
-`laden-apply-branding` / `laden-apply-tray-branding`, run from the package
-install scripts and pacman hooks (`/usr/share/libalpm/hooks/5x-laden-*.hook`,
-`60-laden-tray-branding.hook`) whenever those packages are upgraded. The first
+`/usr/share/icons/cachyos.svg` (cachyos-settings) are **not** claimed. Laden
+content lives under `/usr/share/laden` and is overlaid by `laden-apply-branding`,
+run from the package install script and pacman hooks
+(`/usr/share/libalpm/hooks/5x-laden-*.hook`) whenever those packages are
+upgraded. (The cachy-update tray overlay and the `/usr/local/share/applications`
+menu overrides were dropped in laden-desktop-settings 2026.11.09-2: the real
+forks below replace them.) The first
 original of each overlaid file is kept in `/var/lib/laden/orig/`.
 
 The Limine splash is only copied to `/boot` when `/boot` is on the same disk as
@@ -114,3 +115,39 @@ rebrand labels never reached the real boot menu. The script moves it aside to
                            $B/pkgs/linux-cachyos-headers-7.3.3-1-x86_64_v3.pkg.tar.zst
     # quick boot-menu-only rollback: the old ESP files are still in /boot/<machine-id>/linux-cachyos
     sudo mv /boot/EFI/limine/limine.conf.pre-linux-laden /boot/EFI/limine/limine.conf
+
+## Laden forks of the CachyOS tools (step 3)
+
+| Laden package | Based on (upstream, license) | Replaces |
+|---|---|---|
+| `laden-update` 4.4.7 | [cachy-update](https://github.com/CachyOS/cachy-update) main `22c569d` ← [Arch-Update](https://github.com/Antiz96/arch-update) by Robin Candau, GPL-3.0-or-later | `cachy-update` |
+| `laden-scheduler` 1.16.0 | [scx-manager](https://github.com/CachyOS/scx-manager) v1.16.0, GPL-3.0-or-later | `scx-manager` |
+| `laden-kernel-manager` 1.19.0 | [kernel-manager](https://github.com/CachyOS/kernel-manager) v1.19.0, GPL-3.0-or-later | `cachyos-kernel-manager` |
+
+Each PKGBUILD clones upstream at a pinned commit and applies
+`laden-branding.patch` (generated with `git format-patch` from a `laden`
+branch). Only names, icons, desktop entries, window titles, notification text,
+the polkit action (`org.laden.KernelManager…`, helper path
+`/usr/lib/laden-kernel-manager/`) and Qt app ids change. Kept on purpose:
+`/usr/bin/arch-update` (+ `laden-update` alias), `arch-update.{service,timer}`
+user units, `~/.config/arch-update`, the `Arch-Update` gettext domain,
+`libscxctl-ui` + its cmake config (the kernel manager links it), a
+`scx-manager` symlink, and the functional linux-cachyos package names / "CachyOS
+config" kernel options. Each package `provides`/`conflicts`/`replaces` exactly the
+package it supersedes.
+
+Build: `BUILDDIR=/tmp/laden-makepkg GPGKEY=<fpr> makepkg -C --sign --nocheck` in each dir
+(scdoc is a makedep of laden-update; bats only for check), then `repo-add --sign`
+and `sudo bash packages/publish-local-repo.sh`.
+
+Install: `bash packages/install-laden-forks.sh [--dry-run]` — snapshot
+`/.laden-snapshots/pre-laden-forks-<date>`, originals saved to
+`/var/backups/laden-forks/<date>/pkgs`, `pacman -U --ask 4` (removes only the three
+named packages), then per-user migration: old `~/.local/share/applications`
+overrides moved to `~/.local/share/laden-backups/forks-<date>/`,
+`~/.local/state/arch-update/tray_icon` renamed to the `laden-update…` icon, tray restarted.
+
+Undo: `sudo pacman -U --ask 4 /var/backups/laden-forks/<date>/pkgs/*.pkg.tar.zst`
+(reinstalls cachy-update, cachyos-kernel-manager, scx-manager and
+laden-desktop-settings -1, removing the forks), then copy the files from
+`~/.local/share/laden-backups/forks-<date>/` back.

@@ -26,3 +26,7 @@ packages/*/pkg/
 *.gpg.key
 secring*
 private-keys-v1.d/
+# upstream git clones made by makepkg (SRCDEST)
+packages/laden-update/cachy-update/
+packages/laden-scheduler/scx-manager/
+packages/laden-kernel-manager/kernel-manager/

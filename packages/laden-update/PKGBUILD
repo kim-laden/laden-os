@@ -1,0 +1,53 @@
+# Maintainer: Laden OS <admin@laden.no>
+# Based on cachy-update (CachyOS) / Arch-Update by Robin Candau <antiz@archlinux.org>
+
+pkgname=laden-update
+pkgver=4.4.7
+pkgrel=1
+_commit=22c569d44b5cf87becc4b60dd2b9a8e9ec34ea23   # CachyOS/cachy-update main (4.4.7)
+pkgdesc="Laden OS update notifier & applier (tray applet), based on cachy-update / Arch-Update"
+url="https://github.com/CachyOS/cachy-update"
+arch=('x86_64')
+license=('GPL-3.0-or-later')
+depends=('bash' 'systemd' 'pacman' 'pacman-contrib' 'archlinux-contrib' 'curl' 'fakeroot' 'util-linux'
+         'htmlq' 'diffutils' 'hicolor-icon-theme' 'glibc' 'libgcc' 'glib2' 'xdg-utils')
+makedepends=('cargo' 'scdoc' 'git')
+checkdepends=('bats')
+provides=("cachy-update=${pkgver}" "arch-update=${pkgver}")
+conflicts=('cachy-update' 'arch-update')
+replaces=('cachy-update')
+optdepends=('paru: AUR Packages support'
+            'yay: AUR Packages support'
+            'flatpak: Flatpak Packages support'
+            'libnotify: Desktop notifications support on new available updates'
+            'vim: Default diff program for pacdiff'
+            'sudo: Privilege elevation')
+source=("cachy-update::git+https://github.com/CachyOS/cachy-update#commit=${_commit}"
+        laden-branding.patch)
+sha256sums=('SKIP'
+            '2c98de1b99a6105c506277c311637b0ea2aa2ea0135004af1e4a208a114a5209')
+
+prepare() {
+    cd cachy-update
+    git apply --whitespace=nowarn ../laden-branding.patch
+    make clean
+}
+
+build() {
+    cd cachy-update
+    make
+}
+
+check() {
+    cd cachy-update
+    make test
+}
+
+package() {
+    cd cachy-update
+    make PREFIX=/usr DESTDIR="${pkgdir}" install
+    install -Dm 644 res/desktop/arch-update-tray.desktop "${pkgdir}/etc/xdg/autostart/arch-update-tray.desktop"
+    ln -s arch-update "${pkgdir}/usr/bin/laden-update"
+    install -Dm 644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+    install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

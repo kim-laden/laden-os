@@ -1,2 +1,0 @@
-post_install() { /usr/lib/laden/laden-apply-tray-branding; }
-post_upgrade() { /usr/lib/laden/laden-apply-tray-branding; }

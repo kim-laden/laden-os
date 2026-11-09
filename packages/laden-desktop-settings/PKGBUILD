@@ -1,21 +1,19 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=1
-pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults, fish config and menu/tray branding'
+pkgrel=2
+pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
 license=('LicenseRef-LadenAS')
 depends=('laden-branding' 'bash')
 optdepends=('plasma-desktop: Laden look-and-feel'
             'fish: Laden shell config'
-            'cachy-update: tray updater shown as Laden Update')
+            'laden-update: Laden Update tray updater')
 backup=('etc/xdg/kdeglobals' 'etc/xdg/ksplashrc')
-install="${pkgname}.install"
 source=('laden-config.fish' 'laden-colors.fish' 'laden-os.fish'
-        '00-laden-config.fish' 'compat-laden-config.fish'
-        'laden-apply-tray-branding' '60-laden-tray-branding.hook')
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+        '00-laden-config.fish' 'compat-laden-config.fish')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 _assets="${startdir}/../../rebrand/assets"
 
@@ -41,24 +39,9 @@ package() {
   install -Dm0644 laden-colors.fish   "${d}/etc/fish/conf.d/laden-colors.fish"
   install -Dm0644 laden-os.fish       "${d}/etc/fish/conf.d/laden-os.fish"
 
-  # Tray: Laden Update icons + overlay template for cachy-update's autostart entry
+  # Generic Laden Update icon (the tray itself now comes from the laden-update
+  # package; the old cachy-update overlay hook and menu overrides were dropped
+  # in 2026.11.09-2 because laden-update / laden-kernel-manager /
+  # laden-scheduler ship Laden-named entries themselves).
   install -Dm0644 "${_assets}/icons/tray/laden-update.svg" "${d}/usr/share/icons/hicolor/scalable/apps/laden-update.svg"
-  local i
-  for i in laden-update laden-update-available laden-update-available-alert; do
-    install -Dm0644 "${_assets}/icons/tray/${i}.png" "${d}/usr/share/laden/icons/tray/${i}.png"
-  done
-  install -Dm0644 "${_assets}/desktop-overrides/arch-update-tray.desktop" \
-    "${d}/usr/share/laden/overrides/arch-update-tray.autostart.desktop"
-  install -Dm0755 laden-apply-tray-branding "${d}/usr/lib/laden/laden-apply-tray-branding"
-  install -Dm0644 60-laden-tray-branding.hook "${d}/usr/share/libalpm/hooks/60-laden-tray-branding.hook"
-
-  # Menu overrides. /usr/local/share/applications is searched before
-  # /usr/share/applications in XDG_DATA_DIRS, so these shadow the CachyOS
-  # entries without modifying files owned by other packages.
-  local f
-  for f in arch-update.desktop arch-update-tray.desktop \
-           org.cachyos.KernelManager.desktop org.cachyos.scx-manager.desktop \
-           cachyos-hello.desktop cachyos-pi.desktop; do
-    install -Dm0644 "${_assets}/desktop-overrides/${f}" "${d}/usr/local/share/applications/${f}"
-  done
 }

@@ -1,0 +1,47 @@
+# Maintainer: Laden OS <admin@laden.no>
+# Based on cachyos-kernel-manager by Vladislav Nepogodin (CachyOS)
+
+pkgname=laden-kernel-manager
+pkgver=1.19.0
+pkgrel=1
+_commit=6b4a373e6a4e7295a0803034e597c4f2a055a411   # CachyOS/kernel-manager v1.19.0
+pkgdesc="Laden OS kernel manager, based on cachyos-kernel-manager"
+arch=('x86_64')
+url="https://github.com/cachyos/kernel-manager"
+license=('GPL-3.0-or-later')
+depends=('qt6-base' 'polkit' 'chwd' 'scx-manager')
+makedepends=('cmake' 'ninja' 'git' 'python' 'polkit-qt6' 'qt6-tools' 'cargo' 'lld' 'clang' 'llvm')
+provides=("cachyos-kernel-manager=${pkgver}")
+conflicts=('cachyos-kernel-manager')
+replaces=('cachyos-kernel-manager')
+source=("kernel-manager::git+${url}.git#commit=${_commit}"
+        fix-installed-db.patch
+        laden-branding.patch)
+sha256sums=('SKIP'
+            '455c136513110b88e8234b8e4b25fd739804122ba6a492cde369b1f76c90960c'
+            '529898caecf01c496f5ba705b8fe7de2eb654eae98c8031c829a86093065c5f5')
+
+_llvm_env() {
+  export AR=llvm-ar CC=clang CXX=clang++ NM=llvm-nm RANLIB=llvm-ranlib
+  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld"
+}
+
+prepare() {
+  cd kernel-manager
+  patch -Np1 -i ../fix-installed-db.patch
+  git apply --whitespace=nowarn ../laden-branding.patch
+}
+
+build() {
+  cd kernel-manager
+  _llvm_env
+  cmake -S . -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib
+  cmake --build build
+}
+
+package() {
+  cd kernel-manager
+  _llvm_env
+  DESTDIR="${pkgdir}" cmake --build build --target install
+  install -Dm 644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
