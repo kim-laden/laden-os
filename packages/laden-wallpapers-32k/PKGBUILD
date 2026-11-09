@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-wallpapers-32k
 pkgver=2026.11.09
-pkgrel=2
+pkgrel=3
 pkgdesc='Laden OS optional 32K deep-zoom art masters (Art v5 + v4)'
 arch=('any')
 url='https://laden.no'

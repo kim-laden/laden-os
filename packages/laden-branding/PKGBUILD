@@ -2,7 +2,7 @@
 # Assets come from the project tree (rebrand/assets, branding/), not duplicated here.
 pkgname=laden-branding
 pkgver=2026.11.09
-pkgrel=4
+pkgrel=5
 pkgdesc='Laden OS identity, logos, Limine splash, Plymouth theme, wallpapers and fastfetch logo'
 arch=('any')
 url='https://laden.no'
