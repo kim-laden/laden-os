@@ -151,3 +151,29 @@ Undo: `sudo pacman -U --ask 4 /var/backups/laden-forks/<date>/pkgs/*.pkg.tar.zst
 (reinstalls cachy-update, cachyos-kernel-manager, scx-manager and
 laden-desktop-settings -1, removing the forks), then copy the files from
 `~/.local/share/laden-backups/forks-<date>/` back.
+
+## Meta-packages (step 4) and ISO editions
+
+`packages/metas/gen-metas.py` generates `laden-{desktop,gaming,creator,streaming,pentest,full}`
+(arch any, group `laden-meta`). Hard `depends` are small essentials that resolve from
+the configured repos; large or hardware-specific items (Proton/Wine builds, NVIDIA/AMD
+userspace, Blender, DaVinci Resolve, Metasploit, Burp, SecLists, Ghidra…) are
+`optdepends` only, so installing a meta never pulls in GBs. On ladenx all six
+were installed with 0 bytes added (all depends were already present).
+
+| ISO edition (step 5) | metas in the package list | extra repos needed |
+|---|---|---|
+| Laden OS Desktop | `laden-desktop` (+ `linux-laden`, `limine`, `chwd` from its optdepends) | laden, cachyos* |
+| Laden OS Gaming | `laden-desktop laden-gaming` + `proton-cachyos-slr`, `wine-cachyos-opt`; GPU stack chosen by chwd at install | + multilib |
+| Laden OS Creator | `laden-desktop laden-creator laden-streaming` (+ gimp, krita, inkscape, audacity from optdepends) | — |
+| Laden OS Pentest | `laden-desktop laden-pentest` (+ metasploit, burpsuite, zaproxy, seclists from optdepends) | + blackarch |
+| Laden OS Full (dev/test) | `laden-full` | multilib, blackarch |
+
+AUR-only (not in any repo, so never in depends): bottles (use Flatpak),
+chatterino2, game-devices-udev, gpu-screen-recorder-gtk, obs-pipewire-audio-capture,
+olive, openshot, streamlink-twitch-gui-bin. obs-websocket is built into OBS
+(obs-studio-browser provides it).
+
+Undo: `sudo pacman -R laden-full laden-desktop laden-gaming laden-creator laden-streaming laden-pentest`
+(plain `-R`, no `-s`: the apps stay installed; anything that was a dependency only
+because of a meta would show up in `pacman -Qdt` and is left for manual review).
