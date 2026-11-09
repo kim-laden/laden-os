@@ -59,12 +59,17 @@ safety_snapshot() {
     echo "cmdline=$(cat /proc/cmdline)"
     echo "NOTE: Kingston nvme0n1 must remain untouched"
   } > "${BACKUP_ROOT}/META.txt"
-  if command -v snapper >/dev/null; then
-    snapper -c root create --description "pre-rebrand-${DATE_TAG}" --cleanup-algorithm number \
-      || die "snapper snapshot failed"
+  # The cloned system has no /.snapshots subvolume, so snapper can fail.
+  # Fall back to a plain read-only btrfs snapshot of / (the @ subvolume).
+  if command -v snapper >/dev/null && [[ -d /.snapshots ]] \
+     && snapper -c root create --description "pre-rebrand-${DATE_TAG}" --cleanup-algorithm number; then
     snapper -c root list | tee -a "${LOG_FILE}" | tail -5 || true
   else
-    log "WARN: snapper not available; relying on file backups only"
+    log "snapper unavailable or failed; using btrfs read-only snapshot instead"
+    mkdir -p /.laden-snapshots
+    btrfs subvolume snapshot -r / "/.laden-snapshots/pre-rebrand-${DATE_TAG}" \
+      || die "btrfs snapshot failed"
+    log "Snapshot: /.laden-snapshots/pre-rebrand-${DATE_TAG}"
   fi
 }
 
