@@ -1,0 +1,45 @@
+#!/bin/bash
+# Runs inside the new system (chroot) right after the live image is copied.
+# Removes everything that only makes sense on the live ISO.
+set -u
+log() { echo "laden-installer: $*"; }
+
+# Live-session configuration (see profile/laden-os-0.2/airootfs)
+rm -f /etc/sddm.conf.d/00-laden-live.conf \
+      /etc/sudoers.d/10-laden-live \
+      /etc/polkit-1/rules.d/49-laden-live.rules \
+      /etc/systemd/system/etc-pacman.d-gnupg.mount \
+      /etc/systemd/system/pacman-init.service \
+      /etc/systemd/system/multi-user.target.wants/pacman-init.service \
+      /etc/systemd/system/laden-live-user.service \
+      /etc/systemd/system/multi-user.target.wants/laden-live-user.service \
+      /usr/lib/systemd/system/laden-live-user.service \
+      /etc/systemd/system/display-manager.service \
+      /etc/systemd/journald.conf.d/volatile-storage.conf \
+      /etc/systemd/logind.conf.d/do-not-suspend.conf \
+      /etc/mkinitcpio.conf.d/archiso.conf \
+      /etc/motd
+rm -rf /etc/systemd/system/serial-getty@ttyS0.service.d \
+       /etc/systemd/system/getty@tty1.service.d \
+       /usr/lib/laden-live
+rm -rf /home/live
+
+# Fresh pacman keyring for this machine (generated now, on the target).
+rm -rf /etc/pacman.d/gnupg
+pacman-key --init
+pacman-key --populate archlinux cachyos laden
+
+# Live-only packages. Plain -R: nothing else is removed with them.
+for p in mkinitcpio-archiso; do
+    pacman -Q "$p" >/dev/null 2>&1 && pacman -R --noconfirm "$p"
+done
+
+# mkinitcpio preset for the Laden kernel (standard, not the archiso one)
+cat > /etc/mkinitcpio.d/linux-laden.preset <<'PRESET'
+# mkinitcpio preset file for linux-laden (written by the Laden OS installer)
+ALL_kver="/boot/vmlinuz-linux-laden"
+PRESETS=('default')
+default_image="/boot/initramfs-linux-laden.img"
+PRESET
+log "target prepared"
+exit 0

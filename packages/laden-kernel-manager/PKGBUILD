@@ -3,7 +3,7 @@
 
 pkgname=laden-kernel-manager
 pkgver=1.19.0
-pkgrel=1
+pkgrel=3
 _commit=6b4a373e6a4e7295a0803034e597c4f2a055a411   # CachyOS/kernel-manager v1.19.0
 pkgdesc="Laden OS kernel manager, based on cachyos-kernel-manager"
 arch=('x86_64')
@@ -23,7 +23,7 @@ sha256sums=('SKIP'
 
 _llvm_env() {
   export AR=llvm-ar CC=clang CXX=clang++ NM=llvm-nm RANLIB=llvm-ranlib
-  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld"
+  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld -C target-cpu=x86-64-v3 --remap-path-prefix=${HOME}=/build"
 }
 
 prepare() {

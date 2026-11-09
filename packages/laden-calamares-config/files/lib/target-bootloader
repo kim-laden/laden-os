@@ -1,0 +1,30 @@
+#!/bin/bash
+# Runs in the target after the bootloader module.
+# Limine: rename the menu section to Laden OS, switch to the mkinitcpio hook
+# (so kernel updates refresh the menu) and generate the entries.
+set -u
+log() { echo "laden-installer: $*"; }
+conf=""
+for c in /boot/limine.conf /boot/EFI/limine/limine.conf; do [[ -f $c ]] && conf=$c && break; done
+if [[ -z $conf ]]; then
+    log "no limine.conf: systemd-boot install, nothing to do"
+    exit 0
+fi
+sed -i -e 's|^/+CachyOS$|/+Laden OS|' \
+       -e 's|^# CachyOS Limine theme$|# Laden OS Limine theme|' \
+       -e '/^# Author: diegons490/d' \
+       -e 's|^interface_branding:.*|interface_branding: Laden OS|' \
+       -e 's|^term_palette: .*|term_palette: 050b09;ff5f5f;39ffb0;f9e2af;5fafff;f5c2e7;94e2d5;e9fff5|' \
+       -e 's|^term_foreground: .*|term_foreground: e9fff5|' "$conf"
+grep -q '^/+Laden OS' "$conf" || printf '/+Laden OS\n' >> "$conf"
+
+pkg=$(ls /usr/share/laden-installer/pkgs/limine-mkinitcpio-hook-*.pkg.tar.zst 2>/dev/null | head -1)
+if [[ -n $pkg ]] && ! pacman -Q limine-mkinitcpio-hook >/dev/null 2>&1; then
+    # --ask 4 answers yes only to "remove conflicting limine-entry-tool?"
+    pacman -U --noconfirm --ask 4 "$pkg"
+fi
+# Kernels live in the ESP under the machine-id once the hook is in place.
+rm -f /boot/vmlinuz-linux-laden /boot/initramfs-linux-laden.img /boot/initramfs-linux-laden-fallback.img
+limine-update
+grep -q 'linux-laden' "$conf" || { log "ERROR: no linux-laden entry in $conf"; exit 1; }
+log "limine menu ready"

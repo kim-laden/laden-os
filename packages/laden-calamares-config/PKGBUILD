@@ -1,0 +1,28 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-calamares-config
+pkgver=0.2.0
+pkgrel=3
+pkgdesc='Laden OS installer: Calamares settings, Laden branding, slideshow and install scripts'
+arch=('any')
+url='https://laden.no'
+license=('GPL-3.0-or-later')
+depends=('calamares' 'laden-branding' 'sudo' 'bash' 'curl')
+optdepends=('chwd: GPU driver detection during install'
+            'limine: default bootloader'
+            'kdialog: CPU check message')
+_f="${startdir}/files"
+
+package() {
+  local d="${pkgdir}"
+  install -Dm0644 "${_f}/settings/settings.conf" "${d}/etc/calamares/settings.conf"
+  install -Dm0644 -t "${d}/etc/calamares/modules" "${_f}"/modules/laden-*.conf
+  install -dm0755 "${d}/usr/share/calamares/branding/laden"
+  install -m0644 -t "${d}/usr/share/calamares/branding/laden" "${_f}"/branding/laden/*
+  local s
+  for s in target-prepare target-hardware target-bootloader target-finish laden-firstboot; do
+    install -Dm0755 "${_f}/lib/${s}" "${d}/usr/lib/laden-installer/${s}"
+  done
+  install -Dm0644 "${_f}/systemd/laden-firstboot.service" "${d}/usr/lib/systemd/system/laden-firstboot.service"
+  install -Dm0755 "${_f}/bin/laden-installer" "${d}/usr/bin/laden-installer"
+  install -Dm0644 "${_f}/laden-installer.desktop" "${d}/usr/share/applications/laden-installer.desktop"
+}

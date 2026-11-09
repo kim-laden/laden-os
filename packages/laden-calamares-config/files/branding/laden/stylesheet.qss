@@ -1,0 +1,7 @@
+/* Laden OS Calamares stylesheet: colours from the v2 wallpaper. */
+#mainApp { background-color: #0a1411; color: #e9fff5; }
+#sidebarApp { background-color: #050b09; }
+QPushButton { background-color: #13231e; color: #e9fff5; border: 1px solid #1f6050; border-radius: 6px; padding: 6px 14px; }
+QPushButton:hover { border-color: #39ffb0; }
+QPushButton:default { background-color: #39ffb0; color: #050b09; }
+QProgressBar::chunk { background-color: #39ffb0; }

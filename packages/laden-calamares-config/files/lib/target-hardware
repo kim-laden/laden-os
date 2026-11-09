@@ -1,0 +1,9 @@
+#!/bin/bash
+# GPU / hardware drivers via chwd. Needs internet for proprietary drivers.
+set -u
+if ! command -v chwd >/dev/null; then echo "chwd not installed, skipping"; exit 0; fi
+if ! curl -fsS --max-time 8 -o /dev/null https://cachyos.org && ! curl -fsS --max-time 8 -o /dev/null https://geo.mirror.pkgbuild.com/; then
+    echo "no internet: keeping the open drivers from the ISO"; exit 0
+fi
+pacman -Sy --noconfirm || exit 0
+chwd --autoconfigure

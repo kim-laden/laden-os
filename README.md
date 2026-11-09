@@ -48,3 +48,15 @@ The test uses QEMU and a file-backed ISO. It does not write a USB stick or a phy
 Read `docs/TEST-REPORT.md` before treating an ISO as bootable. A file on disk is not a passing boot test.
 
 The lab package list is part of the 0.1.1 live image. Creator, gamer, and Calamares are not. The CockPit 1.1.0 checksum is in `third_party/cockpit/`. Read `docs/TEST-REPORT.md` and `docs/DEV-VM-TEST-RECORD.md` for what was actually booted. The image is not release-ready.
+
+## Laden OS 0.2.0 release ISO (Calamares installer)
+
+The 0.2.0 profile is `profile/laden-os-0.2/`. The installer config is the `laden-calamares-config` package, and Calamares itself is `laden-calamares`, a rebuild of CachyOS's calamares against the current boost.
+
+```
+scripts/build-release-0.2.sh          # fresh build/release-0.2.0-<stamp>/, needs the [laden] repo published to /srv/laden-repo
+scripts/test-boot-0.2.sh bios ISO     # QEMU/KVM SeaBIOS: SDDM + Plasma + Laden menu + Calamares start, with screenshots
+scripts/test-boot-0.2.sh uefi ISO     # same with OVMF
+```
+
+The ISO is the Desktop edition. The other editions are installed online from the installer's Edition page. Release notes draft: `docs/RELEASE-NOTES-0.2.0.md`.

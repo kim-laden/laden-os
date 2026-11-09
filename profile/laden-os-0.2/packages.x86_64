@@ -1,0 +1,82 @@
+# Laden OS 0.2.0 Desktop edition. One package per line.
+# --- base, kernel, firmware
+base
+linux-laden
+linux-laden-headers
+linux-firmware
+sof-firmware
+intel-ucode
+amd-ucode
+mkinitcpio
+mkinitcpio-archiso
+syslinux
+limine
+limine-entry-tool
+efibootmgr
+# --- keyrings and repositories
+archlinux-keyring
+cachyos-keyring
+laden-keyring
+cachyos-mirrorlist
+cachyos-v3-mirrorlist
+laden-mirrorlist
+pacman-contrib
+rate-mirrors
+# --- Laden OS desktop (KDE Plasma, branding, Laden tools)
+laden-desktop
+chwd
+cachyos-settings
+power-profiles-daemon
+# --- installer
+laden-calamares
+laden-calamares-config
+kdialog
+# --- apps
+firefox
+wezterm
+kate
+gwenview
+okular
+partitionmanager
+plasma-systemmonitor
+xdg-user-dirs
+bluez
+bluez-utils
+# --- disks and filesystems
+btrfs-progs
+dosfstools
+e2fsprogs
+exfatprogs
+ntfs-3g
+xfsprogs
+f2fs-tools
+cryptsetup
+lvm2
+gptfdisk
+parted
+os-prober
+# --- graphics (open drivers; chwd adds NVIDIA during install when online)
+mesa
+vulkan-intel
+vulkan-radeon
+intel-media-driver
+libva-mesa-driver
+xf86-video-amdgpu
+qt6-wayland
+xorg-xwayland
+# --- shell and tools
+sudo
+nano
+vim
+less
+man-db
+htop
+usbutils
+pciutils
+dmidecode
+wget
+curl
+rsync
+git
+openssl
+

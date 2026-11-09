@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Laden OS branding for Calamares.
+---
+componentName: laden
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 1024px,640px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         "Laden OS"
+    shortProductName:    "Laden OS"
+    version:             "0.2.0"
+    shortVersion:        "0.2.0"
+    versionedName:       "Laden OS 0.2.0"
+    shortVersionedName:  "Laden OS 0.2"
+    bootloaderEntryName: "Laden OS"
+    productUrl:          "https://laden.no"
+    supportUrl:          "https://laden.no"
+    knownIssuesUrl:      "https://laden.no"
+    releaseNotesUrl:     "https://laden.no"
+    donateUrl:           "https://laden.no"
+
+images:
+    productLogo:      "logo.png"
+    productIcon:      "icon.png"
+    productWelcome:   "welcome.png"
+    productWallpaper: "welcome.png"
+
+slideshow:    "show.qml"
+slideshowAPI: 2
+
+# Colours taken from the Laden OS v2 wallpaper (deep black-green, emerald glow).
+style:
+    SidebarBackground:     "#050b09"
+    SidebarText:           "#e9fff5"
+    SidebarTextCurrent:    "#050b09"
+    SidebarBackgroundCurrent: "#39ffb0"
+
+uploadServer:
+    type: "none"

@@ -1,0 +1,14 @@
+[Unit]
+Description=Laden OS first-boot setup
+After=local-fs.target
+Before=display-manager.service
+ConditionPathExists=!/var/lib/laden/firstboot-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laden-installer/laden-firstboot
+ExecStartPost=/usr/bin/mkdir -p /var/lib/laden
+ExecStartPost=/usr/bin/touch /var/lib/laden/firstboot-done
+
+[Install]
+WantedBy=multi-user.target

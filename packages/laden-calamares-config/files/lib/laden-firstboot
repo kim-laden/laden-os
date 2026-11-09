@@ -1,0 +1,13 @@
+#!/bin/bash
+# Laden OS first boot (runs once, then disables itself).
+set -u
+# Identity and wallpapers/logos from laden-branding
+[[ -x /usr/lib/laden/laden-apply-branding ]] && /usr/lib/laden/laden-apply-branding || true
+# SSH host keys are made here on first boot if OpenSSH is installed
+command -v ssh-keygen >/dev/null && ssh-keygen -A || true
+command -v update-desktop-database >/dev/null && update-desktop-database -q || true
+command -v fc-cache >/dev/null && fc-cache -s >/dev/null 2>&1 || true
+systemctl disable laden-firstboot.service
+rm -f /etc/systemd/system/laden-firstboot.service
+rm -rf /usr/local/lib/laden
+exit 0

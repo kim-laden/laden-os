@@ -1,0 +1,13 @@
+#!/bin/bash
+# Live session only: create the passwordless "live" account at boot.
+# Nothing here is copied into an installed system (the installer removes it).
+set -eu
+if ! id live >/dev/null 2>&1; then
+    useradd -m -U -G wheel,audio,video,storage,network,lp,rfkill -s /usr/bin/fish -c "Laden OS Live" live
+    passwd -d live >/dev/null
+fi
+desk=/home/live/Desktop
+install -d -o live -g live "$desk"
+install -m0755 -o live -g live /usr/share/applications/laden-installer.desktop "$desk/laden-installer.desktop"
+# KDE asks before running .desktop files from the desktop unless trusted
+runuser -u live -- gio set "$desk/laden-installer.desktop" metadata::trusted true 2>/dev/null || true

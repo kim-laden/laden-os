@@ -3,7 +3,7 @@
 
 pkgname=laden-update
 pkgver=4.4.7
-pkgrel=1
+pkgrel=3
 _commit=22c569d44b5cf87becc4b60dd2b9a8e9ec34ea23   # CachyOS/cachy-update main (4.4.7)
 pkgdesc="Laden OS update notifier & applier (tray applet), based on cachy-update / Arch-Update"
 url="https://github.com/CachyOS/cachy-update"

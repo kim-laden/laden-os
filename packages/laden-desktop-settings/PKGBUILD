@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=2
+pkgrel=4
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
@@ -24,6 +24,8 @@ package() {
   install -dm0755 "${d}/usr/share/plasma/look-and-feel/org.laden.os"
   cp -a --no-preserve=ownership "${_assets}/look-and-feel/org.laden.os/." \
     "${d}/usr/share/plasma/look-and-feel/org.laden.os/"
+  # contents/layouts/ belongs to laden-menu (desktop + panel layout); never ship it here
+  rm -rf "${d}/usr/share/plasma/look-and-feel/org.laden.os/contents/layouts"
   find "${d}/usr/share/plasma" -type f -exec chmod 0644 {} +
   install -Dm0644 "${_assets}/LadenDark.colors" "${d}/usr/share/color-schemes/LadenDark.colors"
 

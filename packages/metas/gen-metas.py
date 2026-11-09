@@ -4,12 +4,12 @@ Hard depends = small essentials (all resolvable from the configured repos);
 everything big or optional goes to optdepends.  Edit the lists here, re-run."""
 import os
 VER, REL = "2026.11.09", "1"
-RELS = {"gaming": "2"}  # per-meta pkgrel bumps
+RELS = {"desktop": "2", "gaming": "2", "streaming": "2"}  # per-meta pkgrel bumps
 B = "[blackarch]"
 M = {
  "desktop": ("Laden OS base desktop: KDE Plasma, Laden branding, tools and audio", [
    "laden-branding","laden-desktop-settings","laden-keyring","laden-mirrorlist",
-   "laden-update","laden-kernel-manager","laden-scheduler",
+   "laden-update","laden-kernel-manager","laden-scheduler","laden-menu",
    "plasma-desktop","plasma-workspace","sddm","sddm-kcm","plasma-nm","plasma-pa","bluedevil",
    "powerdevil","kscreen","kde-gtk-config","breeze-gtk","xdg-desktop-portal-kde",
    "dolphin","konsole","ark","spectacle","networkmanager",
@@ -64,7 +64,7 @@ M = {
    ("obs-studio-browser","OBS with browser source/websocket [cachyos], provides obs-studio"),
    ("obs-vkcapture","Vulkan/OpenGL game capture"),("lib32-obs-vkcapture","32-bit game capture"),
    ("obs-gstreamer","GStreamer sources/encoders for OBS"),
-   ("v4l2loopback-dkms","OBS virtual camera"),("v4l2loopback-utils","v4l2loopback tools"),
+   ("v4l2loopback-utils","v4l2loopback tools"),
    ("noise-suppression-for-voice","RNNoise mic filter"),("rnnoise","noise suppression"),
    ("easyeffects","mic/voice effects"),("qpwgraph","PipeWire patchbay"),
    ("libva-nvidia-driver","VA-API on NVIDIA"),("libva-utils","VA-API tools"),

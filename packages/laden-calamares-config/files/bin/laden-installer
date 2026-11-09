@@ -1,0 +1,10 @@
+#!/bin/bash
+# Start the Laden OS installer (Calamares) from the live session.
+if ! grep -qw avx2 /proc/cpuinfo || ! grep -qw bmi2 /proc/cpuinfo; then
+    msg="Laden OS 0.2.0 needs an x86-64-v3 CPU (AVX2), like Intel Haswell / AMD Zen or newer."
+    command -v kdialog >/dev/null && kdialog --error "$msg" || echo "$msg" >&2
+    exit 1
+fi
+log=/tmp/laden-installer.log
+exec sudo --preserve-env=WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DISPLAY,XAUTHORITY,QT_QPA_PLATFORM,XDG_SESSION_TYPE \
+    /usr/bin/calamares "$@" >"$log" 2>&1

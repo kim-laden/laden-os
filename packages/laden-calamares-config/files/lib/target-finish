@@ -1,0 +1,16 @@
+#!/bin/bash
+# Last step in the target: enable first-boot tasks, remove the installer.
+set -u
+# The first-boot unit is copied out of this package because the package is
+# removed below; the unit deletes itself after running once.
+install -Dm0755 /usr/lib/laden-installer/laden-firstboot /usr/local/lib/laden/laden-firstboot
+sed 's|/usr/lib/laden-installer/laden-firstboot|/usr/local/lib/laden/laden-firstboot|' \
+    /usr/lib/systemd/system/laden-firstboot.service > /etc/systemd/system/laden-firstboot.service
+systemctl enable laden-firstboot.service
+rm -rf /usr/share/laden-installer/pkgs
+# Remove the installer itself (plain -R, no cascade).
+for p in laden-calamares-config laden-calamares cachyos-calamares calamares; do
+    pacman -Q "$p" >/dev/null 2>&1 && pacman -R --noconfirm "$p"
+done
+rm -f /etc/resolv.conf && ln -sf /run/NetworkManager/resolv.conf /etc/resolv.conf 2>/dev/null || true
+exit 0

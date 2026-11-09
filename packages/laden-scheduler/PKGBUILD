@@ -3,7 +3,7 @@
 
 pkgname=laden-scheduler
 pkgver=1.16.0
-pkgrel=1
+pkgrel=3
 _commit=121bae02d66334191a72c87d1b5139485564330e   # CachyOS/scx-manager v1.16.0
 pkgdesc="Laden OS sched-ext (scx) scheduler manager, based on scx-manager"
 arch=('x86_64')
@@ -21,7 +21,7 @@ sha256sums=('SKIP'
 
 _llvm_env() {
   export AR=llvm-ar CC=clang CXX=clang++ NM=llvm-nm RANLIB=llvm-ranlib
-  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld"
+  export RUSTFLAGS="-Cembed-bitcode -C opt-level=3 -Ccodegen-units=1 -Clinker=clang -C link-arg=-flto -Clink-arg=-fuse-ld=/usr/bin/ld.lld -C target-cpu=x86-64-v3 --remap-path-prefix=${HOME}=/build"
 }
 
 prepare() {
