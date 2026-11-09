@@ -1,32 +1,30 @@
 #!/usr/bin/env bash
-# Rebuild linux-laden for the CachyOS kernel currently in the cachyos-v3 repo.
-# As user (no sudo). Afterwards: sudo bash packages/publish-local-repo.sh && sudo pacman -Syu
-# linux-cachyos is no longer installed, so pacman -Syu does NOT pick up new
-# CachyOS kernels by itself — run this when CachyOS ships a new kernel.
+# Rebase linux-laden onto a CachyOS linux-cachyos release.
+#   bash update-from-cachyos.sh            # newest linux-cachyos in CachyOS's git
+#   bash update-from-cachyos.sh <commit>   # a specific CachyOS/linux-cachyos commit
+# Fetches the upstream PKGBUILD, takes the exact .config from the signed CachyOS
+# x86_64_v3 headers package, regenerates PKGBUILD with laden-ize.py and updates checksums.
+# Then build:  LADEN_JOBS=16 nice -n 19 ionice -c3 makepkg -f --sign   (see README)
 set -euo pipefail
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO="$(cd "$HERE/../.." && pwd)/repo/x86_64"
-KEY=BE87AF39CC3C4610DEA910EC106B6FC0D1FF397F
-new=$(pacman -Si cachyos-v3/linux-cachyos | awk -F': ' '/^Version/{print $2; exit}')
-cur=$(. <(grep -E '^_cachy(ver|rel)=' "$HERE/PKGBUILD"); echo "${_cachyver}-${_cachyrel}")
-echo "cachyos-v3: $new   linux-laden PKGBUILD: $cur"
-[[ $new != "$cur" || ${1:-} == --force ]] || { echo "up to date"; exit 0; }
-ver=${new%-*}; rel=${new##*-}
-SRC=/tmp/laden-kpkg; mkdir -p "$SRC"
-mirror=$(grep -oP "^_mirror='\K[^']+" "$HERE/PKGBUILD")
-for n in linux-cachyos linux-cachyos-headers; do
-  f="$n-$ver-$rel-x86_64_v3.pkg.tar.zst"
-  [[ -f $SRC/$f ]] || curl -fL --retry 3 -o "$SRC/$f" "$mirror/$f"
-  curl -fsL --retry 3 -o "$SRC/$f.cachysig" "$mirror/$f.sig"
-done
-sed -i -E "s/^_cachyver=.*/_cachyver=$ver/; s/^_cachyrel=.*/_cachyrel=$rel/" "$HERE/PKGBUILD"
-cd "$HERE"
-export SRCDEST=$SRC BUILDDIR=/tmp/laden-makepkg PKGDEST="$REPO" GPGKEY=$KEY PACKAGER="Laden OS Repo <admin@laden.no>"
-updpkgsums
-makepkg -f --cleanbuild --clean --sign --nodeps --noconfirm
-rm -rf /tmp/laden-makepkg
-cd "$REPO"
-repo-add --sign --key "$KEY" --verify --remove laden.db.tar.zst \
-  "linux-laden-$ver-$rel-x86_64.pkg.tar.zst" "linux-laden-headers-$ver-$rel-x86_64.pkg.tar.zst"
-echo "Built linux-laden $ver-$rel. Next: sudo bash packages/publish-local-repo.sh && sudo pacman -Syu"
-echo "Also bump KVER/PKGVER in packages/install-linux-laden.sh if you use it again."
+here=$(cd "$(dirname "$0")" && pwd)
+work=$(mktemp -d); trap 'rm -rf "$work"' EXIT
+git clone -q --filter=blob:none https://github.com/CachyOS/linux-cachyos "$work/lc"
+commit=${1:-$(git -C "$work/lc" log -1 --format=%H -- linux-cachyos/PKGBUILD)}
+git -C "$work/lc" -c advice.detachedHead=false checkout -q "$commit"
+up="$work/lc/linux-cachyos/PKGBUILD"
+ver=$(sed -n 's/^_major=//p' "$up").$(sed -n 's/^_minor=//p' "$up"); rel=$(sed -n 's/^pkgrel=//p' "$up")
+echo "CachyOS linux-cachyos $ver-$rel @ $commit"
+
+# exact binary config from the signed CachyOS headers package
+mirror=${CACHY_MIRROR:-https://at.cachyos.org/repo/x86_64_v3/cachyos-v3}
+h="linux-cachyos-headers-$ver-$rel-x86_64_v3.pkg.tar.zst"
+curl -fsSLo "$work/$h" "$mirror/$h"; curl -fsSLo "$work/$h.sig" "$mirror/$h.sig"
+gpg --dearmor < /usr/share/pacman/keyrings/cachyos.gpg > "$work/kr.gpg"
+gpgv --keyring "$work/kr.gpg" "$work/$h.sig" "$work/$h"
+bsdtar -xOf "$work/$h" "usr/lib/modules/$ver-$rel-cachyos/build/.config" > "$here/config"
+echo "config: $(wc -l < "$here/config") lines from $h"
+
+python3 "$here/laden-ize.py" "$up" "$here/PKGBUILD" "$commit"
+echo "$commit" > "$here/UPSTREAM_COMMIT"
+cd "$here" && updpkgsums && makepkg --printsrcinfo > .SRCINFO
+echo "linux-laden now at $ver-$rel. Build it (README), then install with pacman."

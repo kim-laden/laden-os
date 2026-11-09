@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# check-new-cachyos-kernel: is there a newer CachyOS kernel than the installed linux-laden?
+# exit 0 + "up to date", or exit 10 + "new: <ver>" (handy for a routine).
+set -uo pipefail
+cur=$(pacman -Q linux-laden 2>/dev/null | awk '{print $2}')
+new=$(pacman -Sl cachyos-v3 2>/dev/null | awk '$2=="linux-cachyos"{print $3; exit}')
+[[ -z $new ]] && new=$(curl -fsSL https://raw.githubusercontent.com/CachyOS/linux-cachyos/master/linux-cachyos/PKGBUILD \
+  | awk -F= '/^_major=/{M=$2} /^_minor=/{m=$2} /^pkgrel=/{r=$2} END{print M"."m"-"r}')
+[[ -z $new || -z $cur ]] && { echo "unknown (linux-laden=$cur cachyos=$new)"; exit 2; }
+if [[ $(vercmp "$new" "$cur") -gt 0 ]]; then echo "new: linux-cachyos $new (linux-laden $cur)"; exit 10; fi
+echo "up to date: linux-laden $cur (CachyOS $new)"
