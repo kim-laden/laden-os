@@ -14,3 +14,15 @@ id_*
 !tests/fixtures/*.pem
 __pycache__/
 *.pyc
+# Laden pacman repo: built artifacts, makepkg dirs, keys
+repo/
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+*.db.tar.zst*
+*.files.tar.zst*
+packages/*/src/
+packages/*/pkg/
+*.rev
+*.gpg.key
+secring*
+private-keys-v1.d/

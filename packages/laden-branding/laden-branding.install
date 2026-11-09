@@ -1,0 +1,11 @@
+post_install() {
+  /usr/lib/laden/laden-apply-branding all
+}
+post_upgrade() {
+  /usr/lib/laden/laden-apply-branding all
+  echo ":: If the Plymouth theme files changed, rebuild the initramfs: sudo limine-mkinitcpio"
+}
+post_remove() {
+  echo ":: laden-branding removed. /etc/os-release, /usr/lib/os-release and /etc/lsb-release"
+  echo "   keep the Laden content; originals are in /var/lib/laden/orig if you need them."
+}

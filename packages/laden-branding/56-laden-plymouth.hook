@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = plymouth
+Target = plymouth-git
+
+[Action]
+Description = Keeping Laden OS Plymouth theme as default...
+When = PostTransaction
+Exec = /usr/lib/laden/laden-apply-branding plymouth

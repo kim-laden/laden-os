@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+Target = lsb-release
+Target = cachyos-settings
+
+[Action]
+Description = Re-applying Laden OS identity (os-release, lsb-release, logo)...
+When = PostTransaction
+Exec = /usr/lib/laden/laden-apply-branding identity

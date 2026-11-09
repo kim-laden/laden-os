@@ -1,0 +1,15 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-mirrorlist
+pkgver=2026.11.09
+pkgrel=1
+pkgdesc='Laden OS repository mirrorlist'
+arch=('any')
+url='https://laden.no'
+license=('LicenseRef-LadenAS')
+backup=('etc/pacman.d/laden-mirrorlist')
+source=('laden-mirrorlist')
+sha256sums=('SKIP')
+
+package() {
+  install -Dm0644 laden-mirrorlist "${pkgdir}/etc/pacman.d/laden-mirrorlist"
+}

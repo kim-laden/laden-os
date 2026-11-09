@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Laden OS: (re)apply identity + overlays that live in files owned by other
+# packages (filesystem, lsb-release, cachyos-settings). Called by pacman hooks
+# and laden-branding.install. Idempotent. Never touches any disk but this
+# system's own / and its /boot (must be on the same disk as /).
+set -u
+SHARE=/usr/share/laden
+ORIG=/var/lib/laden/orig
+log() { logger -t laden-branding "$*" 2>/dev/null || true; }
+put() { # src dest  (copy only if different; keep first original)
+  local src=$1 dest=$2
+  [[ -f $src ]] || return 0
+  if [[ -e $dest ]] && cmp -s "$src" "$dest"; then return 0; fi
+  if [[ -e $dest && ! -e $ORIG$dest ]]; then
+    mkdir -p "$(dirname "$ORIG$dest")" && cp -a "$dest" "$ORIG$dest"
+  fi
+  install -Dm0644 "$src" "$dest" && log "applied $dest"
+}
+
+identity() {
+  put "$SHARE/os-identity/os-release"  /etc/os-release
+  put "$SHARE/os-identity/os-release"  /usr/lib/os-release
+  put "$SHARE/os-identity/lsb-release" /etc/lsb-release
+  # cachyos-settings owns /usr/share/icons/cachyos.svg; anything asking for
+  # the CachyOS logo by name gets the Laden logo instead.
+  [[ -e /usr/share/icons/cachyos.svg ]] && \
+    put /usr/share/icons/hicolor/scalable/apps/laden-os.svg /usr/share/icons/cachyos.svg
+}
+
+disk_of() { lsblk -no PKNAME "$1" 2>/dev/null | head -1; }
+
+limine_splash() {
+  local src=$SHARE/limine-splash.png
+  [[ -f $src ]] || return 0
+  mountpoint -q /boot || { log "skip limine splash: /boot not mounted"; return 0; }
+  [[ -f /boot/limine.conf ]] || { log "skip limine splash: no /boot/limine.conf"; return 0; }
+  local bdev rdev
+  bdev=$(findmnt -no SOURCE /boot | sed 's/\[.*//')
+  rdev=$(findmnt -no SOURCE / | sed 's/\[.*//')
+  if [[ -z $bdev || -z $rdev || "$(disk_of "$bdev")" != "$(disk_of "$rdev")" ]]; then
+    log "skip limine splash: /boot ($bdev) is not on the same disk as / ($rdev)"
+    return 0
+  fi
+  put "$src" /boot/limine-splash.png
+}
+
+plymouth_theme() {
+  [[ -d /usr/share/plymouth/themes/laden ]] || return 0
+  command -v plymouth-set-default-theme >/dev/null || return 0
+  if [[ "$(plymouth-set-default-theme 2>/dev/null)" != laden ]]; then
+    plymouth-set-default-theme laden && \
+      echo ":: Plymouth theme set to 'laden' — run 'sudo limine-mkinitcpio' (or mkinitcpio -P) to rebuild the initramfs"
+  fi
+}
+
+case "${1:-all}" in
+  identity) identity ;;
+  splash)   limine_splash ;;
+  plymouth) plymouth_theme ;;
+  all)      identity; limine_splash; plymouth_theme ;;
+  *) echo "usage: $0 [all|identity|splash|plymouth]" >&2; exit 2 ;;
+esac
+exit 0

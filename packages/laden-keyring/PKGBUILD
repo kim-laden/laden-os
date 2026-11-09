@@ -1,0 +1,17 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-keyring
+pkgver=2026.11.09
+pkgrel=1
+pkgdesc='Laden OS repository signing key (public key only)'
+arch=('any')
+url='https://laden.no'
+license=('LicenseRef-LadenAS')
+install="${pkgname}.install"
+source=('laden.gpg' 'laden-trusted' 'laden-revoked')
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+package() {
+  install -Dm0644 laden.gpg     "${pkgdir}/usr/share/pacman/keyrings/laden.gpg"
+  install -Dm0644 laden-trusted "${pkgdir}/usr/share/pacman/keyrings/laden-trusted"
+  install -Dm0644 laden-revoked "${pkgdir}/usr/share/pacman/keyrings/laden-revoked"
+}
