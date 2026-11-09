@@ -1,8 +1,8 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-wallpapers-32k
 pkgver=2026.11.09
-pkgrel=1
-pkgdesc='Laden OS optional 32K deep-zoom wallpaper master (v4)'
+pkgrel=2
+pkgdesc='Laden OS optional 32K deep-zoom art masters (Art v5 + v4)'
 arch=('any')
 url='https://laden.no'
 license=('LicenseRef-LadenAS')
@@ -11,6 +11,14 @@ _root="${startdir}/../.."
 _walls="${_root}/branding"
 
 package() {
-  install -Dm0644 "${_walls}/laden-os-lets-do-it-v4-deep-30720x17280.png" \
-    "${pkgdir}/usr/share/backgrounds/laden/laden-os-lets-do-it-v4-deep-30720x17280.png"
+  # Art v5 32K master (user-facing name) + keep v4 deep for those who installed it
+  install -Dm0644 "${_walls}/laden-os-art-v5-deep-30720x17280.png" \
+    "${pkgdir}/usr/share/backgrounds/laden/laden-os-art-v5-deep-30720x17280.png"
+  if [[ -f "${_walls}/laden-os-lets-do-it-v4-deep-30720x17280.png" ]]; then
+    install -Dm0644 "${_walls}/laden-os-lets-do-it-v4-deep-30720x17280.png" \
+      "${pkgdir}/usr/share/backgrounds/laden/laden-os-lets-do-it-v4-deep-30720x17280.png"
+  fi
+  # Compatibility path some docs still name
+  install -Dm0644 "${_walls}/laden-os-art-v5-deep-30720x17280.png" \
+    "${pkgdir}/usr/share/backgrounds/laden/laden-os-lets-do-it-v5-deep-30720x17280.png"
 }
