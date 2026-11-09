@@ -1,0 +1,90 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+#
+# linux-laden: the CachyOS kernel (same binaries, same performance) repackaged
+# under the Laden name. Nothing is recompiled: the signed linux-cachyos /
+# linux-cachyos-headers packages are downloaded, their CachyOS signatures are
+# verified against the installed cachyos keyring, and the files are installed
+# unchanged except for:
+#   /usr/lib/modules/<kver>/pkgbase  -> linux-laden
+#   /usr/src/linux-cachyos           -> /usr/src/linux-laden (headers symlink)
+# The package owning modules.builtin names the Limine entry, so the boot menu
+# shows "linux-laden" (ESP dir /boot/<machine-id>/linux-laden).
+#
+# The kernel release string (uname -r) stays "<ver>-cachyos": it is compiled
+# into vmlinuz and every module's vermagic and cannot change without a rebuild.
+# Because the module directory is identical, linux-laden conflicts with
+# linux-cachyos (they cannot be co-installed). linux-cachyos-lts is untouched
+# and stays as the fallback kernel.
+#
+# Update to a new CachyOS kernel: bash update-from-cachyos.sh
+
+pkgbase=linux-laden
+pkgname=(linux-laden linux-laden-headers)
+_cachyver=7.3.3
+_cachyrel=1
+_cachyarch=x86_64_v3
+_kver="${_cachyver}-${_cachyrel}-cachyos"
+pkgver=${_cachyver}
+pkgrel=${_cachyrel}
+arch=('x86_64')
+url='https://laden.no'
+license=('GPL-2.0-only')
+_mirror='https://at.cachyos.org/repo/x86_64_v3/cachyos-v3'
+_k="linux-cachyos-${_cachyver}-${_cachyrel}-${_cachyarch}.pkg.tar.zst"
+_h="linux-cachyos-headers-${_cachyver}-${_cachyrel}-${_cachyarch}.pkg.tar.zst"
+# Signatures are saved as *.cachysig so makepkg does not try them against the
+# user's keyring; prepare() checks them against the cachyos pacman keyring.
+source=("${_mirror}/${_k}" "${_k}.cachysig::${_mirror}/${_k}.sig"
+        "${_mirror}/${_h}" "${_h}.cachysig::${_mirror}/${_h}.sig")
+noextract=("${_k}" "${_h}")
+sha256sums=('c97789f8f15334cc81be9e112de1dc18a3553099baba9b1639bc0f34b481d60d'
+            'SKIP'
+            '3199e57427257ec5c1d0387fa8d95aa143edb21f1ae65d27fd457c4332fed65f'
+            'SKIP')
+# Keep the upstream files byte-for-byte: no stripping, compression or purging.
+options=('!strip' '!debug' '!zipman' '!purge' 'libtool' 'staticlibs' 'emptydirs' '!lto')
+
+prepare() {
+  # Verify CachyOS signatures with the system's cachyos keyring (no root needed)
+  local kr="${srcdir}/cachyos-keyring.gpg"
+  gpg --dearmor < /usr/share/pacman/keyrings/cachyos.gpg > "$kr"
+  local f
+  for f in "${_k}" "${_h}"; do
+    gpgv --keyring "$kr" "${srcdir}/${f}.cachysig" "${srcdir}/${f}" \
+      || { echo "CachyOS signature check failed for $f" >&2; return 1; }
+  done
+}
+
+_unpack() { # <pkgfile>
+  bsdtar -xpf "${srcdir}/$1" -C "${pkgdir}" \
+    --exclude '.PKGINFO' --exclude '.BUILDINFO' --exclude '.MTREE' --exclude '.INSTALL'
+}
+
+package_linux-laden() {
+  pkgdesc="Laden OS kernel (CachyOS ${_cachyver}-${_cachyrel} EEVDF+LTO+AutoFDO+Propeller binaries, repackaged)"
+  depends=('coreutils' 'kmod' 'initramfs')
+  optdepends=('wireless-regdb: to set the correct wireless channels of your country'
+              'linux-firmware: firmware images needed for some devices'
+              'scx-scheds: to use sched-ext schedulers')
+  provides=("linux-cachyos=${_cachyver}-${_cachyrel}" "linux-cachyos-lto=${_cachyver}-${_cachyrel}"
+            'VIRTUALBOX-GUEST-MODULES' 'WIREGUARD-MODULE' 'KSMBD-MODULE' 'V4L2LOOPBACK-MODULE'
+            'NTSYNC-MODULE' 'VHBA-MODULE' 'ADIOS-MODULE')
+  conflicts=('linux-cachyos')
+
+  _unpack "${_k}"
+  [[ -f "${pkgdir}/usr/lib/modules/${_kver}/vmlinuz" ]] || { echo "unexpected layout" >&2; return 1; }
+  echo "${pkgbase}" > "${pkgdir}/usr/lib/modules/${_kver}/pkgbase"
+}
+
+package_linux-laden-headers() {
+  pkgdesc="Headers and scripts for building modules for the Laden OS kernel (linux-laden ${_cachyver}-${_cachyrel})"
+  depends=('binutils' 'glibc' 'libelf' 'libgcc' 'openssl' 'pahole>=1:1.32-2' 'xxhash' 'zlib' 'zstd'
+           "linux-laden=${pkgver}-${pkgrel}" 'clang' 'llvm' 'lld')
+  provides=('LINUX-HEADERS' "linux-cachyos-headers=${_cachyver}-${_cachyrel}"
+            "linux-cachyos-lto-headers=${_cachyver}-${_cachyrel}")
+  conflicts=('linux-cachyos-headers')
+
+  _unpack "${_h}"
+  rm -f "${pkgdir}/usr/src/linux-cachyos"
+  ln -s "../lib/modules/${_kver}/build" "${pkgdir}/usr/src/linux-laden"
+}
