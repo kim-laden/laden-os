@@ -1,0 +1,14 @@
+[Unit]
+Description=Generate the per-boot Laden OS service identity
+DefaultDependencies=no
+After=local-fs.target
+Before=sysinit.target laden-os-status.service
+ConditionPathExists=!/var/lib/laden-os/service-identity.key
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/laden-os/generate-identity
+
+[Install]
+WantedBy=multi-user.target

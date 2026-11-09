@@ -1,0 +1,11 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Alt+Q toggles The CockPit. Alt+T still opens it.
+set -u
+uid=$(id -u)
+mapfile -t pids < <(ps -u "$uid" -o pid=,args= | awk '/\/usr\/share\/the-cockpit\/config\/cockpit\.lua/ && !/awk/ { print $1 }')
+if (( ${#pids[@]} > 0 )); then
+    kill "${pids[@]}" 2>/dev/null || true
+    exit 0
+fi
+exec lcp

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Lab tools
+Comment=Open LCP with the installed lab commands
+Exec=lcp -- laden-lab
+Icon=utilities-terminal
+Terminal=false
+Categories=System;Security;
+StartupNotify=true
+StartupWMClass=the-cockpit

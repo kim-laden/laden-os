@@ -1,0 +1,58 @@
+--- a/src/modules/partition/core/DeviceList.cpp	2026-03-10 15:53:55.000000000 +0100
++++ b/src/modules/partition/core/DeviceList.cpp	2026-11-08 23:55:27.099869868 +0100
+@@ -19,6 +19,7 @@
+ #include <kpmcore/core/device.h>
+ #include <kpmcore/core/partition.h>
+ 
++#include <QFile>
+ #include <QProcess>
+ 
+ using Calamares::Partition::PartitionIterator;
+@@ -102,6 +103,35 @@
+     return path.startsWith( "/dev/fd" ) || path.startsWith( "/dev/floppy" );
+ }
+ 
++/** Laden OS lists disks that must never be install targets.
++ *  The file is written by laden-install. If it is missing or unreadable,
++ *  every disk is refused.
++ */
++static bool
++isLadenProtected( const Device* device )
++{
++    QFile file( QStringLiteral( "/run/laden-os/install-ignored" ) );
++    if ( !file.exists() || !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
++    {
++        cWarning() << "Laden OS install guard missing. Refusing" << device->deviceNode();
++        return true;
++    }
++    const QString node = device->deviceNode();
++    while ( !file.atEnd() )
++    {
++        const QString line = QString::fromUtf8( file.readLine() ).trimmed();
++        if ( line.isEmpty() || line.startsWith( QLatin1Char( '#' ) ) )
++        {
++            continue;
++        }
++        if ( line == node )
++        {
++            return true;
++        }
++    }
++    return false;
++}
++
+ static inline QDebug&
+ operator<<( QDebug& s, QList< Device* >::iterator& it )
+ {
+@@ -175,6 +205,11 @@
+             cDebug() << Logger::SubEntry << "Removing floppy disk" << it;
+             it = removeInAllModes( devices, it );
+         }
++        else if ( isLadenProtected( *it ) )
++        {
++            cDebug() << Logger::SubEntry << "Removing Laden OS protected disk" << it;
++            it = removeInAllModes( devices, it );
++        }
+         else if ( writableOnly && hasRootPartition( *it ) )
+         {
+             cDebug() << Logger::SubEntry << "Removing device with root filesystem (/) on it" << it;

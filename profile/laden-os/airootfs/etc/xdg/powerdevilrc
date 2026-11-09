@@ -1,0 +1,16 @@
+# Live image only. Do not copy this file onto an installed system.
+# Groups match PowerDevil ProfileSettings: [AC], [Battery], [LowBattery].
+[AC][Display]
+DimDisplayWhenIdle=false
+TurnOffDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false
+
+[Battery][Display]
+DimDisplayWhenIdle=false
+TurnOffDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false
+
+[LowBattery][Display]
+DimDisplayWhenIdle=false
+TurnOffDisplayWhenIdle=false
+LockBeforeTurnOffDisplay=false

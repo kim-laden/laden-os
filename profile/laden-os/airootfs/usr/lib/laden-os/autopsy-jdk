@@ -1,0 +1,32 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Autopsy ships jdkhome="jre" and does not include that directory.
+# It needs Java 17. JavaFX comes with the application.
+# Pass a root directory to retarget a tree in a test. The live hook passes none.
+set -euo pipefail
+
+root=${1:-}
+conf=$root/opt/autopsy/etc/autopsy.conf
+jdk=$root/usr/lib/jvm/java-17-openjdk
+wanted='jdkhome="/usr/lib/jvm/java-17-openjdk"'
+
+if [[ ! -f $conf ]]; then
+    echo "Autopsy config is missing: $conf" >&2
+    exit 1
+fi
+if [[ ! -x $jdk/bin/java ]]; then
+    echo "Autopsy needs Java 17 at $jdk" >&2
+    exit 1
+fi
+version=$("$jdk/bin/java" -version 2>&1 || true)
+if [[ $version != *'"17.'* ]]; then
+    echo "Autopsy needs Java 17. Found: $version" >&2
+    exit 1
+fi
+if grep -q 'jdkhome="jre"' "$conf"; then
+    sed -i 's|jdkhome="jre"|jdkhome="/usr/lib/jvm/java-17-openjdk"|' "$conf"
+fi
+if ! grep -q -F "$wanted" "$conf"; then
+    echo "Autopsy jdkhome is not Java 17." >&2
+    exit 1
+fi

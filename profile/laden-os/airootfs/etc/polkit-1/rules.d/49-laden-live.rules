@@ -1,0 +1,6 @@
+/* Local active live session only. Remote and inactive subjects are not matched. */
+polkit.addRule(function(action, subject) {
+    if (subject.user == "live" && subject.local && subject.active) {
+        return polkit.Result.YES;
+    }
+});

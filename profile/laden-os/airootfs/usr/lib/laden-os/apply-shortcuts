@@ -1,0 +1,30 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Bind Alt+T and Alt+Q in the form Plasma 6.8 actually reads.
+# A value such as Alt+T,Alt+T,LCP is one invalid chord, so a new
+# session ignores it. This does not restart KWin.
+set -u
+
+if [[ -x /usr/bin/kwriteconfig6 ]]; then
+    write_key() {
+        /usr/bin/kwriteconfig6 --file kglobalshortcutsrc --group "$1" --key _launch "$2"
+    }
+    write_key 'services][lcp.desktop' 'Alt+T'
+    write_key 'services][lcp-toggle.desktop' 'Alt+Q'
+    write_key 'services][org.kde.konsole.desktop' 'none'
+    write_key 'services][org.wezfurlong.wezterm.desktop' 'none'
+fi
+
+if ! /usr/bin/busctl --user status org.kde.kglobalaccel >/dev/null 2>&1; then
+    exit 0
+fi
+
+# setShortcut(as action, ai keys, u flags). 4 is NoAutoloading.
+# Alt is 0x08000000. T is 0x54. Q is 0x51.
+/usr/bin/busctl --user call org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel setShortcut \
+    asaiu 4 lcp.desktop _launch LCP LCP 1 134217812 4 >/dev/null || true
+/usr/bin/busctl --user call org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel setShortcut \
+    asaiu 4 lcp-toggle.desktop _launch "Toggle LCP" "Toggle LCP" 1 134217809 4 >/dev/null || true
+/usr/bin/busctl --user call org.kde.kglobalaccel /kglobalaccel org.kde.KGlobalAccel setShortcut \
+    asaiu 4 org.kde.konsole.desktop _launch Konsole Konsole 0 4 >/dev/null || true
+exit 0

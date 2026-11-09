@@ -1,0 +1,8 @@
+# Requires the multilib repository, which is already enabled in pacman.conf.
+# Game libraries stay on user storage. Do not bake games into the ISO.
+steam
+gamemode
+mangohud
+lib32-mesa
+lib32-vulkan-intel
+lib32-vulkan-radeon

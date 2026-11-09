@@ -1,0 +1,7 @@
+# Official Arch names. The host package obs-studio-browser is not an Arch package.
+blender
+kdenlive
+obs-studio
+gimp
+inkscape
+ardour

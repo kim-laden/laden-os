@@ -1,0 +1,43 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Open a shell with the lab commands that are installed on this image.
+# Names only. This is not a guide for using the tools.
+cat <<'EOF'
+Laden OS lab tools are on this image for authorized work.
+
+Kali commands people actually use:
+  nmap, zenmap     network scanner and its GUI
+  masscan, naabu   fast port scanners
+  amass, subfinder, httpx, theharvester, dnsrecon
+  responder is not installed. Its package pulls a 1.2 GiB MinGW compiler.
+  enum4linux-ng, smbmap, smbclient, impacket-*
+  netexec, nxc     Active Directory testing
+  bloodhound-python, bloodhound-ce-python
+                   collectors only. The BloodHound GUI is not installed.
+  certipy, kerbrute
+  burpsuite, zaproxy, sqlmap
+  gobuster, ffuf, feroxbuster, nikto, wpscan, nuclei, whatweb
+  john, hashcat, hydra, hashid, crunch
+  aircrack-ng, hcxdumptool, wifite, reaver, bully, pixiewps, kismet, bettercap
+  msfconsole, searchsploit, mitmproxy
+
+Forensic and reverse-engineering commands:
+  wireshark, tcpdump
+  autopsy, guymager
+  mmls, fls        from sleuthkit
+  testdisk, photorec
+  binwalk, foremost, scalpel, exiftool, bulk_extractor
+  vol              volatility3
+  yara, ssdeep, hashdeep
+  dc3dd, dcfldd, ewfacquire
+  python-plaso     timeline tools
+  regripper, chkrootkit, rkhunter, unhide, chntpw, stegseek
+  r2, iaito, ghidra
+
+seclists is not installed. John ships a small wordlist.
+The terminal is lcp. Alt+T opens it. Alt+Q shows or hides it.
+Chromium is the default browser and opens https://laden.no.
+The full BlackArch catalogue is not installed.
+More tools from the enabled BlackArch repository can be added with pacman.
+EOF
+exec fish -l

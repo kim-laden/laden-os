@@ -1,0 +1,16 @@
+[Unit]
+Description=Apply the Laden OS default wallpaper once
+After=plasma-workspace.target plasma-plasmashell.service
+PartOf=graphical-session.target
+StartLimitIntervalSec=400
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laden-os/apply-wallpaper
+TimeoutStartSec=360
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=plasma-workspace.target

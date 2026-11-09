@@ -1,0 +1,67 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Write a single boot report. No private keys, no host data.
+set -u
+install -d -m 0755 /run/laden-os
+deadline=$((SECONDS + 150))
+plasma=down
+while (( SECONDS < deadline )); do
+    # Any graphical user counts. An installed system has no live account.
+    if pgrep -x plasmashell >/dev/null 2>&1 || pgrep -x kwin_wayland >/dev/null 2>&1; then
+        plasma=up
+        break
+    fi
+    sleep 2
+done
+
+dm=inactive
+if systemctl is-active --quiet plasmalogin.service; then
+    dm=active
+fi
+proof=absent
+if [[ -e /home/live/PROOF ]]; then
+    proof=present
+fi
+fingerprint=missing
+if [[ -r /var/lib/laden-os/service-identity.fingerprint ]]; then
+    fingerprint=$(tr -d '[:space:]' </var/lib/laden-os/service-identity.fingerprint)
+fi
+ssh=not-installed
+if systemctl cat sshd.service >/dev/null 2>&1; then
+    ssh=$(systemctl is-enabled sshd.service 2>/dev/null || true)
+    ssh=${ssh:-unknown}
+fi
+listeners=$(ss -H -ltn 2>/dev/null | awk '{print $4}' | tr '\n' ',' | sed 's/,$//')
+listeners=${listeners:-none}
+pipewire=down
+if pgrep -u live -x pipewire >/dev/null 2>&1; then
+    pipewire=up
+fi
+uptime=$(cut -d' ' -f1 /proc/uptime)
+kernel=$(uname -r)
+mem=$(awk '/MemAvailable/ {print $2}' /proc/meminfo)
+
+{
+    printf 'LADEN_STATUS\n'
+    printf 'uptime_s=%s\n' "$uptime"
+    printf 'kernel=%s\n' "$kernel"
+    printf 'dm=%s\n' "$dm"
+    printf 'plasma=%s\n' "$plasma"
+    printf 'proof=%s\n' "$proof"
+    printf 'fingerprint=%s\n' "$fingerprint"
+    printf 'ssh=%s\n' "$ssh"
+    printf 'listeners=%s\n' "$listeners"
+    printf 'pipewire=%s\n' "$pipewire"
+    printf 'mem_available_kb=%s\n' "$mem"
+} >/run/laden-os/status
+
+if [[ "$plasma" != up ]]; then
+    journalctl -b -u plasmalogin.service -u laden-os-identity.service --no-pager -n 40 >/run/laden-os/boot-tail.txt 2>/dev/null || true
+fi
+
+if [[ -w /dev/ttyS0 ]]; then
+    cat /run/laden-os/status >/dev/ttyS0
+    printf '\n' >/dev/ttyS0
+fi
+logger -t laden-os "status plasma=$plasma proof=$proof dm=$dm"
+exit 0

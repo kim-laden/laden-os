@@ -1,0 +1,12 @@
+# remove from airootfs!
+[Trigger]
+Operation = Install
+Type = Package
+Target = wezterm
+
+[Action]
+Description = Installing The CockPit 1.1.0...
+When = PostTransaction
+Depends = wezterm
+Depends = shadow
+Exec = /usr/lib/laden-os/install-cockpit

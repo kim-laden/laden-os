@@ -1,0 +1,13 @@
+# remove from airootfs!
+[Trigger]
+Operation = Install
+Type = Package
+Target = base
+
+[Action]
+Description = Creating the locked Laden OS live user...
+When = PostTransaction
+Depends = shadow
+Depends = fish
+Depends = sudo
+Exec = /usr/lib/laden-os/create-live-user

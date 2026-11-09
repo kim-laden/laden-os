@@ -1,0 +1,8 @@
+# Live image only. The live account password is locked, so a screen lock
+# cannot be cleared. Do not copy this file onto an installed system.
+[Daemon]
+Autolock=false
+Lock=false
+LockOnResume=false
+RequirePassword=false
+Timeout=480

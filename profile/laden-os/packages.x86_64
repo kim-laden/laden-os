@@ -1,0 +1,77 @@
+# Live desktop. Versions are whatever the repositories serve on the build day.
+# linux-lts is included here. The lab toolkit is packages.d/lab.txt, which
+# scripts/build-iso.sh appends before mkarchiso. Creator, gamer, and Calamares
+# stay out of this file.
+
+base
+linux
+linux-lts
+linux-firmware
+sof-firmware
+intel-ucode
+amd-ucode
+mkinitcpio
+mkinitcpio-archiso
+syslinux
+archlinux-keyring
+sudo
+openssl
+python
+networkmanager
+iwd
+wpa_supplicant
+wireless-regdb
+dosfstools
+e2fsprogs
+exfatprogs
+ntfsprogs
+gptfdisk
+parted
+btrfs-progs
+xfsprogs
+cryptsetup
+nano
+less
+usbutils
+pciutils
+dmidecode
+efibootmgr
+squashfs-tools
+
+plasma-desktop
+plasma-login-manager
+plasma-nm
+plasma-pa
+konsole
+wezterm
+dolphin
+systemsettings
+breeze
+xdg-desktop-portal
+xdg-desktop-portal-kde
+xdg-user-dirs
+qt6-wayland
+xorg-xwayland
+firefox
+chromium
+breeze-gtk
+fish
+fastfetch
+btop
+pipewire
+wireplumber
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+noto-fonts
+# These names select a provider. Without them, pacman stops and asks.
+# opencl-mesa covers Intel and AMD on the portable image. It is not the NVIDIA stack.
+iptables
+noto-fonts-emoji
+qt6-multimedia-ffmpeg
+opencl-mesa
+ttf-liberation
+ttf-dejavu
+mesa
+vulkan-intel
+vulkan-radeon

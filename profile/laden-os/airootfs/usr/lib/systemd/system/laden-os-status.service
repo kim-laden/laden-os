@@ -1,0 +1,13 @@
+[Unit]
+Description=Report Laden OS boot status
+After=display-manager.service laden-os-identity.service
+Wants=display-manager.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TimeoutStartSec=240
+ExecStart=/usr/lib/laden-os/report-status
+
+[Install]
+WantedBy=multi-user.target

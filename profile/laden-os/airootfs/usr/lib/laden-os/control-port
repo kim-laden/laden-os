@@ -1,0 +1,34 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Allowlisted commands from a virtio port. Absent on real hardware.
+# Commands: status, create-proof. No shell is invoked.
+# QEMU's socket backend returns end-of-file when no client is connected.
+# Reopen the port. Exiting here drops the later test command.
+set -u
+port=/dev/virtio-ports/laden.control
+while true; do
+    if [[ ! -e "$port" ]]; then
+        sleep 1
+        continue
+    fi
+    while IFS= read -r line; do
+        cmd=${line//$'\r'/}
+        case "$cmd" in
+            status)
+                /usr/lib/laden-os/report-status || true
+                ;;
+            create-proof)
+                install -d -o live -g live /home/live
+                touch /home/live/PROOF
+                chown live:live /home/live/PROOF
+                /usr/lib/laden-os/report-status || true
+                ;;
+            "")
+                ;;
+            *)
+                printf 'denied\n' >/dev/ttyS0 2>/dev/null || true
+                ;;
+        esac
+    done <"$port"
+    sleep 1
+done

@@ -1,0 +1,12 @@
+Laden OS installs with Calamares 3.4.2, built by scripts/build-calamares.sh.
+Arch does not ship that package. The window is started by laden-install.
+
+Calamares 3.4 does not read an ignored-disk list. laden-install writes
+/run/laden-os/install-ignored, and the patched partition scan refuses every
+disk in that file. A missing file refuses every disk. Identity matches
+(the Acer Hynix drive, the Kingston system disk, and a volume label of Acer)
+are also set read-only before the window opens. The disk the machine is
+running from is left writable and is still refused as a target.
+
+An installed system must not keep live autologin, the live sudoers rule,
+or the live polkit rule. shellprocess.conf removes those after the copy.

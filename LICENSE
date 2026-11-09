@@ -1,0 +1,17 @@
+Laden OS source is distributed under two licenses.
+
+Original scripts, tests, and documentation written for Laden OS are under the MIT license below, Copyright 2026 Laden AS.
+
+Files adapted from archiso, including the profile shape, boot-loader templates, Pacman keyring units, and the build-hook remover, remain under GPL-3.0-or-later. Copyright belongs to the archiso contributors. See `/usr/share/doc/archiso` in the archiso package, version 92.
+
+Wallpaper PNG files under `branding/` were supplied with the project on 2026-11-08. No separate license file came with them. They are AI-upscaled artwork for Laden OS. Do not describe them as native 8K or native 4K captures. Do not treat them as MIT-licensed merely because this file exists.
+
+Packages installed into the image keep the licenses stated by their Arch Linux package metadata.
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of the original Laden OS scripts and documentation in this repository and associated documentation files, to deal in them without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

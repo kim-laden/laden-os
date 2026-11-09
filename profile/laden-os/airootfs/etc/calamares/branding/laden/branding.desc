@@ -1,0 +1,36 @@
+---
+componentName: laden
+welcomeStyleCalamares: false
+windowExpanding: normal
+windowSize: 800px,520px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+slideshow: show.qml
+
+strings:
+    productName: Laden OS
+    shortProductName: Laden
+    version: 0.1.1-live
+    shortVersion: 0.1.1
+    versionedName: Laden OS 0.1.1
+    shortVersionedName: Laden OS
+    bootloaderEntryName: Laden OS
+    productUrl: https://laden.no
+    supportUrl: https://laden.no
+    knownIssuesUrl: https://laden.no
+    releaseNotesUrl: https://laden.no
+    donateUrl: https://laden.no
+
+images:
+    productBanner: banner.png
+    productIcon: laden-os.svg
+    productLogo: laden-os.svg
+    productWallpaper: welcome.png
+    productWelcome: welcome.png
+
+style:
+    sidebarBackground: "#071210"
+    sidebarText: "#e9fff5"
+    sidebarTextSelect: "#071210"
+    sidebarTextHighlight: "#39ffb0"

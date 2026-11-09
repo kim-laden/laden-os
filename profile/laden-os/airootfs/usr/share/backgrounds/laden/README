@@ -1,0 +1,8 @@
+The build script installs the v2 wallpaper PNG files here after checking
+branding/SHA256SUMS-wallpapers-v2-ship.txt.
+
+Default on all displays: laden-os-lets-do-it-v2-7680x4320.png
+(SHA-256 b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f,
+AI-upscaled, not a native 8K capture; Plasma scales it to each screen).
+The 3840x2160, 1920x1080 and 3440x1440 v2 files are optional manual overrides.
+Nothing is selected automatically by resolution. The HP artwork is not installed.

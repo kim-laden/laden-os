@@ -1,0 +1,6 @@
+# Directories the project owns completely. `dev-vm.sh sync` may delete files
+# inside these trees when the source no longer has them. No other path is
+# deleted in the guest.
+usr/share/backgrounds/laden
+usr/share/doc/laden-os
+usr/lib/laden-os

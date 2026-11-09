@@ -1,0 +1,9 @@
+# Calamares is not in the Arch repositories. scripts/build-calamares.sh
+# builds the pinned 3.4.2 tarball inside Laden OS. The ISO build copies
+# that runtime tree from build/cache/calamares-3.4.2-runtime.tar.
+# Do not list a package named calamares: mkarchiso would stop with
+# "target not found".
+# Libraries the runtime tree links, and rsync for the unpack step.
+kpmcore
+yaml-cpp
+rsync

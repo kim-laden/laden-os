@@ -1,0 +1,11 @@
+[services][lcp.desktop]
+_launch=Alt+T
+
+[services][lcp-toggle.desktop]
+_launch=Alt+Q
+
+[services][org.kde.konsole.desktop]
+_launch=none
+
+[services][org.wezfurlong.wezterm.desktop]
+_launch=none

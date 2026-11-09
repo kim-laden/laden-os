@@ -1,0 +1,7 @@
+Laden OS 0.1.3-live (based on Arch Linux)
+Let's do it!
+
+The live session is discarded on reboot. SSH is off. Intel capture is off.
+Default wallpaper: /usr/share/backgrounds/laden/laden-os-lets-do-it-v2-7680x4320.png
+Lab tools are installed for authorized work. Plasma needs about 4 GB of RAM.
+The terminal is lcp. Alt+T opens it. Alt+Q shows or hides it. Chromium opens https://laden.no. The panel is on top.

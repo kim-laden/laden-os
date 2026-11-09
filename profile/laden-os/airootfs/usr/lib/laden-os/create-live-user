@@ -1,0 +1,23 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Create the local live account with a locked password. No known password.
+set -euo pipefail
+
+if ! grep -qx '/usr/bin/fish' /etc/shells; then
+    printf '%s\n' '/usr/bin/fish' >>/etc/shells
+fi
+groups=()
+for group in wheel network video audio storage lp input wireshark kismet; do
+    if getent group "$group" >/dev/null; then
+        groups+=("$group")
+    fi
+done
+if ! id live &>/dev/null; then
+    args=(-m -u 1000 -s /usr/bin/fish -c "Laden OS live user")
+    if ((${#groups[@]})); then
+        args+=(-G "$(IFS=,; echo "${groups[*]}")")
+    fi
+    useradd "${args[@]}" live
+fi
+passwd -l live
+passwd -l root

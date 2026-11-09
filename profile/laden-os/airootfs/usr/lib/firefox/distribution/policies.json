@@ -1,0 +1,16 @@
+{
+  "policies": {
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "AppAutoUpdate": false,
+    "NoDefaultBookmarks": true,
+    "OfferToSaveLogins": false,
+    "PasswordManagerEnabled": false,
+    "OverrideFirstRunPage": "file:///usr/share/doc/laden-os/welcome.html",
+    "Homepage": {
+      "URL": "file:///usr/share/doc/laden-os/welcome.html",
+      "StartPage": "homepage",
+      "Locked": false
+    }
+  }
+}

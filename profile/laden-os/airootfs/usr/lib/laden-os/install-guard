@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
+"""Decide which disks the Laden OS installer is allowed to offer.
+
+The Acer workstation drive and the disk the system is running from are never
+targets. A caller can pass a fixture instead of the live machine.
+"""
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+PROTECTED = Path("/usr/lib/laden-os/protected-disks.txt")
+
+
+def load_rules(path):
+    rules = []
+    text = Path(path).read_text(encoding="utf-8")
+    for raw in text.splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        kind, value = line.split(None, 1)
+        rules.append((kind.casefold(), value.strip().casefold()))
+    return rules
+
+
+def _norm(value):
+    return (value or "").strip().casefold()
+
+
+def disk_identity(disk):
+    values = {
+        "serial": _norm(disk.get("serial")),
+        "model": _norm(disk.get("model")),
+    }
+    labels = []
+    for child in disk.get("children") or []:
+        for key in ("label", "partlabel"):
+            label = _norm(child.get(key))
+            if label:
+                labels.append(label)
+    return values, labels
+
+
+def is_protected(disk, rules):
+    values, labels = disk_identity(disk)
+    for kind, wanted in rules:
+        if kind in ("serial", "model") and values.get(kind) == wanted:
+            return True
+        if kind == "label" and wanted in labels:
+            return True
+    return False
+
+
+def running_disks(lsblk, mounts):
+    by_name = {}
+
+    def walk(node, parent_disk):
+        name = node.get("name")
+        disk = parent_disk
+        if node.get("type") == "disk":
+            disk = name
+            by_name[name] = name
+        elif disk and name:
+            by_name[name] = disk
+        for child in node.get("children") or []:
+            walk(child, disk)
+
+    for node in lsblk.get("blockdevices") or []:
+        walk(node, None)
+    found = set()
+    for mount in mounts:
+        target = mount.get("target") or ""
+        source = (mount.get("source") or "").split("[", 1)[0]
+        source = source.removeprefix("/dev/")
+        if target in ("/", "/boot", "/boot/efi", "/run/archiso/bootmnt") and source in by_name:
+            found.add(by_name[source])
+    return found
+
+
+def classify(lsblk, rules, mounts):
+    identity = []
+    running_hits = []
+    running = running_disks(lsblk, mounts)
+    for disk in lsblk.get("blockdevices") or []:
+        if disk.get("type") not in (None, "disk"):
+            continue
+        name = disk.get("name")
+        if not name:
+            continue
+        path = f"/dev/{name}"
+        if is_protected(disk, rules):
+            identity.append(path)
+        elif name in running:
+            running_hits.append(path)
+    return identity, running_hits
+
+
+def live_lsblk():
+    raw = subprocess.check_output(
+        ["lsblk", "-J", "-o", "NAME,TYPE,SERIAL,MODEL,LABEL,PARTLABEL,FSTYPE,MOUNTPOINTS"],
+        text=True,
+    )
+    return json.loads(raw)
+
+
+def flatten_mounts(nodes):
+    found = []
+    for node in nodes or []:
+        found.append({"target": node.get("target"), "source": node.get("source")})
+        found.extend(flatten_mounts(node.get("children")))
+    return found
+
+
+def live_mounts():
+    raw = subprocess.check_output(
+        ["findmnt", "-J", "-o", "TARGET,SOURCE"],
+        text=True,
+    )
+    data = json.loads(raw)
+    return flatten_mounts(data.get("filesystems"))
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fixture", help="lsblk -J plus mounts, for tests")
+    parser.add_argument("--rules", default=str(PROTECTED))
+    parser.add_argument("--ignored", action="store_true", help="print every refused device")
+    parser.add_argument("--identity", action="store_true", help="print identity matches only")
+    args = parser.parse_args()
+    rules = load_rules(args.rules)
+    if args.fixture:
+        fixture = json.loads(Path(args.fixture).read_text(encoding="utf-8"))
+        lsblk = fixture["lsblk"]
+        mounts = fixture.get("mounts") or []
+    else:
+        lsblk = live_lsblk()
+        mounts = live_mounts()
+    identity, running = classify(lsblk, rules, mounts)
+    if args.identity:
+        print("\n".join(identity))
+        return 0
+    ignored = identity + running
+    if args.ignored:
+        print("\n".join(ignored))
+        return 0
+    reasons = [f"{path} is protected and is not an install target" for path in identity]
+    reasons += [f"{path} holds the running system and is not an install target" for path in running]
+    print("\n".join(reasons) if reasons else "No disk is excluded.")
+    print("ignored=" + ",".join(ignored))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

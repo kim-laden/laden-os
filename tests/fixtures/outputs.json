@@ -1,0 +1,25 @@
+{
+  "outputs": [
+    {
+      "name": "PANEL-0",
+      "connected": true,
+      "enabled": true,
+      "priority": 1,
+      "size": {"width": 1920, "height": 1080}
+    },
+    {
+      "name": "EXTERNAL-0",
+      "connected": true,
+      "enabled": true,
+      "priority": 2,
+      "size": {"width": 2560, "height": 1440}
+    },
+    {
+      "name": "OFF-0",
+      "connected": true,
+      "enabled": false,
+      "priority": 3,
+      "size": {"width": 7680, "height": 4320}
+    }
+  ]
+}

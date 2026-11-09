@@ -1,0 +1,17 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Generate a service identity that exists only on this boot's writable layer.
+# The private key is never shipped in the squashfs.
+set -euo pipefail
+umask 077
+install -d -m 0700 /var/lib/laden-os
+key=/var/lib/laden-os/service-identity.key
+pub=/var/lib/laden-os/service-identity.pub
+fp=/var/lib/laden-os/service-identity.fingerprint
+if [[ ! -s "$key" ]]; then
+    openssl genpkey -algorithm ED25519 -out "$key"
+fi
+openssl pkey -in "$key" -pubout -out "$pub"
+openssl pkey -in "$pub" -pubin -outform DER | sha256sum | awk '{print $1}' >"$fp"
+chmod 0644 "$pub" "$fp"
+chmod 0600 "$key"

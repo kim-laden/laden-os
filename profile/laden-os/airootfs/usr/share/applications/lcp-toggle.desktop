@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Toggle LCP
+GenericName=Toggle The CockPit
+Comment=Show or hide The CockPit
+Exec=lcp-toggle
+Icon=the-cockpit
+Terminal=false
+NoDisplay=true
+Categories=System;
+StartupWMClass=the-cockpit
+X-KDE-Shortcuts=Alt+Q

@@ -1,0 +1,5 @@
+8ec1e8651a29c4c3d03c47ba702c83c7d3a047a533031a5d88c9b5cfdeb5e361  TheCockPit-1.1.0-macOS-universal.zip
+7d5bba272742310d1274941d543efad185e3a5a9e2fec205bea86b2b9b51147e  TheCockPit-1.1.0-windows-x64.zip
+2062382fa8bb2f06b2b79c05753a8ae7003ecb4b0a6e6d4a1c982e5f433d5709  TheCockPit-1.1.0-x86_64.AppImage
+72349d6983827d6a50acbdb5850b46aaa30213e9ecc8bb89f1e57c1d00943eb1  the-cockpit-1.1.0-linux-x86_64.tar.gz
+0eaa93fcc6943c15198fa3cc61768b228ed310277232a1a04d6ada0c6cad003c  the-cockpit_1.1.0_all.deb

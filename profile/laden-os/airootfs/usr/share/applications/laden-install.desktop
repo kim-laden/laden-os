@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Laden OS
+GenericName=Installer
+Comment=Install Laden OS. The Acer drive is never offered.
+Exec=/usr/bin/laden-install
+Icon=laden-os
+Terminal=false
+Categories=System;
+Keywords=install;calamares;laden;
+StartupNotify=true

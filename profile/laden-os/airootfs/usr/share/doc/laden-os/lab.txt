@@ -1,0 +1,28 @@
+Laden OS lab toolkit
+=====================
+
+The live image carries the Kali tools people actually run, then the
+BlackArch forensic tools examiners actually open. Arch packages are used
+when the same name exists in both repositories. The signed BlackArch
+repository stays enabled. strap.sh is not run, and the full catalogue is
+not installed.
+
+Not included, and why:
+- responder. The BlackArch package depends on mingw-w64-gcc, about 1.2 GiB,
+  for a small Python program.
+- seclists. About 1.9 GiB of wordlists. John includes a small list, and
+  crunch can generate more.
+- The BloodHound desktop application. It pulls Neo4j and a second JDK.
+  bloodhound-python and bloodhound-ce-python, the collectors, are installed.
+- blackarch-officials and the older scanners that gobuster, ffuf, and
+  feroxbuster replaced.
+
+Groups that only add denial-of-service tools, keyloggers, or backdoors
+are not selected. More tools can be installed later with pacman after
+pacman-init.service has created the live keyring.
+
+Use these tools only on systems you are allowed to test.
+Intel capture in The CockPit stays off until you turn it on.
+SSH is masked. The live account has no password.
+The terminal is lcp. Alt+T opens it. Alt+Q shows or hides it.
+Chromium is the default browser and opens https://laden.no.

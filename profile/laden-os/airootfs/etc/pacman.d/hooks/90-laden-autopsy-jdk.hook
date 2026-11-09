@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = autopsy
+
+[Action]
+Description = Point Autopsy at Java 17
+When = PostTransaction
+Depends = bash
+Exec = /usr/lib/laden-os/autopsy-jdk

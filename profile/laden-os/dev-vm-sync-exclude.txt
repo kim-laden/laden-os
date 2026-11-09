@@ -1,0 +1,6 @@
+# Paths copied into the live ISO that must not be pushed onto the installed
+# development VM. The release build still reads them from airootfs.
+# Sync refuses absolute paths and ".." independently of this list.
+etc/systemd/system/sshd.service
+etc/systemd/system/sshd.socket
+etc/mkinitcpio.conf.d/archiso.conf

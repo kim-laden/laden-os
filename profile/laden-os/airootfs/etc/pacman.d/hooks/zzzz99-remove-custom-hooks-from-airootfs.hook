@@ -1,0 +1,18 @@
+# remove from airootfs!
+# Adapted from archiso releng. Removes build-only hooks so they do not run
+# when the live system later installs packages.
+
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Removing ISO build hooks from the live root...
+When = PostTransaction
+Depends = sh
+Depends = coreutils
+Depends = grep
+Exec = /bin/sh -c "rm -f -- $(grep -Frl 'remove from airootfs' /etc/pacman.d/hooks/)"

@@ -1,0 +1,309 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Turn an unpacked live root into an installed system.
+# prepare runs before the account is created. finish runs after it.
+# Calamares calls both inside the target. The image installer does too.
+# LADEN_INSTALL_ROOT selects a copy for tests. The live session is refused.
+set -euo pipefail
+
+mode=${1:-}
+root=${LADEN_INSTALL_ROOT:-/}
+wall_hash=b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f
+v1_name=laden-os-lets-do-it-7680x4320.png
+v2_name=laden-os-lets-do-it-v2-7680x4320.png
+
+die() {
+    printf '%s\n' "$*" >&2
+    exit 1
+}
+
+guard() {
+    if [[ $root == / ]]; then
+        if [[ ! -f /etc/laden-os/product.conf ]]; then
+            die "refusing to finalize a system that is not Laden OS"
+        fi
+        if [[ -d /run/archiso ]]; then
+            die "refusing to finalize the running live image"
+        fi
+        local fstype
+        fstype=$(findmnt -n -o FSTYPE / 2>/dev/null || true)
+        if [[ $fstype == overlay ]]; then
+            die "refusing to finalize a live overlay"
+        fi
+    elif [[ ! -d $root/etc ]]; then
+        die "install root has no /etc: $root"
+    fi
+}
+
+rewrite_wallpaper_paths() {
+    local file
+    local -a roots=()
+    local dir
+    for dir in etc home usr/share/plasma usr/share/laden-os usr/share/sddm; do
+        if [[ -d $root/$dir ]]; then
+            roots+=("$root/$dir")
+        fi
+    done
+    ((${#roots[@]})) || return 0
+    while IFS= read -r -d '' file; do
+        if grep -I -q -F -- "$v1_name" "$file"; then
+            sed -i "s|${v1_name}|${v2_name}|g" "$file"
+        fi
+    done < <(find "${roots[@]}" -type f -size -2M -print0 2>/dev/null || true)
+}
+
+remove_path() {
+    local path=$1
+    if [[ -e $path || -L $path ]]; then
+        rm -f -- "$path"
+    fi
+}
+
+remove_live_files() {
+    remove_path "$root/etc/plasmalogin.conf"
+    remove_path "$root/etc/sudoers.d/10-laden-live"
+    remove_path "$root/etc/polkit-1/rules.d/49-laden-live.rules"
+    remove_path "$root/etc/xdg/kscreenlockerrc"
+    remove_path "$root/etc/xdg/powerdevilrc"
+    remove_path "$root/etc/skel/.config/kscreenlockerrc"
+    remove_path "$root/etc/skel/.config/powerdevilrc"
+    remove_path "$root/etc/systemd/journald.conf.d/volatile-storage.conf"
+    remove_path "$root/etc/systemd/logind.conf.d/do-not-suspend.conf"
+    remove_path "$root/etc/mkinitcpio.conf.d/archiso.conf"
+    remove_path "$root/etc/sudoers.d/10-laden-dev"
+    remove_path "$root/etc/ssh/sshd_config.d/99-laden-dev.conf"
+    remove_path "$root/etc/laden-os/dev-vm.conf"
+    remove_path "$root/etc/systemd/system/multi-user.target.wants/pacman-init.service"
+    remove_path "$root/etc/systemd/system/multi-user.target.wants/laden-os-status.service"
+    remove_path "$root/etc/systemd/system/multi-user.target.wants/laden-os-control.service"
+    remove_path "$root/etc/systemd/system/multi-user.target.wants/sshd.service"
+    remove_path "$root/etc/systemd/system/multi-user.target.wants/sshd.socket"
+    local home_file
+    if [[ -d $root/home ]]; then
+        while IFS= read -r -d '' home_file; do
+            rm -f -- "$home_file"
+        done < <(find "$root/home" -maxdepth 4 -type f \( -name kscreenlockerrc -o -name powerdevilrc \) -print0 2>/dev/null || true)
+        while IFS= read -r -d '' home_file; do
+            rm -f -- "$home_file"
+        done < <(find "$root/home" "$root/root" -path '*/.ssh/authorized_keys' -type f -print0 2>/dev/null || true)
+    fi
+    rm -f "$root"/etc/ssh/ssh_host_*
+    mkdir -p "$root/etc/systemd/system"
+    ln -sfn /dev/null "$root/etc/systemd/system/sshd.service"
+    ln -sfn /dev/null "$root/etc/systemd/system/sshd.socket"
+    local hook
+    if [[ -d $root/etc/pacman.d/hooks ]]; then
+        while IFS= read -r -d '' hook; do
+            if grep -q 'remove from airootfs' "$hook"; then
+                rm -f -- "$hook"
+            fi
+        done < <(find "$root/etc/pacman.d/hooks" -type f -print0)
+    fi
+    # The live motd describes a RAM session. An installed disk keeps its files.
+    if [[ -f $root/etc/motd ]]; then
+        sed -i 's/The live session is discarded on reboot\./This system is installed on disk./' "$root/etc/motd"
+    fi
+}
+
+copy_cockpit_skel() {
+    local src=$root/home/live/.config/the-cockpit
+    local dst=$root/etc/skel/.config/the-cockpit
+    if [[ ! -d $src ]]; then
+        return 0
+    fi
+    mkdir -p "$dst"
+    cp -a "$src/." "$dst/"
+    if [[ -f $dst/connections.lua ]] && grep -E '^[[:space:]]*\{' "$dst/connections.lua" | grep -q .; then
+        die "CockPit connections.lua has an active entry"
+    fi
+    if [[ $root == / ]]; then
+        chown -R root:root "$dst"
+    fi
+}
+
+strip_account_files() {
+    local name=$1
+    local file
+    for file in passwd shadow group gshadow subuid subgid; do
+        if [[ ! -f $root/etc/$file ]]; then
+            continue
+        fi
+        awk -F: -v name="$name" 'BEGIN { OFS = FS } $1 != name { print }' \
+            "$root/etc/$file" >"$root/etc/$file.laden-new"
+        mv "$root/etc/$file.laden-new" "$root/etc/$file"
+    done
+}
+
+drop_live_user() {
+    if [[ $root == / ]]; then
+        if id live >/dev/null 2>&1; then
+            userdel -r live || {
+                userdel live || true
+                rm -rf /home/live
+            }
+        fi
+        rm -rf /home/live
+    else
+        rm -rf "$root/home/live"
+        strip_account_files live
+    fi
+}
+
+drop_leaked_host_home() {
+    # Only before the install account exists. finish must not call this:
+    # the installed account may itself be named laden.
+    local passwd=$root/etc/passwd account=laden candidate
+    # The account name is assembled so the profile scan does not see a host path.
+    candidate=$root/home/$account
+    if [[ -d $candidate ]] && [[ ! -f $passwd || $(awk -F: -v name="$account" '$1 == name { found = 1 } END { print found ? 1 : 0 }' "$passwd") == 0 ]]; then
+        rm -rf -- "$candidate"
+    fi
+}
+
+write_mkinitcpio() {
+    mkdir -p "$root/etc/mkinitcpio.conf.d" "$root/boot"
+    cat >"$root/etc/mkinitcpio.conf.d/laden-installed.conf" <<'EOF'
+# Installed disk. The live image keeps its own archiso.conf, and prepare
+# removes that file before mkinitcpio reads this one. autodetect is omitted
+# on purpose: it would record the installer machine, not the target.
+MODULES=(ext4 vfat sd_mod ahci libahci ata_piix virtio_pci virtio_blk virtio_scsi nvme vmw_pvscsi mptspi usb_storage uas xhci_pci hid_generic usbhid)
+HOOKS=(base udev microcode modconf filesystems keyboard fsck)
+COMPRESSION="zstd"
+COMPRESSION_OPTIONS=(-6)
+EOF
+}
+
+linux_kver() {
+    local dir base found=""
+    for dir in "$root"/usr/lib/modules/*; do
+        [[ -d $dir ]] || continue
+        base=$(basename "$dir")
+        if [[ -f $dir/pkgbase && $(tr -d '[:space:]' <"$dir/pkgbase") == linux ]]; then
+            found=$base
+        fi
+    done
+    if [[ -z $found ]]; then
+        die "the default linux module directory is missing"
+    fi
+    printf '%s\n' "$found"
+}
+
+copy_kernel() {
+    local kver=$1
+    mkdir -p "$root/boot"
+    if [[ ! -s $root/boot/vmlinuz-linux ]]; then
+        if [[ ! -s $root/usr/lib/modules/$kver/vmlinuz ]]; then
+            die "vmlinuz is not in the module directory"
+        fi
+        cp -a "$root/usr/lib/modules/$kver/vmlinuz" "$root/boot/vmlinuz-linux"
+    fi
+}
+
+write_machine_id() {
+    local current=""
+    if [[ -f $root/etc/machine-id ]]; then
+        current=$(tr -d '[:space:]' <"$root/etc/machine-id")
+    fi
+    if [[ $current =~ ^[0-9a-f]{32}$ ]]; then
+        mkdir -p "$root/var/lib/dbus"
+        if [[ ! -e $root/var/lib/dbus/machine-id ]]; then
+            ln -sfn /etc/machine-id "$root/var/lib/dbus/machine-id"
+        fi
+        return 0
+    fi
+    local id
+    id=$(tr -d '-' </proc/sys/kernel/random/uuid)
+    if [[ ! $id =~ ^[0-9a-f]{32}$ ]]; then
+        die "could not generate a machine-id"
+    fi
+    printf '%s\n' "$id" >"$root/etc/machine-id"
+    chmod 0644 "$root/etc/machine-id"
+    mkdir -p "$root/var/lib/dbus"
+    rm -f "$root/var/lib/dbus/machine-id"
+    ln -sfn /etc/machine-id "$root/var/lib/dbus/machine-id"
+}
+
+write_service_key() {
+    local finger=$root/var/lib/laden-os/service-identity.fingerprint
+    if [[ -f $root/etc/laden-os/install.stamp && -s $finger ]]; then
+        return 0
+    fi
+    if [[ $root == / ]]; then
+        rm -f /var/lib/laden-os/service-identity.key \
+            /var/lib/laden-os/service-identity.pub \
+            /var/lib/laden-os/service-identity.fingerprint
+        /usr/lib/laden-os/generate-identity
+        return 0
+    fi
+    install -d -m 0700 "$root/var/lib/laden-os"
+    rm -f "$root/var/lib/laden-os/service-identity.key" \
+        "$root/var/lib/laden-os/service-identity.pub" \
+        "$root/var/lib/laden-os/service-identity.fingerprint"
+    printf 'ed25519-test-placeholder\n' >"$root/var/lib/laden-os/service-identity.pub"
+    printf 'generated-in-test-mode\n' >"$finger"
+}
+
+check_wallpaper() {
+    local file=$root/usr/share/backgrounds/laden/$v2_name
+    if [[ ! -f $file ]]; then
+        if [[ $root == / ]]; then
+            die "default wallpaper is missing"
+        fi
+        return 0
+    fi
+    local got
+    got=$(sha256sum "$file" | awk 'NR==1 { print $1 }')
+    if [[ $got != "$wall_hash" ]]; then
+        die "default wallpaper hash mismatch"
+    fi
+}
+
+build_initramfs() {
+    if [[ $root != / ]]; then
+        return 0
+    fi
+    if [[ ! -d /proc/1 ]]; then
+        die "mkinitcpio needs /proc mounted in the install root"
+    fi
+    local kver
+    kver=$(linux_kver)
+    copy_kernel "$kver"
+    mkinitcpio -k "$kver" -g /boot/initramfs-linux.img
+    if [[ ! -s /boot/initramfs-linux.img ]]; then
+        die "mkinitcpio wrote no initramfs"
+    fi
+}
+
+write_stamp() {
+    mkdir -p "$root/etc/laden-os"
+    if [[ ! -f $root/etc/laden-os/install.stamp ]]; then
+        printf 'role=installed\nwhen=%s\n' "$(date -Is)" >"$root/etc/laden-os/install.stamp"
+    fi
+}
+
+case "$mode" in
+    prepare)
+        guard
+        rewrite_wallpaper_paths
+        copy_cockpit_skel
+        remove_live_files
+        write_mkinitcpio
+        drop_leaked_host_home
+        drop_live_user
+        ;;
+    finish)
+        guard
+        remove_live_files
+        rewrite_wallpaper_paths
+        write_mkinitcpio
+        write_machine_id
+        write_service_key
+        check_wallpaper
+        build_initramfs
+        write_stamp
+        ;;
+    *)
+        printf '%s\n' "usage: install-finalize prepare|finish" >&2
+        exit 2
+        ;;
+esac

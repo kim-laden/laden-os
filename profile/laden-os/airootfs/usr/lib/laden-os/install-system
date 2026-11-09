@@ -1,0 +1,601 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Install Laden OS as a writable disk, not a copy of the live ISO.
+#
+# --image writes a regular file. scripts/install-disk.sh is the host entry
+# and refuses every host device. --device is for a later live USB boot.
+# It refuses this workstation, the running disk, and protected-disks.txt.
+set -euo pipefail
+
+mode=
+image=
+device=
+repo=
+iso=
+profile=
+unsquash=
+user_name=
+password_file=
+hostname=laden
+disk_size=28G
+serial_getty=0
+replace=0
+erase=0
+image_root=
+
+usage() {
+    cat <<'EOF'
+usage: install-system --image FILE --repo ROOT --iso ISO --profile DIR
+                       --unsquash UNSQUASHFS --user NAME --password-file FILE
+                       [--hostname NAME] [--size 28G] [--serial-getty] [--replace]
+       install-system --device DISK --user NAME --password-file FILE --erase
+EOF
+}
+
+die() {
+    printf '%s\n' "$*" >&2
+    exit 1
+}
+
+log() {
+    printf '%s %s\n' "$(date -Is)" "$*" >&2
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --image) image=$2; shift 2 ;;
+        --device) device=$2; mode=device; shift 2 ;;
+        --repo) repo=$2; shift 2 ;;
+        --iso) iso=$2; shift 2 ;;
+        --profile) profile=$2; shift 2 ;;
+        --unsquash) unsquash=$2; shift 2 ;;
+        --user) user_name=$2; shift 2 ;;
+        --password-file) password_file=$2; shift 2 ;;
+        --hostname) hostname=$2; shift 2 ;;
+        --size) disk_size=$2; shift 2 ;;
+        --image-root) image_root=$2; shift 2 ;;
+        --serial-getty) serial_getty=1; shift ;;
+        --replace) replace=1; shift ;;
+        --erase) erase=1; shift ;;
+        -h|--help) usage; exit 0 ;;
+        *) die "unknown argument: $1" ;;
+    esac
+done
+
+if [[ -n $image ]]; then
+    mode=image
+fi
+if [[ $mode != image && $mode != device ]]; then
+    usage >&2
+    exit 2
+fi
+if [[ $(id -u) -ne 0 ]]; then
+    die "install-system needs root inside its user namespace. Use scripts/install-disk.sh."
+fi
+if [[ ! $user_name =~ ^[a-z][a-z0-9-]{0,31}$ ]]; then
+    die "user name must be a short lowercase account"
+fi
+if [[ $user_name == root || $user_name == live ]]; then
+    die "refusing user name $user_name"
+fi
+if [[ ! -f $password_file ]]; then
+    die "password file is missing"
+fi
+if [[ $(stat -c %a "$password_file") != 600 ]]; then
+    die "password file must be mode 600"
+fi
+if [[ ! -s $password_file ]]; then
+    die "password file is empty"
+fi
+
+finalize=
+if [[ -n $profile ]]; then
+    finalize=$profile/airootfs/usr/lib/laden-os/install-finalize
+fi
+if [[ ! -x ${finalize:-} && -x /usr/lib/laden-os/install-finalize ]]; then
+    finalize=/usr/lib/laden-os/install-finalize
+fi
+if [[ ! -x $finalize ]]; then
+    die "install-finalize is missing"
+fi
+
+chroot_do() {
+    local rootfs=$1
+    shift
+    chroot "$rootfs" /usr/bin/env HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin "$@"
+}
+
+mount_target() {
+    local rootfs=$1 node
+    mkdir -p "$rootfs/proc" "$rootfs/sys" "$rootfs/dev/pts" "$rootfs/run"
+    if ! mountpoint -q "$rootfs"; then
+        mount --bind "$rootfs" "$rootfs"
+    fi
+    mount -t proc proc -o nosuid,noexec,nodev "$rootfs/proc"
+    mount --rbind /sys "$rootfs/sys"
+    mount --make-rslave "$rootfs/sys"
+    mount -t tmpfs -o mode=0755,nosuid tmpfs "$rootfs/dev"
+    mkdir -p "$rootfs/dev/pts" "$rootfs/dev/shm"
+    ln -sfn /proc/self/fd "$rootfs/dev/fd"
+    ln -sfn /proc/self/fd/0 "$rootfs/dev/stdin"
+    ln -sfn /proc/self/fd/1 "$rootfs/dev/stdout"
+    ln -sfn /proc/self/fd/2 "$rootfs/dev/stderr"
+    for node in null zero random urandom full tty console; do
+        if [[ -e /dev/$node ]]; then
+            touch "$rootfs/dev/$node"
+            mount --bind "/dev/$node" "$rootfs/dev/$node"
+        fi
+    done
+    mount -t devpts devpts "$rootfs/dev/pts" || true
+    mount -t tmpfs -o mode=0755,nosuid,nodev tmpfs "$rootfs/run"
+}
+
+umount_target() {
+    local rootfs=$1 mountpoint
+    if [[ -d $rootfs/boot ]] && mountpoint -q "$rootfs/boot"; then
+        umount "$rootfs/boot" 2>/dev/null || umount -l "$rootfs/boot" || true
+    fi
+    for mountpoint in \
+        "$rootfs/dev/pts" \
+        "$rootfs/dev/console" \
+        "$rootfs/dev/tty" \
+        "$rootfs/dev/full" \
+        "$rootfs/dev/urandom" \
+        "$rootfs/dev/random" \
+        "$rootfs/dev/zero" \
+        "$rootfs/dev/null" \
+        "$rootfs/dev" \
+        "$rootfs/run" \
+        "$rootfs/sys" \
+        "$rootfs/proc" \
+        "$rootfs"
+    do
+        if [[ -d $mountpoint ]] && mountpoint -q "$mountpoint"; then
+            umount "$mountpoint" 2>/dev/null || umount -l "$mountpoint" || true
+        fi
+    done
+}
+
+refresh_wallpapers() {
+    local rootfs=$1
+    local wall=$rootfs/usr/share/backgrounds/laden
+    local sumfile=$repo/branding/SHA256SUMS-wallpapers-v2-ship.txt
+    local expected=b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f
+    mkdir -p "$wall"
+    rm -f "$wall"/laden-os-lets-do-it-*.png "$wall"/*emerald* "$wall"/*hp*
+    local sum file
+    while read -r sum file; do
+        [[ -n ${file:-} ]] || continue
+        cp -a "$repo/branding/$file" "$wall/$file"
+    done <"$sumfile"
+    local got
+    got=$(sha256sum "$wall/laden-os-lets-do-it-v2-7680x4320.png" | awk '{ print $1 }')
+    if [[ $got != "$expected" ]]; then
+        die "wallpaper hash mismatch after copy"
+    fi
+}
+
+overlay_profile() {
+    local rootfs=$1
+    log "overlaying the current profile"
+    rsync -a "$profile/airootfs/" "$rootfs/"
+    refresh_wallpapers "$rootfs"
+    chmod 0755 "$rootfs/usr/lib/laden-os/install-finalize" \
+        "$rootfs/usr/lib/laden-os/install-system" \
+        "$rootfs/usr/lib/laden-os/generate-identity"
+}
+
+extract_iso() {
+    local rootfs=$1 work=$2
+    if [[ -f $rootfs/etc/os-release && -d $rootfs/usr/lib/modules ]]; then
+        log "reusing the extracted root"
+        overlay_profile "$rootfs"
+        return 0
+    fi
+    rm -rf "$rootfs"
+    mkdir -p "$work"
+    log "extracting airootfs from the ISO"
+    xorriso -osirrox on -indev "$iso" \
+        -extract /laden/x86_64/airootfs.sfs "$work/airootfs.sfs"
+    if ! "$unsquash" -d "$rootfs" "$work/airootfs.sfs"; then
+        log "unsquashfs retry without xattrs"
+        rm -rf "$rootfs"
+        "$unsquash" -d "$rootfs" -no-xattrs "$work/airootfs.sfs"
+    fi
+    rm -f "$work/airootfs.sfs"
+    overlay_profile "$rootfs"
+}
+
+write_fstab() {
+    local rootfs=$1 root_uuid=$2 esp_uuid=$3 swap_uuid=$4
+    cat >"$rootfs/etc/fstab" <<EOF
+UUID=$root_uuid / ext4 rw,relatime 0 1
+UUID=$esp_uuid /boot vfat rw,relatime,fmask=0133,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro 0 2
+UUID=$swap_uuid none swap defaults 0 0
+EOF
+}
+
+write_loader() {
+    local esp_dir=$1 root_uuid=$2 bootefi=$3 vmlinuz=$4 initramfs=$5
+    mkdir -p "$esp_dir/EFI/BOOT" "$esp_dir/EFI/systemd" "$esp_dir/loader/entries"
+    cp -a "$bootefi" "$esp_dir/EFI/BOOT/BOOTX64.EFI"
+    cp -a "$bootefi" "$esp_dir/EFI/systemd/systemd-bootx64.efi"
+    cp -a "$vmlinuz" "$esp_dir/vmlinuz-linux"
+    cp -a "$initramfs" "$esp_dir/initramfs-linux.img"
+    printf '%s\n' 'default laden.conf' 'timeout 3' 'console-mode keep' 'editor no' \
+        >"$esp_dir/loader/loader.conf"
+    cat >"$esp_dir/loader/entries/laden.conf" <<EOF
+title    Laden OS
+linux    /vmlinuz-linux
+initrd   /initramfs-linux.img
+options  root=UUID=$root_uuid rw rootfstype=ext4 console=ttyS0,115200 console=tty0
+EOF
+}
+
+create_user() {
+    local rootfs=$1
+    local shells=$rootfs/etc/shells
+    if [[ -f $shells ]] && ! grep -qx '/usr/bin/fish' "$shells"; then
+        printf '%s\n' '/usr/bin/fish' >>"$shells"
+    fi
+    if ! chroot_do "$rootfs" getent group wheel >/dev/null; then
+        die "the wheel group is missing"
+    fi
+    local groups="" name
+    for name in users wheel lp video audio storage input; do
+        if chroot_do "$rootfs" getent group "$name" >/dev/null; then
+            groups=${groups:+$groups,}$name
+        fi
+    done
+    if chroot_do "$rootfs" id "$user_name" >/dev/null 2>&1; then
+        log "user $user_name already exists"
+    else
+        chroot_do "$rootfs" useradd -m -G "$groups" -s /usr/bin/fish -c "Laden OS" "$user_name"
+    fi
+    chmod 0700 "$rootfs/home/$user_name"
+    {
+        printf '%s:' "$user_name"
+        tr -d '\n' <"$password_file"
+        printf '\n'
+    } | chroot_do "$rootfs" chpasswd
+    printf '%s\n' '%wheel ALL=(ALL:ALL) ALL' >"$rootfs/etc/sudoers.d/10-installer"
+    chmod 0440 "$rootfs/etc/sudoers.d/10-installer"
+    chroot_do "$rootfs" visudo -cf /etc/sudoers.d/10-installer
+    printf '%s\n' "$hostname" >"$rootfs/etc/hostname"
+    printf '127.0.0.1 localhost %s\n::1 localhost %s\n' "$hostname" "$hostname" >"$rootfs/etc/hosts"
+    if [[ $serial_getty == 1 ]]; then
+        mkdir -p "$rootfs/etc/systemd/system/getty.target.wants"
+        ln -sfn /usr/lib/systemd/system/serial-getty@.service \
+            "$rootfs/etc/systemd/system/getty.target.wants/serial-getty@ttyS0.service"
+    fi
+}
+
+configure_root() {
+    local rootfs=$1
+    log "removing live-only files"
+    chroot_do "$rootfs" /usr/lib/laden-os/install-finalize prepare
+    log "creating the user account"
+    create_user "$rootfs"
+    log "generating identity and initramfs"
+    chroot_do "$rootfs" /usr/lib/laden-os/install-finalize finish
+    local method=image
+    if [[ $mode == device ]]; then
+        method=device
+    fi
+    if ! grep -q '^method=' "$rootfs/etc/laden-os/install.stamp"; then
+        printf 'method=%s\nuser=%s\nhostname=%s\nserial_getty=%s\n' \
+            "$method" "$user_name" "$hostname" "$serial_getty" \
+            >>"$rootfs/etc/laden-os/install.stamp"
+    fi
+}
+
+assert_installed_root() {
+    local rootfs=$1
+    local id finger
+    id=$(tr -d '[:space:]' <"$rootfs/etc/machine-id")
+    if [[ ! $id =~ ^[0-9a-f]{32}$ ]]; then
+        die "machine-id was not generated"
+    fi
+    if [[ -f /etc/machine-id ]]; then
+        local host_id
+        host_id=$(tr -d '[:space:]' </etc/machine-id)
+        if [[ $id == "$host_id" ]]; then
+            die "machine-id matches the machine that ran the installer"
+        fi
+    fi
+    if [[ -f $rootfs/etc/plasmalogin.conf || -f $rootfs/etc/sudoers.d/10-laden-live ]]; then
+        die "live autologin or the live sudo rule is still present"
+    fi
+    if grep -q '^live:' "$rootfs/etc/passwd"; then
+        die "the live account is still present"
+    fi
+    if [[ -f $rootfs/etc/sudoers.d/10-laden-dev || -f $rootfs/etc/laden-os/dev-vm.conf ]]; then
+        die "development access files are still present"
+    fi
+    if [[ -e $rootfs/etc/mkinitcpio.conf.d/archiso.conf ]]; then
+        die "the archiso initramfs config is still present"
+    fi
+    finger=$(tr -d '[:space:]' <"$rootfs/var/lib/laden-os/service-identity.fingerprint")
+    if [[ -z $finger || $finger == missing ]]; then
+        die "service identity was not generated"
+    fi
+    chroot_do "$rootfs" openssl pkey -in /var/lib/laden-os/service-identity.key -noout
+    local got
+    got=$(sha256sum "$rootfs/usr/share/backgrounds/laden/laden-os-lets-do-it-v2-7680x4320.png" | awk '{ print $1 }')
+    if [[ $got != b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f ]]; then
+        die "installed wallpaper hash mismatch"
+    fi
+    if [[ ! -s $rootfs/boot/vmlinuz-linux || ! -s $rootfs/boot/initramfs-linux.img ]]; then
+        die "kernel or initramfs is missing"
+    fi
+    if chroot_do "$rootfs" lsinitcpio /boot/initramfs-linux.img | grep -q 'archiso'; then
+        die "initramfs still contains the archiso hook"
+    fi
+    local link
+    link=$(readlink "$rootfs/etc/systemd/system/sshd.service" || true)
+    if [[ $link != /dev/null ]]; then
+        die "sshd is not masked"
+    fi
+    if compgen -G "$rootfs/etc/ssh/ssh_host_*" >/dev/null; then
+        die "SSH host keys were left on the install"
+    fi
+    log "install root checks passed"
+    printf '%s\n' "$id" "$finger"
+}
+
+mcopy_esp() {
+    local esp=$1 src=$2
+    local rel
+    (cd "$src" && find . -type d -print | sort) | while IFS= read -r rel; do
+        rel=${rel#./}
+        [[ -n $rel ]] || continue
+        mmd -i "$esp" "::/$rel" >/dev/null 2>&1 || true
+    done
+    (cd "$src" && find . -type f -print | sort) | while IFS= read -r rel; do
+        rel=${rel#./}
+        mcopy -i "$esp" -o "$src/$rel" "::/$rel"
+    done
+}
+
+refuse_image_target() {
+    local path=$1
+    case "$path" in
+        /dev/*|*/dev/*) die "refusing a device path: $path" ;;
+    esac
+    if [[ -L $path || -b $path || -c $path ]]; then
+        die "refusing a symlink or device node: $path"
+    fi
+    local real allowed devraw
+    mkdir -p "$(dirname "$path")"
+    real=$(readlink -f "$path")
+    allowed=$(readlink -f "$image_root")
+    case "$real" in
+        "$allowed"/*) ;;
+        *) die "image path is outside $image_root" ;;
+    esac
+    if [[ -n $repo ]]; then
+        devraw=$(readlink -f "$repo/build/dev-vm/laden-os-dev.raw" 2>/dev/null || true)
+        if [[ -n $devraw && $real == "$devraw" ]]; then
+            die "refusing the development VM disk"
+        fi
+    fi
+}
+
+cmd_image() {
+    [[ -n $repo && -n $iso && -n $profile && -n $unsquash && -n $image_root ]] || die "--image needs repo, iso, profile, unsquash, and image-root"
+    [[ -f $iso && ! -b $iso ]] || die "ISO must be a regular file"
+    [[ -x $unsquash ]] || die "unsquashfs is missing"
+    [[ -d $profile/airootfs ]] || die "profile is missing"
+    case "$iso" in
+        /dev/*) die "refusing an ISO device path" ;;
+    esac
+    refuse_image_target "$image"
+    local ready=$image_root/READY
+    if [[ -f $ready && -s $image && $replace != 1 ]]; then
+        log "finished image already exists"
+        exit 0
+    fi
+    local avail_kb
+    avail_kb=$(df -Pk "$image_root" | awk 'NR==2 { print $4 }')
+    if (( avail_kb < 40 * 1024 * 1024 )); then
+        die "need at least 40 GiB free. Have ${avail_kb} KiB."
+    fi
+    local work=$image_root/staging
+    local rootfs=$work/root
+    mkdir -p "$work" "$image_root/logs"
+    extract_iso "$rootfs" "$work"
+
+    local raw=$image
+    rm -f "$raw" "$ready"
+    truncate -s "$disk_size" "$raw"
+    parted -s "$raw" mklabel gpt
+    parted -s "$raw" mkpart ESP fat32 1MiB 513MiB
+    parted -s "$raw" set 1 esp on
+    parted -s "$raw" name 1 laden-esp
+    parted -s "$raw" mkpart swap linux-swap 513MiB 2561MiB
+    parted -s "$raw" name 2 laden-swap
+    parted -s "$raw" mkpart root ext4 2561MiB 100%
+    parted -s "$raw" name 3 laden-root
+
+    local esp_start esp_size swap_start swap_size root_start root_size
+    # shellcheck disable=SC2046
+    read -r esp_start esp_size swap_start swap_size root_start root_size < <(parted -m -s "$raw" unit B print | awk -F: '
+        $1 == "1" { esp_start = $2; esp_size = $4 }
+        $1 == "2" { swap_start = $2; swap_size = $4 }
+        $1 == "3" { root_start = $2; root_size = $4 }
+        END {
+            gsub(/B/, "", esp_start); gsub(/B/, "", esp_size)
+            gsub(/B/, "", swap_start); gsub(/B/, "", swap_size)
+            gsub(/B/, "", root_start); gsub(/B/, "", root_size)
+            print esp_start, esp_size, swap_start, swap_size, root_start, root_size
+        }
+    ')
+    if (( esp_start % 1048576 != 0 || swap_start % 1048576 != 0 || root_start % 1048576 != 0 )); then
+        die "partition start is not 1 MiB aligned"
+    fi
+    log "ESP size=$esp_size swap size=$swap_size root size=$root_size"
+
+    local esp=$work/esp.img swap=$work/swap.img
+    truncate -s "$esp_size" "$esp"
+    mkfs.fat -F 32 -n LADENESP "$esp"
+    local esp_uuid root_uuid swap_uuid
+    esp_uuid=$(blkid -p -s UUID -o value "$esp")
+    root_uuid=$(uuidgen)
+    swap_uuid=$(uuidgen)
+    [[ -n $esp_uuid ]] || die "ESP has no UUID"
+    write_fstab "$rootfs" "$root_uuid" "$esp_uuid" "$swap_uuid"
+
+    mount_target "$rootfs"
+    configure_root "$rootfs"
+    local identity id finger
+    identity=$(assert_installed_root "$rootfs") || die "install root checks failed"
+    id=$(printf '%s\n' "$identity" | awk 'NR==1 { print $0 }')
+    finger=$(printf '%s\n' "$identity" | awk 'NR==2 { print $0 }')
+    if [[ -z $id || -z $finger ]]; then
+        die "install root checks did not report an identity"
+    fi
+    umount_target "$rootfs"
+    if findmnt -R "$rootfs" >/dev/null 2>&1; then
+        die "refusing to image a root that still has mounts"
+    fi
+
+    local loader=$work/loader-tree
+    rm -rf "$loader"
+    write_loader "$loader" "$root_uuid" \
+        "$rootfs/usr/lib/systemd/boot/efi/systemd-bootx64.efi" \
+        "$rootfs/boot/vmlinuz-linux" \
+        "$rootfs/boot/initramfs-linux.img"
+    mcopy_esp "$esp" "$loader"
+
+    local free_kb
+    free_kb=$(df -Pk "$image_root" | awk 'NR==2 { print $4 }')
+    if (( free_kb < 12 * 1024 * 1024 )); then
+        die "less than 12 GiB free before writing the root filesystem"
+    fi
+    log "writing the ext4 root"
+    local rootimg=$work/root.img
+    truncate -s "$root_size" "$rootimg"
+    mkfs.ext4 -F -L laden-root -U "$root_uuid" -d "$rootfs" -m 1 "$rootimg"
+    log "writing the swap image"
+    truncate -s "$swap_size" "$swap"
+    mkswap -L laden-swap -U "$swap_uuid" "$swap" >/dev/null
+    log "removing the unpacked root"
+    rm -rf "$rootfs" "$loader"
+    log "copying filesystems into the disk image"
+    dd if="$esp" of="$raw" bs=1M seek=$((esp_start / 1048576)) conv=sparse,notrunc status=progress
+    dd if="$swap" of="$raw" bs=1M seek=$((swap_start / 1048576)) conv=sparse,notrunc status=progress
+    dd if="$rootimg" of="$raw" bs=1M seek=$((root_start / 1048576)) conv=sparse,notrunc status=progress
+    rm -f "$esp" "$swap" "$rootimg"
+    sync
+    cat >"$image_root/disk-uuid" <<EOF
+root=$root_uuid
+esp=$esp_uuid
+swap=$swap_uuid
+machine_id=$id
+fingerprint=$finger
+user=$user_name
+EOF
+    cat >"$ready" <<EOF
+disk=$image
+machine_id=$id
+fingerprint=$finger
+user=$user_name
+hostname=$hostname
+serial_getty=$serial_getty
+EOF
+    log "image install finished"
+}
+
+part_node() {
+    local disk=$1 num=$2
+    case "$disk" in
+        *nvme*|*mmcblk*|*loop*) printf '%s\n' "${disk}p${num}" ;;
+        *) printf '%s\n' "${disk}${num}" ;;
+    esac
+}
+
+cmd_device() {
+    [[ $erase == 1 ]] || die "--device requires --erase"
+    [[ -f /etc/laden-os/product.conf ]] || die "refusing a device install outside Laden OS"
+    [[ -d /run/archiso ]] || die "refusing a device install outside the live image"
+    case "$device" in
+        /dev/*) ;;
+        *) die "refusing a non-device path" ;;
+    esac
+    [[ -b $device && ! -L $device ]] || die "not a whole-disk block device"
+    local type
+    type=$(lsblk -dn -o TYPE "$device" | awk 'NR==1 { print $1 }')
+    [[ $type == disk ]] || die "$device is not a whole disk"
+    if lsblk -nr -o MOUNTPOINTS "$device" | grep -q '[^[:space:]]'; then
+        die "$device has a mounted filesystem"
+    fi
+    local guard=/usr/lib/laden-os/install-guard
+    [[ -x $guard ]] || die "install-guard is missing"
+    local ignored
+    ignored=$("$guard" --ignored || true)
+    if grep -Fxq "$device" <<<"$ignored"; then
+        die "$device is protected or holds the running system"
+    fi
+    local sfs=/run/archiso/bootmnt/laden/x86_64/airootfs.sfs
+    [[ -f $sfs ]] || die "the live squashfs is not mounted"
+    command -v unsquashfs >/dev/null || die "unsquashfs is not installed"
+    log "partitioning $device"
+    parted -s "$device" mklabel gpt
+    parted -s "$device" mkpart ESP fat32 1MiB 513MiB
+    parted -s "$device" set 1 esp on
+    parted -s "$device" name 1 laden-esp
+    parted -s "$device" mkpart swap linux-swap 513MiB 2561MiB
+    parted -s "$device" name 2 laden-swap
+    parted -s "$device" mkpart root ext4 2561MiB 100%
+    parted -s "$device" name 3 laden-root
+    partprobe "$device" || udevadm settle || sleep 2
+    local esp swap rootp
+    esp=$(part_node "$device" 1)
+    swap=$(part_node "$device" 2)
+    rootp=$(part_node "$device" 3)
+    [[ -b $esp && -b $swap && -b $rootp ]] || die "partition nodes did not appear"
+    mkfs.fat -F 32 -n LADENESP "$esp"
+    mkswap -L laden-swap "$swap" >/dev/null
+    mkfs.ext4 -F -L laden-root "$rootp"
+    local esp_uuid swap_uuid root_uuid
+    esp_uuid=$(blkid -p -s UUID -o value "$esp")
+    swap_uuid=$(blkid -p -s UUID -o value "$swap")
+    root_uuid=$(blkid -p -s UUID -o value "$rootp")
+    local mnt
+    mnt=$(mktemp -d /tmp/laden-install.XXXX)
+    mount "$rootp" "$mnt"
+    if ! unsquashfs -f -d "$mnt" "$sfs"; then
+        unsquashfs -f -d "$mnt" -no-xattrs "$sfs"
+    fi
+    if [[ -n $repo && -d ${profile:-}/airootfs ]]; then
+        overlay_profile "$mnt"
+    fi
+    write_fstab "$mnt" "$root_uuid" "$esp_uuid" "$swap_uuid"
+    mount_target "$mnt"
+    mkdir -p "$mnt/boot"
+    mount "$esp" "$mnt/boot"
+    configure_root "$mnt"
+    assert_installed_root "$mnt" >/dev/null
+    local loader
+    loader=$(mktemp -d /tmp/laden-loader.XXXX)
+    write_loader "$loader" "$root_uuid" \
+        "$mnt/usr/lib/systemd/boot/efi/systemd-bootx64.efi" \
+        "$mnt/boot/vmlinuz-linux" \
+        "$mnt/boot/initramfs-linux.img"
+    cp -a "$loader/." "$mnt/boot/"
+    rm -rf "$loader"
+    umount_target "$mnt"
+    umount "$mnt" || umount -l "$mnt" || true
+    rmdir "$mnt" || true
+    log "device install finished on $device"
+}
+
+ROOTFS_FOR_TRAP=
+trap 'if [[ -n ${ROOTFS_FOR_TRAP:-} ]]; then umount_target "$ROOTFS_FOR_TRAP" || true; fi' EXIT
+
+if [[ $mode == image ]]; then
+    ROOTFS_FOR_TRAP=$image_root/staging/root
+    cmd_image
+else
+    cmd_device
+fi

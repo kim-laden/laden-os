@@ -1,0 +1,8 @@
+# Disks the installer must never offer. Matched exactly, ignoring case.
+# The Hynix SKU is the Acer machine's main drive. The Kingston is this
+# workstation's system disk. A volume label of Acer is refused as well.
+serial SME8N00091140886D
+model HFS001TEJ9X125N
+serial 50026B768761A57F
+model KINGSTON SNV3S1000G
+label Acer

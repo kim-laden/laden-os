@@ -1,0 +1,13 @@
+[General]
+ColorScheme=BreezeDark
+TerminalApplication=lcp
+TerminalService=lcp.desktop
+
+[KDE]
+LookAndFeelPackage=org.kde.breezedark.desktop
+
+[Icons]
+Theme=breeze-dark
+
+[UiSettings]
+ColorScheme=BreezeDark

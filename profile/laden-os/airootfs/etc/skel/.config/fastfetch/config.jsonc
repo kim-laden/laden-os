@@ -1,0 +1,26 @@
+{
+  "logo": {
+    "type": "small",
+    "source": "linux"
+  },
+  "display": {
+    "separator": "  "
+  },
+  "modules": [
+    "title",
+    "os",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
+    "de",
+    "wm",
+    "terminal",
+    "cpu",
+    "memory",
+    {
+      "type": "custom",
+      "format": "Let's do it!"
+    }
+  ]
+}

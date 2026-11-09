@@ -1,0 +1,12 @@
+[Unit]
+Description=Apply Laden OS keyboard shortcuts
+After=plasma-workspace.target plasma-plasmashell.service
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laden-os/apply-shortcuts
+RemainAfterExit=yes
+
+[Install]
+WantedBy=plasma-workspace.target

@@ -1,0 +1,77 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Open the Laden OS installer. Protected disks are removed before the window
+# is drawn. This does not partition a disk by itself.
+set -euo pipefail
+
+if [[ $(id -u) -ne 0 ]]; then
+    # pkexec keeps the Wayland display only when the install action allows a GUI.
+    exec pkexec /usr/bin/laden-install
+fi
+
+if [[ -z ${WAYLAND_DISPLAY:-} && -z ${DISPLAY:-} ]]; then
+    echo "The installer has no display. Start Install Laden OS from the live desktop." >&2
+    exit 1
+fi
+if [[ -n ${WAYLAND_DISPLAY:-} ]]; then
+    export QT_QPA_PLATFORM=wayland
+fi
+printf '%s display=%s wayland=%s runtime=%s\n' \
+    "$(date -Is)" "${DISPLAY:-}" "${WAYLAND_DISPLAY:-}" "${XDG_RUNTIME_DIR:-}" \
+    >>/tmp/laden-install.log
+
+guard=/usr/lib/laden-os/install-guard
+template=/usr/share/laden-os/installer/partition.conf
+dest=/etc/calamares/modules/partition.conf
+sfs=/run/archiso/bootmnt/laden/x86_64/airootfs.sfs
+list=/run/laden-os/install-ignored
+
+if [[ ! -f $template || ! -x $guard ]]; then
+    echo "Installer files are missing." >&2
+    exit 1
+fi
+
+mkdir -p /run/laden-os /etc/calamares/modules
+"$guard" --ignored >"$list"
+identity=$("$guard" --identity || true)
+
+python3 - "$template" "$dest" "$list" <<'PY'
+import pathlib, sys
+template, dest, listing = sys.argv[1:]
+devices = [
+    line.strip()
+    for line in pathlib.Path(listing).read_text(encoding="utf-8").splitlines()
+    if line.startswith("/dev/")
+]
+body = pathlib.Path(template).read_text(encoding="utf-8")
+needle = "ignored: []"
+block = "ignored:\n" + "".join(f"  - {device}\n" for device in devices)
+if not devices:
+    block = "ignored: []\n"
+if needle not in body:
+    raise SystemExit("partition template has no ignored list")
+pathlib.Path(dest).write_text(body.replace(needle, block.rstrip("\n"), 1), encoding="utf-8")
+PY
+
+"$guard"
+while IFS= read -r device; do
+    [[ -n $device && -b $device ]] || continue
+    if blockdev --setro "$device"; then
+        echo "Write-protected ${device}."
+    else
+        echo "Could not write-protect ${device}. It stays off the installer list." >&2
+    fi
+done <<<"$identity"
+
+if [[ ! -x /usr/bin/calamares ]]; then
+    echo "Calamares is not installed in this system yet." >&2
+    exit 1
+fi
+if [[ ! -s $list ]]; then
+    echo "No protected disk was found on this machine. Other disks can be used."
+fi
+if [[ ! -f $sfs ]]; then
+    echo "This is not the live image, so the copy step has no squashfs to install." >&2
+    echo "The window still opens. Protected disks stay off the list." >&2
+fi
+exec calamares

@@ -1,0 +1,5 @@
+# Local live console. The password is locked, so this is not a network credential.
+# The person at the keyboard can administer the live session.
+# Remove this file on an installed system.
+live ALL=(ALL:ALL) NOPASSWD: ALL
+Defaults:live env_keep += "DISPLAY XAUTHORITY WAYLAND_DISPLAY XDG_RUNTIME_DIR XDG_SESSION_TYPE QT_QPA_PLATFORM"

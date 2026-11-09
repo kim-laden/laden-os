@@ -1,0 +1,70 @@
+#!/bin/bash
+# SPDX-License-Identifier: MIT
+# Apply the v2 8K artwork once per home directory, on every screen.
+# Lower resolutions stay on disk for a manual override. This script never
+# selects them. A later login does not run again, so a user's own wallpaper
+# is left alone after the first successful apply.
+set -uo pipefail
+
+default=/usr/share/backgrounds/laden/laden-os-lets-do-it-v2-7680x4320.png
+expected=b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f
+config_home=${XDG_CONFIG_HOME:-$HOME/.config}
+marker=$config_home/laden-os/wallpaper-initialized
+logfile=$config_home/laden-os/wallpaper.log
+
+log() {
+    printf '%s\n' "$*" >&2
+    logger -t laden-os -- "$*" || true
+    mkdir -p "$(dirname "$logfile")"
+    printf '%s %s\n' "$(date -Is)" "$*" >>"$logfile"
+}
+
+if [[ -f $marker ]]; then
+    exit 0
+fi
+
+if [[ ! -f $default ]]; then
+    log "default wallpaper missing: $default"
+    exit 1
+fi
+
+got=$(sha256sum "$default" | awk 'NR==1 { print $1 }') || {
+    log "could not hash the default wallpaper"
+    exit 1
+}
+if [[ $got != "$expected" ]]; then
+    log "default wallpaper hash mismatch: got $got"
+    exit 1
+fi
+
+ready=0
+for _ in $(seq 1 120); do
+    if busctl --user --no-pager status org.kde.plasmashell >/dev/null 2>&1; then
+        ready=1
+        break
+    fi
+    sleep 1
+done
+if (( ready == 0 )); then
+    log "plasmashell did not become ready; wallpaper was not applied"
+    exit 1
+fi
+
+applied=0
+for _ in $(seq 1 60); do
+    if plasma-apply-wallpaperimage -f preserveAspectCrop "$default"; then
+        applied=1
+        break
+    fi
+    log "plasma-apply-wallpaperimage failed; retrying"
+    sleep 2
+done
+if (( applied == 0 )); then
+    log "could not apply the default wallpaper"
+    exit 1
+fi
+
+mkdir -p "$(dirname "$marker")"
+printf 'default=%s\nsha256=%s\nfill=preserveAspectCrop\n' "$default" "$expected" >"$marker"
+log "applied default wallpaper $default"
+exit 0

@@ -1,0 +1,16 @@
+# Build outputs (ISOs, work dirs)
+build/
+*.iso
+*.qcow2
+*.img
+# Not public branding
+laden-emerald-hp-*.png
+# Backups and secrets
+*.bak*
+*.pem
+*.key
+id_*
+.env
+!tests/fixtures/*.pem
+__pycache__/
+*.pyc

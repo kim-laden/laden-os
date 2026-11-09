@@ -1,0 +1,5 @@
+# Reviewed upstream test keys. These are not Laden OS keys and not host keys.
+# GnuTLS 3.8.13-3 embeds published self-test PEM blocks in the files below.
+# A new path or a changed package name must be reviewed before it is added.
+private-key usr/bin/gnutls-cli
+private-key usr/lib/libgnutls.so.30.42.0

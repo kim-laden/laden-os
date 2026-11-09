@@ -1,0 +1,10 @@
+{
+  "HomepageLocation": "https://laden.no",
+  "HomepageIsNewTabPage": false,
+  "ShowHomeButton": true,
+  "RestoreOnStartup": 4,
+  "RestoreOnStartupURLs": ["https://laden.no"],
+  "BookmarkBarEnabled": false,
+  "DefaultBrowserSettingEnabled": true,
+  "BrowserThemeColor": "#1b1e22"
+}

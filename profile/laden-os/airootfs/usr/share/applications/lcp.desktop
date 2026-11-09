@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=LCP
+GenericName=Terminal
+Comment=The CockPit, the Laden OS terminal
+Exec=lcp
+Icon=the-cockpit
+Terminal=false
+Categories=System;TerminalEmulator;
+Keywords=terminal;shell;cockpit;lcp;wezterm;fish;
+StartupWMClass=the-cockpit
+StartupNotify=true
+X-KDE-Shortcuts=Alt+T

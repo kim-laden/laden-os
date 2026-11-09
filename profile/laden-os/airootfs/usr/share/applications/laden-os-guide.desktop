@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Laden OS Guide
+Comment=Let's do it!
+Exec=chromium --new-window /usr/share/doc/laden-os/welcome.html
+Icon=help-about
+Terminal=false
+Categories=Documentation;
+StartupNotify=false

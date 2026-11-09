@@ -1,0 +1,123 @@
+# Lab toolkit for the live image.
+# Kali tools come first, then the BlackArch forensic tools people actually open.
+# Arch package names win when the same name exists in BlackArch.
+# strap.sh is not run. The full BlackArch catalogue is not installed.
+# Denial-of-service, keylogger, and backdoor groups are not selected.
+#
+# Pinned on purpose:
+#   jdk-openjdk     one Java for Ghidra and ZAP. Burp Suite ships its own runtime.
+#   jdk17-openjdk   Autopsy 4.23 requires Java 17. It does not use the default JDK.
+#   opencl-mesa     pinned in packages.x86_64 so hashcat does not stop and ask
+#                   which opencl-driver provider to use.
+#
+# Left out because the package is bulk, not the tool:
+#   responder       BlackArch hard-depends on mingw-w64-gcc (~1.2 GiB installed)
+#                   for a 4 MiB Python program.
+#   seclists        ~1.9 GiB of wordlists. John ships a small list. crunch can
+#                   generate more. Add seclists later with pacman if you need it.
+#   bloodhound      the desktop app pulls Neo4j and a second JDK (~1 GiB).
+#                   The collectors below are the part people run.
+#   blackarch-officials, dirb, dirbuster, skipfish, wfuzz, maltego, spiderfoot,
+#   empire, powersploit, nishang, mimikatz, beef, set
+#                   catalogue filler or tools the ones below replaced.
+#                   wfuzz also pulls a wxPython GUI the other fuzzers do not need.
+
+blackarch-keyring
+blackarch-mirrorlist
+jdk-openjdk
+jdk17-openjdk
+
+# Kali — reconnaissance and Active Directory
+nmap
+zenmap
+masscan
+naabu
+amass
+subfinder
+httpx
+theharvester
+dnsrecon
+netdiscover
+arp-scan
+nbtscan
+enum4linux-ng
+smbmap
+smbclient
+impacket
+netexec
+bloodhound-python
+bloodhound-ce-python
+certipy
+kerbrute
+
+# Kali — web
+burpsuite
+zaproxy
+sqlmap
+gobuster
+ffuf
+feroxbuster
+nikto
+wpscan
+nuclei
+whatweb
+wafw00f
+testssl.sh
+
+# Kali — passwords and wireless
+john
+hashcat
+hashcat-utils
+hydra
+hashid
+crunch
+aircrack-ng
+hcxtools
+hcxdumptool
+wifite
+reaver
+bully
+pixiewps
+kismet
+bettercap
+
+# Kali — frameworks and the small tools they are used with
+metasploit
+exploitdb
+proxychains-ng
+macchanger
+openbsd-netcat
+socat
+mitmproxy
+
+# BlackArch — forensics and reverse engineering
+sleuthkit
+testdisk
+autopsy
+binwalk
+foremost
+scalpel
+volatility3
+perl-image-exiftool
+bulk-extractor
+yara
+ssdeep
+dc3dd
+dcfldd
+libewf
+afflib
+guymager
+hashdeep
+regripper
+python-plaso
+chkrootkit
+rkhunter
+unhide
+wireshark-qt
+wireshark-cli
+tcpdump
+radare2
+iaito
+ghidra
+chntpw
+stegseek
