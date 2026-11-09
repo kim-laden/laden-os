@@ -7,7 +7,7 @@ Rectangle {
 
     Image {
         anchors.fill: parent
-        source: "file:///usr/share/backgrounds/laden/laden-os-lets-do-it-v2-1920x1080.png"
+        source: "file:///usr/share/backgrounds/laden/laden-os-lets-do-it-v4-1920x1080.png"
         fillMode: Image.PreserveAspectCrop
         opacity: 0.62
     }

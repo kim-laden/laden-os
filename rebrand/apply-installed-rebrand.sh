@@ -293,15 +293,25 @@ apply_desktop() {
     install -m 0644 "${ASSETS}/LadenDark.colors" /usr/share/color-schemes/LadenDark.colors
   fi
 
-  # Wallpapers: backgrounds/laden (all v2 + keep v1) and Plasma wallpaper package
+  # Wallpapers: backgrounds/laden (v1+v2+v3+v4; v4 default) and Plasma wallpaper package
   if [[ "${DRY_RUN}" -eq 1 ]]; then
     echo "DRY-RUN: install wallpapers from branding/ into /usr/share/backgrounds/laden and /usr/share/wallpapers/LadenOS"
   else
     mkdir -p /usr/share/backgrounds/laden
     mkdir -p /usr/share/wallpapers/LadenOS/contents/images
-    # v2 (default) + v1 (keep alongside, never overwrite v1 if already custom — copy once)
+    # v4 default; keep v1+v2+v3 alongside (never delete old files)
     local f
     for f in \
+      laden-os-lets-do-it-v4-7680x4320.png \
+      laden-os-lets-do-it-v4-3840x2160.png \
+      laden-os-lets-do-it-v4-3440x1440.png \
+      laden-os-lets-do-it-v4-2560x1440.png \
+      laden-os-lets-do-it-v4-1920x1080.png \
+      laden-os-lets-do-it-v3-7680x4320.png \
+      laden-os-lets-do-it-v3-3840x2160.png \
+      laden-os-lets-do-it-v3-3440x1440.png \
+      laden-os-lets-do-it-v3-2560x1440.png \
+      laden-os-lets-do-it-v3-1920x1080.png \
       laden-os-lets-do-it-v2-7680x4320.png \
       laden-os-lets-do-it-v2-3840x2160.png \
       laden-os-lets-do-it-v2-3440x1440.png \
@@ -315,25 +325,17 @@ apply_desktop() {
       [[ -f "${BRANDING}/${f}" ]] || continue
       install -m 0644 "${BRANDING}/${f}" "/usr/share/backgrounds/laden/${f}"
     done
-    # Plasma images by resolution name
-    [[ -f "${BRANDING}/laden-os-lets-do-it-v2-7680x4320.png" ]] && \
-      install -m 0644 "${BRANDING}/laden-os-lets-do-it-v2-7680x4320.png" \
-        /usr/share/wallpapers/LadenOS/contents/images/7680x4320.png
-    [[ -f "${BRANDING}/laden-os-lets-do-it-v2-3840x2160.png" ]] && \
-      install -m 0644 "${BRANDING}/laden-os-lets-do-it-v2-3840x2160.png" \
-        /usr/share/wallpapers/LadenOS/contents/images/3840x2160.png
-    [[ -f "${BRANDING}/laden-os-lets-do-it-v2-1920x1080.png" ]] && \
-      install -m 0644 "${BRANDING}/laden-os-lets-do-it-v2-1920x1080.png" \
-        /usr/share/wallpapers/LadenOS/contents/images/1920x1080.png
-    [[ -f "${BRANDING}/laden-os-lets-do-it-v2-3440x1440.png" ]] && \
-      install -m 0644 "${BRANDING}/laden-os-lets-do-it-v2-3440x1440.png" \
-        /usr/share/wallpapers/LadenOS/contents/images/3440x1440.png
+    # Plasma images by resolution name (v4 default; symlinks preferred via package)
+    for s in 7680x4320 3840x2160 3440x1440 2560x1440 1920x1080; do
+      [[ -f "${BRANDING}/laden-os-lets-do-it-v4-${s}.png" ]] || continue
+      install -m 0644 "${BRANDING}/laden-os-lets-do-it-v4-${s}.png" \
+        "/usr/share/wallpapers/LadenOS/contents/images/${s}.png"
+    done
     install -m 0644 "${ASSETS}/wallpapers/LadenOS/metadata.json" \
       /usr/share/wallpapers/LadenOS/metadata.json
-    # checksums for verification
-    [[ -f "${BRANDING}/SHA256SUMS-wallpapers-v2.txt" ]] && \
-      install -m 0644 "${BRANDING}/SHA256SUMS-wallpapers-v2.txt" \
-        /usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v2.txt
+    for sum in SHA256SUMS-wallpapers.txt SHA256SUMS-wallpapers-v2.txt SHA256SUMS-wallpapers-v3.txt SHA256SUMS-wallpapers-v4.txt SHA256SUMS-wallpapers-v4-ship.txt; do
+      [[ -f "${BRANDING}/${sum}" ]] && install -m 0644 "${BRANDING}/${sum}" "/usr/share/backgrounds/laden/${sum}"
+    done
   fi
 
   # /etc/xdg defaults for new users

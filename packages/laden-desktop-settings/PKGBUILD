@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=4
+pkgrel=5
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'

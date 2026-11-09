@@ -30,3 +30,7 @@ private-keys-v1.d/
 packages/laden-update/cachy-update/
 packages/laden-scheduler/scx-manager/
 packages/laden-kernel-manager/kernel-manager/
+
+# 32K wallpaper masters (shipped via local [laden] package, not git)
+branding/*30720x17280*
+branding/*-deep-*.png

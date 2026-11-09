@@ -20,9 +20,9 @@ done
 
 [[ "${EUID}" -ne 0 ]] || die "Do NOT run apply-user-rebrand.sh as root"
 
-WP8K="/usr/share/backgrounds/laden/laden-os-lets-do-it-v2-7680x4320.png"
+WP8K="/usr/share/backgrounds/laden/laden-os-lets-do-it-v4-7680x4320.png"
 if [[ ! -f "${WP8K}" ]]; then
-  WP8K="${BRANDING}/laden-os-lets-do-it-v2-7680x4320.png"
+  WP8K="${BRANDING}/laden-os-lets-do-it-v4-7680x4320.png"
 fi
 
 log "=== User rebrand for ${USER} (dry_run=${DRY_RUN}) ==="

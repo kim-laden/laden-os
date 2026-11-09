@@ -2,7 +2,7 @@
 # Assets come from the project tree (rebrand/assets, branding/), not duplicated here.
 pkgname=laden-branding
 pkgver=2026.11.09
-pkgrel=2
+pkgrel=3
 pkgdesc='Laden OS identity, logos, Limine splash, Plymouth theme, wallpapers and fastfetch logo'
 arch=('any')
 url='https://laden.no'
@@ -10,7 +10,8 @@ license=('LicenseRef-LadenAS')
 depends=('bash' 'util-linux')
 optdepends=('plymouth: Laden boot animation'
             'fastfetch: Laden logo in fastfetch'
-            'limine: Laden boot splash')
+            'limine: Laden boot splash'
+            'laden-wallpapers-32k: optional 32K deep-zoom wallpaper master')
 backup=('etc/xdg/fastfetch/config.jsonc')
 install="${pkgname}.install"
 source=('laden-apply-branding'
@@ -28,14 +29,12 @@ _walls="${_root}/branding"
 package() {
   local d="${pkgdir}"
 
-  # Identity content (applied to /etc and /usr/lib by laden-apply-branding)
   install -Dm0644 "${_assets}/os-identity/os-release"  "${d}/usr/share/laden/os-identity/os-release"
   install -Dm0644 "${_assets}/os-identity/lsb-release" "${d}/usr/share/laden/os-identity/lsb-release"
   install -Dm0755 laden-apply-branding "${d}/usr/lib/laden/laden-apply-branding"
   install -Dm0644 -t "${d}/usr/share/libalpm/hooks" \
     50-laden-identity.hook 55-laden-limine-splash.hook 56-laden-plymouth.hook
 
-  # Icons
   local s
   for s in 16 22 24 32 48 64 128 256 512; do
     install -Dm0644 "${_assets}/icons/hicolor/${s}x${s}/apps/laden-os.png" \
@@ -45,30 +44,42 @@ package() {
   install -Dm0644 "${_assets}/icons/laden-os.png" "${d}/usr/share/pixmaps/laden-os.png"
   install -Dm0644 "${_assets}/icons/laden-os.svg" "${d}/usr/share/pixmaps/laden-os.svg"
 
-  # Limine splash (copied to /boot by laden-apply-branding)
   install -Dm0644 "${_assets}/limine/limine-splash.png" "${d}/usr/share/laden/limine-splash.png"
 
-  # Plymouth theme
   install -dm0755 "${d}/usr/share/plymouth/themes/laden"
   cp -a --no-preserve=ownership "${_assets}/plymouth/laden/." "${d}/usr/share/plymouth/themes/laden/"
   find "${d}/usr/share/plymouth/themes/laden" -type f -exec chmod 0644 {} +
 
-  # Wallpapers: v1 and v2 side by side (distinct names, v1 never overwritten)
-  local f
+  # Wallpapers: v1 + v2 + v3 + v4 (exclude 32K deep master — optional package)
+  local f bn
   for f in "${_walls}"/laden-os-lets-do-it-*.png; do
-    install -Dm0644 "$f" "${d}/usr/share/backgrounds/laden/$(basename "$f")"
+    bn=$(basename "$f")
+    case "$bn" in
+      *30720*|*deep*) continue ;;
+    esac
+    install -Dm0644 "$f" "${d}/usr/share/backgrounds/laden/${bn}"
   done
-  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers.txt"    "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers.txt"
-  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers-v2.txt" "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v2.txt"
-  # Plasma wallpaper package (v2 is the default; 8K largest) — symlinks, no duplicate data
+  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers.txt"      "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers.txt"
+  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers-v2.txt"   "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v2.txt"
+  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers-v3.txt"   "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v3.txt"
+  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers-v4.txt"   "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v4.txt"
+  install -Dm0644 "${_walls}/SHA256SUMS-wallpapers-v4-ship.txt" "${d}/usr/share/backgrounds/laden/SHA256SUMS-wallpapers-v4-ship.txt"
+
+  # Plasma wallpaper package — v4 default (up to 8K + ultrawide + qhd)
   install -Dm0644 "${_assets}/wallpapers/LadenOS/metadata.json" "${d}/usr/share/wallpapers/LadenOS/metadata.json"
   install -dm0755 "${d}/usr/share/wallpapers/LadenOS/contents/images"
-  for s in 7680x4320 3840x2160 3440x1440 1920x1080; do
-    ln -s "/usr/share/backgrounds/laden/laden-os-lets-do-it-v2-${s}.png" \
+  for s in 7680x4320 3840x2160 3440x1440 2560x1440 1920x1080; do
+    ln -s "/usr/share/backgrounds/laden/laden-os-lets-do-it-v4-${s}.png" \
       "${d}/usr/share/wallpapers/LadenOS/contents/images/${s}.png"
   done
 
-  # fastfetch: Laden logo + system-wide default config (ID=ladenos has no builtin logo)
+  # SDDM breeze background override (login screen)
+  install -Dm0644 /dev/stdin "${d}/usr/share/sddm/themes/breeze/theme.conf.user" <<'SDDM'
+[General]
+background=/usr/share/backgrounds/laden/laden-os-lets-do-it-v4-3840x2160.png
+type=image
+SDDM
+
   install -Dm0644 logo.txt     "${d}/usr/share/laden/fastfetch/logo.txt"
   install -Dm0644 config.jsonc "${d}/usr/share/laden/fastfetch/config.jsonc"
   install -Dm0644 config.jsonc "${d}/etc/xdg/fastfetch/config.jsonc"

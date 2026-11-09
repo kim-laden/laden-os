@@ -1,14 +1,26 @@
 # Laden OS branding wallpapers
 
-Ship the four v2 files under `/usr/share/backgrounds/laden/`.
+Defaults and optional sizes under `/usr/share/backgrounds/laden/`.
+Plasma package `/usr/share/wallpapers/LadenOS/` points at the **current default** (v4).
 
-| File | Size | Role | SHA-256 |
-|------|------|------|---------|
-| `laden-os-lets-do-it-v2-7680x4320.png` | 7680×4320 | **OS default** on every display (AI-upscaled 8K, not a native capture; Plasma scales it) | `b0abe88efdeb874912380894bcadf11b04e1773d33b926b76704741031c08b7f` |
-| `laden-os-lets-do-it-v2-3840x2160.png` | 3840×2160 | Optional 4K override, never auto-selected | `95e751690b39febf4c1a5439b59abacf5ccc97721680bad35feacfffe3dfd184` |
-| `laden-os-lets-do-it-v2-1920x1080.png` | 1920×1080 | Optional 1080p override, never auto-selected | `ea2f3ca39f9d0bda0273ef8c96a9b865dd7278e592fb69095b14060b6351b4c8` |
-| `laden-os-lets-do-it-v2-3440x1440.png` | 3440×1440 | Optional ultrawide override, never auto-selected | `2b6b697de5bab6586660c88aa2e5bfb30c53027b31785a24f04c90d61155f2a9` |
+| Version | Role |
+|---------|------|
+| **v4** | **OS default** — calmer grid-tunnel look; 8K set + optional 32K deep-zoom master |
+| v3 | Extra — denser neon composition (kept installed) |
+| v2 | Extra — previous default (kept installed) |
+| v1 | Extra — original (kept installed) |
 
-Verify: `sha256sum -c SHA256SUMS-wallpapers-v2-ship.txt`
+## v4 files
 
-The v1 files and `laden-emerald-hp-1920x1080.png` are not the default and are not installed. Do not hardcode monitor connector names. Do not change the host desktop wallpaper from the build tree.
+| File | Size | Role |
+|------|------|------|
+| `laden-os-lets-do-it-v4-7680x4320.png` | 7680×4320 | Default source for Plasma (largest non-deep) |
+| `laden-os-lets-do-it-v4-3840x2160.png` | 3840×2160 | 4K |
+| `laden-os-lets-do-it-v4-3440x1440.png` | 3440×1440 | Ultrawide 21:9 (vertical center crop) |
+| `laden-os-lets-do-it-v4-2560x1440.png` | 2560×1440 | QHD |
+| `laden-os-lets-do-it-v4-1920x1080.png` | 1920×1080 | Splash / SDDM-friendly |
+| `laden-os-lets-do-it-v4-deep-30720x17280.png` | 30720×17280 | Deep-zoom master (AI + procedural layers) |
+
+Verify: `sha256sum -c SHA256SUMS-wallpapers-v4-ship.txt`
+
+Do not hardcode monitor connector names.
