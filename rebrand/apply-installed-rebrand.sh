@@ -396,9 +396,9 @@ remove_cosmetics() {
   else
     log "Will remove: ${to_remove[*]}"
     if [[ "${DRY_RUN}" -eq 1 ]]; then
-      echo "DRY-RUN: pacman -Rns --noconfirm ${to_remove[*]}"
+      echo "DRY-RUN: pacman -R --noconfirm ${to_remove[*]}  (named packages only, no dependency cascade)"
     else
-      pacman -Rns --noconfirm "${to_remove[@]}"
+      pacman -R --noconfirm "${to_remove[@]}"
     fi
   fi
 
