@@ -104,6 +104,31 @@ for i, s in enumerate(parts):
     else:
         print("linux-laden already first (or missing)")
 PY
+  # The pacman removal hook does not fire when modules.builtin moves to another
+  # package in the same transaction, so drop the stale linux-cachyos entry here
+  # (files kept on the ESP as a manual fallback).
+  if ! pacman -Q linux-cachyos >/dev/null 2>&1 && grep -q 'kernel-id=linux-cachyos *$' <(python3 - /boot/limine.conf <<'PY2'
+import re,sys
+t=open(sys.argv[1]).read()
+print("".join(p for p in re.split(r'(?m)^(?=/\+)', t) if p.startswith('/+Laden OS')))
+PY2
+); then
+    limine-entry-tool --remove-kernel linux-cachyos --keep-files --no-hooks
+  fi
+  # Limine reads <EFI app dir>/limine.conf BEFORE /limine.conf. A hand-made
+  # /boot/EFI/limine/limine.conf shadows the tool-managed /boot/limine.conf,
+  # so park it (backed up) to make /boot/limine.conf the one that boots.
+  if [[ -f /boot/EFI/limine/limine.conf ]]; then
+    mkdir -p "$BACKUP/boot/EFI-limine"; cp -a /boot/EFI/limine/limine.conf "$BACKUP/boot/EFI-limine/"
+    mv /boot/EFI/limine/limine.conf /boot/EFI/limine/limine.conf.pre-linux-laden
+    say "parked shadowing /boot/EFI/limine/limine.conf -> limine.conf.pre-linux-laden"
+  fi
+  # Boot linux-laden by path, not by index (an index naming a directory disables autoboot)
+  sed -i 's#^default_entry: .*#default_entry: Laden OS/linux-laden#' /boot/limine.conf
+  # Verify every hashed path in the active config
+  grep -oE 'boot\(\):/[^#]+#[0-9a-f]+' /boot/limine.conf | while IFS='#' read -r pth h; do
+    f=/boot/${pth#boot():/}; [[ "$(b2sum "$f" | cut -d' ' -f1)" == "$h" ]] && echo "hash OK  $f" || echo "hash BAD $f"
+  done
   kingston_sections /boot/limine.conf > "$BACKUP/kingston-sections.after"
   if cmp -s "$BACKUP/kingston-sections.before" "$BACKUP/kingston-sections.after"; then
     say "Kingston boot entries unchanged"

@@ -66,3 +66,51 @@ After a rebuild later on: `bash packages/build-repo.sh && sudo bash packages/pub
     sudo cp -a /var/backups/laden-repo/<date>/. /     # restore the loose files
 
 or boot/restore the snapshot.
+
+## linux-laden (step 2)
+
+`linux-laden` / `linux-laden-headers` are the signed CachyOS `linux-cachyos` /
+`linux-cachyos-headers` binaries (cachyos-v3, same build, same performance)
+repackaged under the Laden name. Nothing is recompiled; `prepare()` checks the
+CachyOS signatures against `/usr/share/pacman/keyrings/cachyos.gpg`. Only
+`/usr/lib/modules/<kver>/pkgbase` (→ `linux-laden`) and the `/usr/src` symlink
+change; every other file is byte-identical (checked against the upstream MTREE).
+
+**Why a replacement, not side-by-side:** the kernel release (`uname -r` =
+`7.3.3-1-cachyos`) is compiled into vmlinuz and every module's vermagic, so a
+repackage must use the same `/usr/lib/modules/7.3.3-1-cachyos` directory as
+linux-cachyos. Two packages can't own it, and a different directory would need a
+rebuild with a new localversion (~30 GB, hours). A "thin" branding package can't
+work either: limine-mkinitcpio-hook names the boot entry after the package that
+owns `modules.builtin`. So linux-laden `conflicts=linux-cachyos` and
+`provides=linux-cachyos=<ver>` (keeps ntsync-autoload etc. satisfied).
+`linux-cachyos-lts` stays installed, untouched, as the fallback kernel.
+`uname -r` keeps saying `-cachyos` until a real rebuild.
+
+**Updates:** linux-cachyos is no longer installed, so `pacman -Syu` won't pull
+new CachyOS kernels. When CachyOS ships one:
+
+    bash packages/linux-laden/update-from-cachyos.sh
+    sudo bash packages/publish-local-repo.sh && sudo pacman -Syu
+
+**Install:** `sudo bash packages/install-linux-laden.sh` (`--dry-run` first).
+It snapshots, backs up limine.conf, the old ESP kernel dir and the original
+CachyOS packages to `/var/backups/laden-kernel/<date>/`, swaps the packages
+(`--ask 4` answers yes only to the conflict removal), rebuilds DKMS and the
+initramfs through the normal hooks, puts linux-laden first in `/+Laden OS`, and
+sets `default_entry: Laden OS/linux-laden`. It also checks that the Kingston
+sections didn't change.
+
+**Limine config gotcha:** on UEFI, Limine reads `<EFI app dir>/limine.conf`
+before `/limine.conf`. A hand-made `/boot/EFI/limine/limine.conf` was hiding the
+`/boot/limine.conf` that limine-entry-tool manages, so kernel updates and the
+rebrand labels never reached the real boot menu. The script moves it aside to
+`limine.conf.pre-linux-laden`.
+
+**Rollback** (from the LTS entry or a running system):
+
+    B=/var/backups/laden-kernel/<date>
+    sudo pacman -U --ask 4 $B/pkgs/linux-cachyos-7.3.3-1-x86_64_v3.pkg.tar.zst \
+                           $B/pkgs/linux-cachyos-headers-7.3.3-1-x86_64_v3.pkg.tar.zst
+    # quick boot-menu-only rollback: the old ESP files are still in /boot/<machine-id>/linux-cachyos
+    sudo mv /boot/EFI/limine/limine.conf.pre-linux-laden /boot/EFI/limine/limine.conf
