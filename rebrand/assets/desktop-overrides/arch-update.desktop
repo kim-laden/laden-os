@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Laden Update
+GenericName=Update
+Comment=Interactive update notifier for Laden OS
+Exec=arch-update
+Icon=laden-os
+Terminal=true
+Type=Application
+Categories=System;Utility;
+Keywords=update;pacman;laden;

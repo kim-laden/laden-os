@@ -1,0 +1,18 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+Target = lsb-release
+Target = cachyos-settings
+Target = cachyos-kde-settings
+Target = cachyos-hello
+Target = cachyos-wallpapers
+Target = cachyos-plymouth-bootanimation
+Target = cachyos-plymouth-theme
+Target = cachy-update
+
+[Action]
+Description = Re-apply Laden OS branding after package changes
+When = PostTransaction
+Exec = /usr/lib/laden-os/reapply-branding

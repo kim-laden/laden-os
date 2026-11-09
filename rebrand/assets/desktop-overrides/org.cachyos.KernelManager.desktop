@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Laden Kernel Manager
+GenericName=Kernel Manager
+Keywords=laden;system;kernel;
+Exec=cachyos-kernel-manager
+Comment=Manage kernels on Laden OS
+Icon=laden-os
+Terminal=false
+StartupNotify=false
+Categories=Qt;System;
+X-AppStream-Ignore=true

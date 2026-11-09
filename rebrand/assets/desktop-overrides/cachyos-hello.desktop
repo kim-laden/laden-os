@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=CachyOS Hello
+Exec=/usr/bin/cachyos-hello
+Icon=org.cachyos.hello
+Type=Application
+NoDisplay=true
+Hidden=true

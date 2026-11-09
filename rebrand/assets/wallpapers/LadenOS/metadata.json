@@ -1,0 +1,9 @@
+{
+    "KPlugin": {
+        "Authors": [ { "Name": "Laden AS", "Email": "admin@laden.no" } ],
+        "Id": "LadenOS",
+        "License": "LicenseRef-LadenAS",
+        "Name": "Laden OS",
+        "Description": "Let's do it! — default Laden OS wallpapers (v2)"
+    }
+}

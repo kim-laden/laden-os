@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Called from pacman hook after filesystem/lsb-release/cachyos-* changes.
+set -euo pipefail
+SRC_OS="/usr/share/laden-os/os-identity/os-release"
+SRC_LSB="/usr/share/laden-os/os-identity/lsb-release"
+# Fallbacks if share copy missing: try project path (dev) or embedded
+if [[ ! -f "${SRC_OS}" ]]; then
+  for c in \
+    /home/laden/Projects/LadenOS/rebrand/assets/os-identity/os-release \
+    /etc/laden-os/os-release
+  do
+    [[ -f "$c" ]] && SRC_OS="$c" && break
+  done
+fi
+if [[ -f "${SRC_OS}" ]]; then
+  install -m 0644 "${SRC_OS}" /etc/os-release
+  install -m 0644 "${SRC_OS}" /usr/lib/os-release
+fi
+if [[ -f "${SRC_LSB}" ]]; then
+  install -m 0644 "${SRC_LSB}" /etc/lsb-release
+elif [[ -f /home/laden/Projects/LadenOS/rebrand/assets/os-identity/lsb-release ]]; then
+  install -m 0644 /home/laden/Projects/LadenOS/rebrand/assets/os-identity/lsb-release /etc/lsb-release
+fi
+# Re-assert plymouth theme if package overwrote it
+if [[ -d /usr/share/plymouth/themes/laden ]]; then
+  plymouth-set-default-theme laden 2>/dev/null || true
+fi
+logger -t laden-rebrand "reapply-branding completed"

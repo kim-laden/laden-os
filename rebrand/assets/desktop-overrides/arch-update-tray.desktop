@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Laden Update
+Comment=Systray applet for system updates (Laden OS)
+Icon=laden-os
+Type=Application
+Exec=/bin/sh -c "sleep 3 && arch-update --tray"
+Categories=Utility
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

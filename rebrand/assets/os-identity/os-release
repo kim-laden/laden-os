@@ -1,0 +1,12 @@
+NAME="Laden OS"
+PRETTY_NAME="Laden OS"
+ID=ladenos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;57;255;176"
+HOME_URL="https://laden.no"
+DOCUMENTATION_URL="https://laden.no"
+SUPPORT_URL="https://laden.no"
+BUG_REPORT_URL="https://laden.no"
+PRIVACY_POLICY_URL="https://laden.no"
+LOGO=laden-os

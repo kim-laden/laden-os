@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Laden Scheduler
+GenericName=SCX Manager
+Keywords=laden;system;kernel;scheduler;
+Exec=scx-manager
+Comment=Manage scx schedulers on Laden OS
+Icon=laden-os
+Terminal=false
+StartupNotify=false
+Categories=Qt;System;
+X-AppStream-Ignore=true

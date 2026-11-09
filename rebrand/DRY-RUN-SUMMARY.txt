@@ -1,0 +1,64 @@
+DRY-RUN: === Laden OS installed rebrand start (dry_run=1) ===
+DRY-RUN: REBRAND_DIR=/home/laden/Projects/LadenOS/rebrand
+DRY-RUN: BACKUP_ROOT=/var/backups/laden-rebrand/20261109-194305
+DRY-RUN: Creating pre-rebrand snapper snapshot (config root)
+DRY-RUN: snapper -c root create --description "pre-rebrand-20261109-194305" --cleanup-algorithm number
+DRY-RUN: mkdir -p /var/backups/laden-rebrand/20261109-194305 /var/log
+DRY-RUN: === 1. Identity ===
+DRY-RUN backup: /etc/os-release -> /var/backups/laden-rebrand/20261109-194305/etc/os-release
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/os-identity/os-release -> /etc/os-release (mode 0644)
+DRY-RUN backup: /usr/lib/os-release -> /var/backups/laden-rebrand/20261109-194305/usr/lib/os-release
+DRY-RUN: write matching /usr/lib/os-release
+DRY-RUN backup: /etc/lsb-release -> /var/backups/laden-rebrand/20261109-194305/etc/lsb-release
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/os-identity/lsb-release -> /etc/lsb-release (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/16x16/apps/laden-os.png -> /usr/share/icons/hicolor/16x16/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/22x22/apps/laden-os.png -> /usr/share/icons/hicolor/22x22/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/24x24/apps/laden-os.png -> /usr/share/icons/hicolor/24x24/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/32x32/apps/laden-os.png -> /usr/share/icons/hicolor/32x32/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/48x48/apps/laden-os.png -> /usr/share/icons/hicolor/48x48/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/64x64/apps/laden-os.png -> /usr/share/icons/hicolor/64x64/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/128x128/apps/laden-os.png -> /usr/share/icons/hicolor/128x128/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/256x256/apps/laden-os.png -> /usr/share/icons/hicolor/256x256/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/hicolor/512x512/apps/laden-os.png -> /usr/share/icons/hicolor/512x512/apps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/laden-os.svg -> /usr/share/icons/hicolor/scalable/apps/laden-os.svg (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/laden-os.png -> /usr/share/pixmaps/laden-os.png (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/laden-os.svg -> /usr/share/pixmaps/laden-os.svg (mode 0644)
+DRY-RUN backup: /usr/share/icons/cachyos.svg -> /var/backups/laden-rebrand/20261109-194305/usr/share/icons/cachyos.svg
+DRY-RUN: replace /usr/share/icons/cachyos.svg with laden-os.svg
+DRY-RUN: install /usr/lib/laden-os/reapply-branding + pacman hooks
+DRY-RUN exec: gtk-update-icon-cache -f /usr/share/icons/hicolor
+DRY-RUN: === 2. Boot visuals ===
+DRY-RUN: Limine enroll enabled: 0
+DRY-RUN: install limine-splash.png -> /boot/limine-splash.png
+DRY-RUN: rewrite display labels under /+Laden OS (linux-cachyos -> Laden kernel)
+DRY-RUN backup: /etc/default/limine -> /var/backups/laden-rebrand/20261109-194305/etc/default/limine
+DRY-RUN: ensure TARGET_OS_NAME=Laden OS note in /etc/default/limine (comment)
+DRY-RUN: install plymouth theme laden -> /usr/share/plymouth/themes/laden
+DRY-RUN: plymouth-set-default-theme laden
+DRY-RUN: limine-mkinitcpio or mkinitcpio -P
+DRY-RUN: === 3. Tray branding (keep cachy-update / arch-update functionality) ===
+DRY-RUN backup: /etc/xdg/autostart/arch-update-tray.desktop -> /var/backups/laden-rebrand/20261109-194305/etc/xdg/autostart/arch-update-tray.desktop
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/desktop-overrides/arch-update-tray.desktop -> /etc/xdg/autostart/arch-update-tray.desktop (mode 0644)
+DRY-RUN: mkdir -p /usr/local/share/applications
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/desktop-overrides/arch-update-tray.desktop -> /usr/local/share/applications/arch-update-tray.desktop (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/desktop-overrides/arch-update.desktop -> /usr/local/share/applications/arch-update.desktop (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/icons/tray/laden-update.svg -> /usr/share/icons/hicolor/scalable/apps/laden-update.svg (mode 0644)
+DRY-RUN: overlay cachy-update*.svg icons with Laden artwork
+DRY-RUN: === 4. Desktop defaults ===
+DRY-RUN: install org.laden.os look-and-feel + LadenDark.colors
+DRY-RUN: install wallpapers from branding/ into /usr/share/backgrounds/laden and /usr/share/wallpapers/LadenOS
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/xdg/kdeglobals -> /etc/xdg/kdeglobals (mode 0644)
+DRY-RUN install: /home/laden/Projects/LadenOS/rebrand/assets/xdg/ksplashrc -> /etc/xdg/ksplashrc (mode 0644)
+DRY-RUN: install /usr/share/laden-os/fish/* and /etc/fish/conf.d/laden-*.fish
+DRY-RUN: install /usr/local/share/applications overrides for Kernel Manager, SCX, hello, pi
+DRY-RUN: === 5. Remove cosmetic CachyOS packages ===
+DRY-RUN: Will remove: cachyos-hello cachyos-wallpapers cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git cachyos-iridescent-kde cachyos-packageinstaller cachyos-benchmarker cachyos-micro-settings cachyos-kde-settings cachyos-alacritty-config cachyos-plymouth-bootanimation cachyos-plymouth-theme cachyos-fish-config cachyos-zsh-config
+DRY-RUN: pacman -Rns --noconfirm cachyos-hello cachyos-wallpapers cachyos-emerald-kde-theme-git cachyos-nord-kde-theme-git cachyos-iridescent-kde cachyos-packageinstaller cachyos-benchmarker cachyos-micro-settings cachyos-kde-settings cachyos-alacritty-config cachyos-plymouth-bootanimation cachyos-plymouth-theme cachyos-fish-config cachyos-zsh-config
+DRY-RUN backup: /etc/pacman.conf -> /var/backups/laden-rebrand/20261109-194305/etc/pacman.conf
+DRY-RUN: set IgnorePkg for cosmetic packages in /etc/pacman.conf
+DRY-RUN: === Rebrand complete ===
+
+Dry-run finished. Apply for real with:
+  sudo bash /home/laden/Projects/LadenOS/rebrand/apply-installed-rebrand.sh
+Then as your user:
+  bash /home/laden/Projects/LadenOS/rebrand/apply-user-rebrand.sh

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Laden OS
+Comment=Let's do it!
+X-KDE-PluginInfo-Name=org.laden.os
+X-KDE-PluginInfo-Author=Laden AS
+X-KDE-PluginInfo-License=MIT
+X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-ServiceTypes=Plasma/LookAndFeel

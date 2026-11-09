@@ -1,0 +1,20 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = cachyos-hello
+Target = cachyos-wallpapers
+Target = cachyos-emerald-kde-theme-git
+Target = cachyos-nord-kde-theme-git
+Target = cachyos-iridescent-kde
+Target = cachyos-packageinstaller
+Target = cachyos-benchmarker
+Target = cachyos-micro-settings
+Target = cachyos-alacritty-config
+Target = cachyos-plymouth-bootanimation
+Target = cachyos-plymouth-theme
+
+[Action]
+Description = WARNING: a CachyOS cosmetic package was (re)installed — run Laden rebrand again
+When = PostTransaction
+Exec = /usr/bin/logger -t laden-rebrand "CachyOS cosmetic package (re)installed; consider IgnorePkg + re-run rebrand"

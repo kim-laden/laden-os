@@ -1,0 +1,5 @@
+[General]
+ColorScheme=LadenDark
+
+[KDE]
+LookAndFeelPackage=org.laden.os

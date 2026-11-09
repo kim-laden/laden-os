@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=CachyOS Package Installer
+Exec=/usr/bin/cachyos-pi
+Icon=cachyos-pi
+Type=Application
+NoDisplay=true
+Hidden=true
