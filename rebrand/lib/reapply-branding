@@ -3,11 +3,11 @@
 set -euo pipefail
 SRC_OS="/usr/share/laden-os/os-identity/os-release"
 SRC_LSB="/usr/share/laden-os/os-identity/lsb-release"
-# Fallbacks if share copy missing: try project path (dev) or embedded
+# Fallbacks if share copy missing: try repo-relative path (dev) or embedded
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "${SCRIPT_DIR}/../.." && pwd)
 if [[ ! -f "${SRC_OS}" ]]; then
-  for c in \
-    /home/laden/Projects/LadenOS/rebrand/assets/os-identity/os-release \
-    /etc/laden-os/os-release
+  for c in     "${REPO_ROOT}/rebrand/assets/os-identity/os-release"     /usr/share/laden/os-identity/os-release     /etc/laden-os/os-release
   do
     [[ -f "$c" ]] && SRC_OS="$c" && break
   done
@@ -18,8 +18,10 @@ if [[ -f "${SRC_OS}" ]]; then
 fi
 if [[ -f "${SRC_LSB}" ]]; then
   install -m 0644 "${SRC_LSB}" /etc/lsb-release
-elif [[ -f /home/laden/Projects/LadenOS/rebrand/assets/os-identity/lsb-release ]]; then
-  install -m 0644 /home/laden/Projects/LadenOS/rebrand/assets/os-identity/lsb-release /etc/lsb-release
+elif [[ -f "${REPO_ROOT}/rebrand/assets/os-identity/lsb-release" ]]; then
+  install -m 0644 "${REPO_ROOT}/rebrand/assets/os-identity/lsb-release" /etc/lsb-release
+elif [[ -f /usr/share/laden/os-identity/lsb-release ]]; then
+  install -m 0644 /usr/share/laden/os-identity/lsb-release /etc/lsb-release
 fi
 # Re-assert plymouth theme if package overwrote it
 if [[ -d /usr/share/plymouth/themes/laden ]]; then

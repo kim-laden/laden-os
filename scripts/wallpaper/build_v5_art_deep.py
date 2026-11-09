@@ -18,9 +18,10 @@ from pathlib import Path
 import numpy as np
 import pyvips
 
-OUT = Path("/home/laden/Projects/LadenOS/build/wall-tmp/upscale")
-DOCS = Path("/home/laden/Projects/LadenOS/docs/wallpaper")
-RELEASE = Path("/home/laden/Projects/LadenOS/build/art-release/v5")
+_REPO = Path(__file__).resolve().parents[2]
+OUT = _REPO / "build/wall-tmp/upscale"
+DOCS = _REPO / "docs/wallpaper"
+RELEASE = _REPO / "build/art-release/v5"
 W, H = 30720, 17280
 CX, CY = W * 0.505, H * 0.455
 EMERALD = (0x2E, 0xE0, 0x7A)

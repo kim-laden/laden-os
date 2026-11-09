@@ -1,41 +1,39 @@
 # Secrets scan report (v1 prep)
 
-Date: 2026-11-10 Europe/Oslo. Tools: gitleaks 8.30.1 (`detect --log-opts=--all`),
-trufflehog git (`verified,unknown`), plus manual `rg` / `git log -S` sweeps.
+Date: 2026-11-10 Europe/Oslo. Re-run after path hygiene + public README
+promotion. Tools: gitleaks 8.x (`detect --log-opts=--all` on history; exported
+HEAD/working-tree scans excluding `build/` and `repo/`), trufflehog git
+(`verified,unknown`).
 
 ## Summary
 
 | Scanner | Result |
 |---------|--------|
-| gitleaks (full history, 16 commits) | 4 findings — **all false positives or intentional test fixtures** (see below) |
-| trufflehog | 0 verified, 0 unverified |
-| Manual | No private keys, no INetSim key, no SSH host presets, no signing **secret** key in git. Public signing key only. Host path hygiene issues remain. |
+| gitleaks (full history) | 4 findings — **all false positives or intentional test fixtures** (see below) |
+| gitleaks (HEAD tree export) | 3 findings — same public PGP fingerprints + `tests/fixtures/fake-key.pem` |
+| gitleaks (working-tree export, pre-commit) | 3 findings — same as HEAD tree |
+| trufflehog git | **0** verified, **0** unverified |
+| Manual | No private keys, no INetSim key, no SSH host presets, no signing **secret** key in git. Public signing key only. Absolute `/home/laden` host paths removed from `rebrand/lib/reapply-branding`, `scripts/wallpaper/*.py`, and `rebrand/DRY-RUN-SUMMARY.txt`. |
 
-**History is not yet “scrubbed,” but no real credential that requires a history
-rewrite was found.** Hygiene cleanups (absolute `/home/laden` paths, dry-run
-logs) should be fixed in new commits before making the repo public. A history
-rewrite is **not** required for secrets; it would only be needed if Laden
-wants those paths gone from old commits too.
+**History is not rewritten.** No real credential requiring `git filter-repo` / BFG
+was found. Remaining `/home/laden` mentions are intentional (scanner allowlists,
+test harnesses that *look for* leaks, and narrative docs).
 
-## gitleaks findings
+## gitleaks findings (history)
 
 | Severity | Rule | Path | Commit | Assessment |
 |----------|------|------|--------|------------|
-| Low (FP) | generic-api-key | `packages/linux-laden/.SRCINFO` L39–40 | a138fe8 | CachyOS **public** PGP fingerprints (`validpgpkeys`), not API secrets |
-| Low (FP) | generic-api-key | `packages/linux-laden/update-from-cachyos.sh` L9 | 6b98713 | Laden repo **public** key fingerprint `BE87AF39…` |
-| Info | private-key | `tests/fixtures/fake-key.pem` | c4bfcad | Intentional fake PEM for scanner unit tests (allowlisted by project design) |
+| Low (FP) | generic-api-key | `packages/linux-laden/.SRCINFO` | a138fe8 | CachyOS **public** PGP fingerprints (`validpgpkeys`) |
+| Low (FP) | generic-api-key | `packages/linux-laden/update-from-cachyos.sh` | 6b98713 | Laden repo **public** key fingerprint `BE87AF39…` |
+| Info | private-key | `tests/fixtures/fake-key.pem` | c4bfcad | Intentional fake PEM for scanner unit tests |
 
-## Manual findings
+## Hygiene fixed this pass
 
-| Severity | What | Where | Action before public |
-|----------|------|-------|----------------------|
-| Medium | Absolute `/home/laden/Projects/LadenOS/...` paths | `rebrand/lib/reapply-branding`, `scripts/wallpaper/*.py`, `rebrand/DRY-RUN-SUMMARY.txt`, some docs | Replace with relative/`ROOT`-based paths; drop or regenerate dry-run summary |
-| Low | `admin@laden.no`, `kim-laden@users.noreply.github.com` | PKGBUILDs, patches, metadata | Expected project contacts; OK |
-| Low | Public key `packages/laden-keyring/laden.gpg` | keyring package | OK — secret key confirmed absent from tree |
-| Info | Mentions of passwords / NOPASSWD in install tests | `scripts/test-installed-boot.sh`, docs | Test harness only; no live password |
-| Info | `1.1.1.1` / `9.9.9.9` in `scripts/dev-vm.sh` | public DNS | OK |
-| None found | INetSim private key, skel SSH config, VPS HostName presets | — | Those belong to the held Kali CockPit ISO, not this repo |
-| None found | `BEGIN PGP PRIVATE`, OpenSSH private keys, `ghp_` tokens | history + tree | Clean |
+| Item | Action |
+|------|--------|
+| `rebrand/lib/reapply-branding` | Repo-relative / `/usr/share/laden` fallbacks; no `/home/laden/...` |
+| `scripts/wallpaper/build_v4_deep.py`, `build_v5_art_deep.py`, `v5_redraw_hardware_cli.py` | `_REPO = Path(__file__).resolve().parents[2]` |
+| `rebrand/DRY-RUN-SUMMARY.txt` | Host paths removed; placeholder note only |
 
 ## Signing key
 
@@ -45,6 +43,6 @@ git). Keep it that way.
 
 ## Recommendation
 
-Safe to prepare for public **after** path hygiene commits. No git filter-repo /
-BFG rewrite required for credentials based on this scan. Re-run gitleaks +
-trufflehog immediately before flipping visibility.
+Safe to flip the GitHub repository to **public** after this commit is pushed.
+Laden flips visibility; do not automate that. Re-run gitleaks + trufflehog on
+any ISO rootfs before publishing a download.

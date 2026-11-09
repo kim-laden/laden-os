@@ -22,7 +22,7 @@ unless a path below says otherwise. Full texts live under `LICENSES/`.
 | `packages/laden-desktop/`, `-gaming/`, `-creator/`, `-streaming/`, `-pentest/`, `-full/` | Laden metas | **MIT** | Depend on third-party packages that keep their own licenses at install time |
 | `packages/laden-mirrorlist/` | Laden | **MIT** | Still points at `file:///srv/laden-repo` for local builds |
 | `packages/laden-keyring/` | Laden packaging + **public** signing key | **MIT** | Secret key must never enter git (not present) |
-| `packages/laden-desktop-settings/` | Laden original (+ Breeze colors) | **MIT intended**; PKGBUILD still `LicenseRef-LadenAS` until dirty editions edit is cleared | `LadenDark.colors` is **LGPL-2.0-or-later** |
+| `packages/laden-desktop-settings/` | Laden original (+ Breeze colors) | **MIT** (PKGBUILD) | `LadenDark.colors` is **LGPL-2.0-or-later** |
 | `packages/laden-branding/` | Laden scripts + art | **MIT** + **LicenseRef-LadenAS-Branding** | Scripts/hooks MIT; logos/wallpapers/plymouth branding reserved |
 | `packages/laden-wallpapers-32k/` | Laden OS Art | **LicenseRef-LadenAS-Branding** | Not MIT |
 | `branding/` | Laden OS Art (AI-assisted + procedural) | **LicenseRef-LadenAS-Branding** | Recommend keep trademarked; optional future CC BY-NC-ND 4.0 |
@@ -70,6 +70,5 @@ laden-wallpapers-32k (`LicenseRef-LadenAS-Branding`).
 Left unchanged (already correct): laden-update, laden-scheduler,
 laden-kernel-manager, laden-calamares, linux-laden, laden-calamares-config.
 
-Deferred (dirty working tree from editions worker — do not touch):
-`packages/laden-desktop-settings/PKGBUILD` still `LicenseRef-LadenAS` → set MIT
+Updated: `packages/laden-desktop-settings/PKGBUILD` is **MIT** (pkgrel 7).
 when that worker’s changes land.
