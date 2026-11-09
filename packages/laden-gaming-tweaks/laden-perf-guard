@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Laden OS gaming tweaks: adaptive CPU power limit while gaming (root, systemd service).
+# Laptop CPU and GPU share one cooler. Start at GAME_PL1_W, step down when the CPU
+# package or the GPU runs hot, step back up when both are cool. Also re-applies the
+# limit if firmware resets it, and keeps the firmware platform profile on performance.
+set -uo pipefail
+. /usr/lib/laden/gaming/common.sh
+load_profile
+[[ -n $GAME_PL1_W ]] || { echo "no power-limit profile for this machine; exiting"; exit 0; }
+zone=""; for z in /sys/class/thermal/thermal_zone*; do [[ $(cat $z/type) == x86_pkg_temp ]] && zone=$z/temp; done
+pl1=$GAME_PL1_W; hot=0; cool=0; last=""; tick=0
+thr() { local s=0 f; for f in /sys/devices/system/cpu/cpu*/thermal_throttle/core_throttle_total_time_ms; do s=$(( s+$(cat $f) )); done; echo $s; }
+e0=$(cat $RAPL/energy_uj 2>/dev/null || echo 0); t0=$(date +%s%N); th0=$(thr)
+pl2=${GAME_PL2_W:-$(( $(cat $RAPL/constraint_1_power_limit_uw)/1000000 ))}
+echo "guard start profile=$HW_PROFILE pl1=${pl1}W range ${GAME_PL1_MIN_W}-${GAME_PL1_MAX_W}W pl2=${pl2}W"
+while :; do
+  t=0; [[ -n $zone ]] && t=$(( $(cat "$zone")/1000 ))
+  g=0; command -v nvidia-smi >/dev/null && g=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits 2>/dev/null | head -1)
+  g=${g%%.*}; [[ $g =~ ^[0-9]+$ ]] || g=0
+  if (( t >= CPU_HOT_C || g >= GPU_HOT_C )); then ((hot++)); cool=0
+  elif (( t <= CPU_COOL_C && g <= GPU_COOL_C )); then ((cool++)); hot=0
+  else hot=0; cool=0; fi
+  if (( hot >= 2 && pl1 > GAME_PL1_MIN_W )); then pl1=$(( pl1-PL1_STEP_W )); hot=0
+  elif (( cool >= 5 && pl1 < GAME_PL1_MAX_W )); then pl1=$(( pl1+PL1_STEP_W )); cool=0; fi
+  want1=$(( pl1*1000000 )); want2=$(( pl2*1000000 ))
+  [[ $(cat $RAPL/constraint_1_power_limit_uw) == "$want2" ]] || echo $want2 >$RAPL/constraint_1_power_limit_uw
+  [[ $(cat $RAPL/constraint_0_power_limit_uw) == "$want1" ]] || echo $want1 >$RAPL/constraint_0_power_limit_uw
+  if [[ "$pl1" != "$last" ]]; then echo "PL1=${pl1}W (cpu ${t}C gpu ${g}C)"; last=$pl1; fi
+  # every ~30 s: package power, temps, clock, and how long cores sat in thermal throttle
+  if (( ++tick % 10 == 0 )); then
+    e1=$(cat $RAPL/energy_uj 2>/dev/null || echo 0); t1=$(date +%s%N); th1=$(thr)
+    (( e1 < e0 )) && e0=$e1
+    w=$(( (e1-e0)*1000/((t1-t0)/1000+1) )); mhz=$(( $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)/1000 ))
+    echo "stat cpu=$(( w/1000 )).$(( (w%1000)/100 ))W pkg ${t}C gpu ${g}C pl1=${pl1}W cpu0=${mhz}MHz throttle+$(( th1-th0 ))ms"
+    e0=$e1; t0=$t1; th0=$th1
+  fi
+  if [[ -n $PPD_PROFILE && -r /sys/firmware/acpi/platform_profile ]] && \
+     [[ $(cat /sys/firmware/acpi/platform_profile) != "$PPD_PROFILE" ]]; then
+    powerprofilesctl set "$PPD_PROFILE" >/dev/null 2>&1 && echo "re-set power profile $PPD_PROFILE"
+  fi
+  sleep "$GUARD_INTERVAL"
+done

@@ -1,0 +1,2 @@
+# Laden OS gaming tweaks: GameMode hooks may switch game mode on/off without a password.
+%wheel ALL=(root) NOPASSWD: /usr/lib/laden/gaming/laden-perf-helper on, /usr/lib/laden/gaming/laden-perf-helper off, /usr/lib/laden/gaming/laden-perf-helper status

@@ -1,0 +1,34 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-gaming-tweaks
+pkgver=2026.11.09
+pkgrel=5
+pkgdesc='Laden OS game mode: GameMode hooks, power profile, sched-ext gaming scheduler, adaptive laptop CPU limit, NVIDIA shader cache, KWin dGPU selection'
+arch=('any')
+url='https://laden.no'
+license=('LicenseRef-LadenAS')
+depends=('bash' 'gamemode' 'power-profiles-daemon' 'scx-scheds' 'scx-tools' 'sudo' 'util-linux')
+optdepends=('nvidia-utils: GPU temperature for the adaptive CPU limit'
+            'libnotify: game mode notifications')
+backup=('etc/gamemode.ini' 'etc/laden/gaming.conf')
+install=laden-gaming-tweaks.install
+source=(common.sh laden-perf-helper laden-perf-guard laden-perf-guard.service
+        laden-perf-on laden-perf-off gamemode.ini gaming.conf hw-acer-predator.conf
+        sudoers 60-laden-gaming.conf laden-kwin-gpu.sh README.md)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+
+package() {
+  install -Dm644 common.sh               "$pkgdir/usr/lib/laden/gaming/common.sh"
+  install -Dm755 laden-perf-helper       "$pkgdir/usr/lib/laden/gaming/laden-perf-helper"
+  install -Dm755 laden-perf-guard        "$pkgdir/usr/lib/laden/gaming/laden-perf-guard"
+  install -Dm644 laden-perf-guard.service "$pkgdir/usr/lib/systemd/system/laden-perf-guard.service"
+  install -Dm755 laden-perf-on           "$pkgdir/usr/bin/laden-perf-on"
+  install -Dm755 laden-perf-off          "$pkgdir/usr/bin/laden-perf-off"
+  install -Dm644 gamemode.ini            "$pkgdir/etc/gamemode.ini"
+  install -Dm644 gaming.conf             "$pkgdir/etc/laden/gaming.conf"
+  install -Dm644 hw-acer-predator.conf   "$pkgdir/usr/share/laden/gaming/hw/acer-predator.conf"
+  install -dm750 "$pkgdir/etc/sudoers.d"
+  install -Dm440 sudoers                 "$pkgdir/etc/sudoers.d/laden-gaming-tweaks"
+  install -Dm644 60-laden-gaming.conf    "$pkgdir/usr/lib/environment.d/60-laden-gaming.conf"
+  install -Dm644 laden-kwin-gpu.sh       "$pkgdir/etc/xdg/plasma-workspace/env/laden-kwin-gpu.sh"
+  install -Dm644 README.md               "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

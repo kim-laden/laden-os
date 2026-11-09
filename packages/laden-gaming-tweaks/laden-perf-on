@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Laden OS game mode ON (GameMode [custom] start hook; runs as the user).
+set -uo pipefail
+SCX_SCHED=lavd; PPD_PROFILE=performance; NOTIFY=1
+[[ -r /etc/laden/gaming.conf ]] && . /etc/laden/gaming.conf
+RUN="${XDG_RUNTIME_DIR:-/tmp}/laden-perf"; mkdir -p "$RUN"; LOG="$RUN/log"
+# already on (e.g. GameMode bounced during a Steam launch): cancel a pending off
+if [[ -f $RUN/active ]]; then rm -f "$RUN/off.pending"; exit 0; fi
+touch "$RUN/active"
+echo "$(date '+%F %T') ON" >>"$LOG"
+if command -v powerprofilesctl >/dev/null && [[ -n $PPD_PROFILE ]]; then
+  powerprofilesctl get >"$RUN/ppd.prev" 2>/dev/null || echo balanced >"$RUN/ppd.prev"
+  powerprofilesctl set "$PPD_PROFILE" >>"$LOG" 2>&1 || true
+fi
+# root side: CPU limits/clock cap + sched-ext scheduler (as root, so no polkit prompt mid-game)
+sudo -n /usr/lib/laden/gaming/laden-perf-helper on >>"$LOG" 2>&1 || echo "WARN: laden-perf-helper needs sudo (wheel group)" >>"$LOG"
+[[ $NOTIFY == 1 ]] && command -v notify-send >/dev/null && \
+  notify-send -a "Laden OS" -i input-gaming -u low "Game mode ON" "Performance profile, $SCX_SCHED scheduler" 2>/dev/null || true
+exit 0

@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Laden OS gaming tweaks: root side of game mode. Called by laden-perf-on/off via sudo -n.
+#   laden-perf-helper on|off|status
+set -euo pipefail
+. /usr/lib/laden/gaming/common.sh
+[[ $EUID -eq 0 ]] || { echo "laden-perf-helper: run via sudo" >&2; exit 1; }
+load_profile
+log() { logger -t laden-perf "$*" 2>/dev/null || true; echo "$*"; }
+
+case "${1:-}" in
+on)
+  install -d -m0755 "$STATE"
+  if [[ ! -f $STATE/saved ]]; then
+    : >"$STATE/saved"
+    [[ -d $RAPL ]] && printf 'PL1=%s\nPL2=%s\n' "$(cat $RAPL/constraint_0_power_limit_uw)" \
+                       "$(cat $RAPL/constraint_1_power_limit_uw)" >"$STATE/saved"
+    for c in /sys/devices/system/cpu/cpu[0-9]*/cpufreq; do
+      echo "$c $(cat "$c/scaling_max_freq")"; done >"$STATE/maxfreq"
+  fi
+  if [[ -n $PCORE_CAP_KHZ ]]; then
+    for c in /sys/devices/system/cpu/cpu[0-9]*/cpufreq; do
+      if (( $(cat "$c/cpuinfo_max_freq") > PCORE_CAP_KHZ )); then echo "$PCORE_CAP_KHZ" >"$c/scaling_max_freq"; fi
+    done
+  fi
+  if [[ -n $GAME_PL1_W ]]; then systemctl start laden-perf-guard.service; fi
+  # sched-ext gaming scheduler, only if none is running (never replace the user's choice)
+  if [[ -n $SCX_SCHED ]] && command -v scxctl >/dev/null && [[ ! -f $STATE/scx.ours ]]; then
+    for _ in 1 2 3 4 5 6; do [[ $(cat /sys/kernel/sched_ext/state 2>/dev/null) == *ing ]] || break; sleep 0.5; done
+    if [[ $(cat /sys/kernel/sched_ext/state 2>/dev/null) == disabled ]]; then
+      if timeout 20 scxctl start --sched "$SCX_SCHED" --mode "$SCX_MODE"; then touch "$STATE/scx.ours"; fi
+    fi
+  fi
+  log "game mode ON (profile=$HW_PROFILE pl1=${GAME_PL1_W:-firmware}W cap=${PCORE_CAP_KHZ:-none}kHz)"
+  ;;
+off)
+  systemctl stop laden-perf-guard.service 2>/dev/null || true
+  if [[ -f $STATE/scx.ours ]]; then timeout 20 scxctl stop || true; fi
+  if [[ -f $STATE/saved ]]; then
+    PL1=""; PL2=""; . "$STATE/saved"
+    [[ -n $PL2 ]] && echo "$PL2" >"$RAPL/constraint_1_power_limit_uw"
+    [[ -n $PL1 ]] && echo "$PL1" >"$RAPL/constraint_0_power_limit_uw"
+  fi
+  if [[ -f $STATE/maxfreq ]]; then
+    while read -r c f; do [[ -w $c/scaling_max_freq ]] && echo "$f" >"$c/scaling_max_freq" || true; done <"$STATE/maxfreq"
+  fi
+  rm -rf "$STATE"
+  log "game mode OFF (limits restored)"
+  ;;
+status)
+  echo "profile=$HW_PROFILE active=$([[ -d $STATE ]] && echo yes || echo no)"
+  [[ -d $RAPL ]] && echo "PL1=$(( $(cat $RAPL/constraint_0_power_limit_uw)/1000000 ))W PL2=$(( $(cat $RAPL/constraint_1_power_limit_uw)/1000000 ))W"
+  echo "platform_profile=$(cat /sys/firmware/acpi/platform_profile 2>/dev/null || echo n/a) cpu0_max=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)kHz"
+  echo "sched_ext=$(cat /sys/kernel/sched_ext/state 2>/dev/null || echo n/a) $(cat /sys/kernel/sched_ext/root/ops 2>/dev/null)"
+  echo "guard=$(systemctl is-active laden-perf-guard.service)"
+  ;;
+*) echo "usage: laden-perf-helper on|off|status" >&2; exit 2 ;;
+esac

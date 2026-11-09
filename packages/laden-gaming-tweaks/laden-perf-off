@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Laden OS game mode OFF (GameMode [custom] end hook; runs as the user).
+# Debounced: Steam's launch wrappers make GameMode enter/leave several times in a
+# second, so the real switch-off waits a few seconds and only happens if GameMode
+# is still inactive (laden-perf-on cancels a pending off).
+set -uo pipefail
+NOTIFY=1; OFF_DELAY=4
+[[ -r /etc/laden/gaming.conf ]] && . /etc/laden/gaming.conf
+RUN="${XDG_RUNTIME_DIR:-/tmp}/laden-perf"; LOG="$RUN/log"
+[[ -f $RUN/active ]] || exit 0
+
+do_off() {
+  echo "$(date '+%F %T') OFF" >>"$LOG"
+  sudo -n /usr/lib/laden/gaming/laden-perf-helper off >>"$LOG" 2>&1 || true
+  if command -v powerprofilesctl >/dev/null && [[ -f $RUN/ppd.prev ]]; then
+    prev=$(cat "$RUN/ppd.prev"); [[ $prev == performance || -z $prev ]] && prev=balanced
+    powerprofilesctl set "$prev" >>"$LOG" 2>&1 || true
+  fi
+  rm -f "$RUN/active" "$RUN/ppd.prev" "$RUN/off.pending"
+  [[ $NOTIFY == 1 ]] && command -v notify-send >/dev/null && \
+    notify-send -a "Laden OS" -i input-gaming -u low "Game mode OFF" "Back to normal power settings" 2>/dev/null || true
+}
+
+if [[ ${1:-} == --now ]]; then do_off; exit 0; fi
+token=$$.$RANDOM; echo "$token" >"$RUN/off.pending"
+(
+  sleep "$OFF_DELAY"
+  [[ $(cat "$RUN/off.pending" 2>/dev/null) == "$token" ]] || exit 0
+  gamemoded -s 2>/dev/null | grep -q 'is active' && { rm -f "$RUN/off.pending"; exit 0; }
+  do_off
+) </dev/null >/dev/null 2>&1 &
+disown
+exit 0

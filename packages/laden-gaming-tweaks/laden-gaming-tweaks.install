@@ -1,0 +1,9 @@
+post_install() {
+  echo ":: Laden game mode is wired into GameMode (gamemoderun / Steam launch option)."
+  echo ":: Log out and back in once so KWin and the NVIDIA shader-cache settings apply."
+  echo ":: Settings: /etc/laden/gaming.conf  Status: sudo /usr/lib/laden/gaming/laden-perf-helper status"
+}
+post_upgrade() { :; }
+pre_remove() {
+  [ -d /run/laden-perf ] && /usr/lib/laden/gaming/laden-perf-helper off >/dev/null 2>&1 || true
+}

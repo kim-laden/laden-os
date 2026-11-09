@@ -1,0 +1,11 @@
+[Unit]
+Description=Laden OS game mode: adaptive CPU power limit
+Documentation=file:///usr/share/doc/laden-gaming-tweaks/README.md
+ConditionPathExists=/sys/class/powercap/intel-rapl:0
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/laden/gaming/laden-perf-guard
+Nice=-5
+Restart=on-failure
+RestartSec=5

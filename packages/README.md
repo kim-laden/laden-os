@@ -177,3 +177,15 @@ olive, openshot, streamlink-twitch-gui-bin. obs-websocket is built into OBS
 Undo: `sudo pacman -R laden-full laden-desktop laden-gaming laden-creator laden-streaming laden-pentest`
 (plain `-R`, no `-s`: the apps stay installed; anything that was a dependency only
 because of a meta would show up in `pacman -Qdt` and is left for manual review).
+
+## laden-gaming-tweaks (game mode)
+
+GameMode hooks `laden-perf-on/off` (debounced), power profile `performance`, sched-ext
+`scx_lavd` gaming mode started by a root helper (`/usr/lib/laden/gaming/laden-perf-helper`,
+sudoers for `%wheel`, so no polkit prompt mid-game), and on Acer Predator a P-core boost cap
+(5.0 GHz) plus `laden-perf-guard.service`, which holds an adaptive CPU PL1 (60 W, 50-75 W,
+PL2 90 W) from CPU/GPU temperature. Also: NVIDIA shader cache 12 GB (environment.d), and
+KWin renders on the NVIDIA GPU at login when a monitor is plugged into it
+(`/etc/xdg/plasma-workspace/env/laden-kwin-gpu.sh`, off: `KWIN_PRIMARY=igpu`).
+Hardware profiles: `laden-gaming-tweaks/hw-*.conf`; local overrides: `/etc/laden/gaming.conf`.
+Build: `cd packages/laden-gaming-tweaks && makepkg -f --sign`, then `repo-add` + publish.
