@@ -1,0 +1,14 @@
+linux-laden — GPL-2.0-only
+==========================
+
+linux-laden is the Linux kernel as packaged for Laden OS, built from CachyOS
+kernel sources and configuration.
+
+Upstream kernel: https://www.kernel.org/ (GPL-2.0-only, with syscall note)
+CachyOS kernel packaging/sources: https://github.com/CachyOS/linux-cachyos
+Laden packaging scripts (laden-ize.py, update-from-cachyos.sh, PKGBUILD
+wrappers): Copyright (c) 2026 Laden AS — these scripts are also distributed
+under GPL-2.0-only together with the kernel package they produce.
+
+The full GPL-2.0-only text is in LICENSES/GPL-2.0-only.txt at the repository
+root. Do not relicense the kernel as MIT.

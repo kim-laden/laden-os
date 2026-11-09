@@ -1,0 +1,34 @@
+LicenseRef-LadenAS-Branding
+
+Copyright (c) 2026 Laden AS. All rights reserved.
+
+This license applies to Laden AS branding materials in this repository,
+including but not limited to:
+
+  - Logos, wordmarks, and icons that identify Laden OS or Laden AS
+  - Laden OS Art wallpapers and deep-zoom masters under branding/
+  - Plymouth, Limine, SDDM, and splash artwork that incorporates the Laden mark
+  - The "Laden", "Laden OS", and "Laden AS" names and trade dress
+
+Unless Laden AS grants written permission (or replaces this file with a
+different license such as CC BY-NC-ND 4.0), you may:
+
+  - Use these materials unchanged when redistributing an official Laden OS
+    image or package built from this repository
+  - Display screenshots for review, news, or portfolio purposes with credit
+
+You may NOT:
+
+  - Rebrand a fork as Laden OS, or use the Laden marks to imply endorsement
+  - Sell or sublicense the artwork separately from the OS
+  - Remove or replace the marks while still calling the result Laden OS
+
+Software packaging scripts that install these assets (for example
+packages/laden-branding/*.hook and laden-apply-branding) are separate works
+licensed under MIT; only the visual assets themselves are covered here.
+
+A copy of CC BY-NC-ND 4.0 is included at LICENSES/CC-BY-NC-ND-4.0.txt as an
+option Laden AS may adopt later for community wallpapers. Until then, this
+all-rights-reserved notice controls.
+
+Contact: admin@laden.no — https://laden.no

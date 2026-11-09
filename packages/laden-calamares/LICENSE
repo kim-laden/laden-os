@@ -1,0 +1,14 @@
+laden-calamares — GPL-3.0-or-later
+=========================
+
+This package is a Laden OS fork / rebuild of Calamares / cachyos-calamares.
+
+Upstream: https://github.com/CachyOS/cachyos-calamares
+Upstream authors / maintainers: Calamares team; CachyOS packagers (Peter Jung, Vladislav Nepogodin, et al.)
+Laden modifications: Copyright (c) 2026 Laden AS (branding and packaging patches)
+
+The combined work remains under the GNU General Public License version 3 or
+later. The full license text is in LICENSES/GPL-3.0-or-later.txt at the
+repository root (and was copied from the upstream LICENSE file).
+
+You must preserve this license when redistributing source or binaries.

@@ -1,0 +1,13 @@
+laden-desktop-settings — MIT (intended)
+=======================================
+
+Original Laden OS desktop settings (fish configs, look-and-feel, Plasma
+defaults). Copyright (c) 2026 Laden AS.
+
+Intended PKGBUILD license: MIT (see LICENSES/MIT.txt).
+
+NOTE: As of the v1 license prep commit, packages/laden-desktop-settings/PKGBUILD
+still said license=('LicenseRef-LadenAS') because an editions worker had
+uncommitted edits in that file. Update the PKGBUILD to MIT and bump pkgrel
+when those editions changes are committed or discarded. LadenDark.colors
+inside the assets remains LGPL-2.0-or-later (KDE Breeze lineage).

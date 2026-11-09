@@ -1,0 +1,14 @@
+laden-calamares-config — GPL-3.0-or-later
+========================================
+
+Installer configuration and branding for Calamares on Laden OS.
+
+Many files under files/ already carry:
+  SPDX-License-Identifier: GPL-3.0-or-later
+
+Calamares branding and module configuration is customarily distributed under
+the same GPL-3.0-or-later terms as Calamares. Keep this package GPL-3.0-or-later
+even though other original Laden tooling is MIT.
+
+Copyright (c) 2026 Laden AS
+Full text: LICENSES/GPL-3.0-or-later.txt

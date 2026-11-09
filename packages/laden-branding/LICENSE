@@ -1,0 +1,10 @@
+laden-branding — dual notice
+============================
+
+Scripts, hooks, and packaging in this directory (laden-apply-branding,
+*.hook, PKGBUILD, install script, fastfetch config.jsonc, logo.txt as
+fastfetch art ASCII) are MIT. See LICENSES/MIT.txt. Copyright (c) 2026 Laden AS.
+
+Visual assets installed by this package (icons, wallpapers, plymouth frames,
+limine splash, wordmarks) are LicenseRef-LadenAS-Branding. See
+LICENSES/LicenseRef-LadenAS-Branding.txt. Forks must rebrand.

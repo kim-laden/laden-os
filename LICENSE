@@ -1,17 +1,50 @@
-Laden OS source is distributed under two licenses.
+Laden OS source licenses
+========================
 
-Original scripts, tests, and documentation written for Laden OS are under the MIT license below, Copyright 2026 Laden AS.
+Copyright (c) 2026 Laden AS
 
-Files adapted from archiso, including the profile shape, boot-loader templates, Pacman keyring units, and the build-hook remover, remain under GPL-3.0-or-later. Copyright belongs to the archiso contributors. See `/usr/share/doc/archiso` in the archiso package, version 92.
+Unless a subdirectory, package, or file says otherwise, original work in this
+repository written for Laden OS is licensed under the MIT License. The full
+MIT text is in LICENSES/MIT.txt.
 
-Wallpaper PNG files under `branding/` were supplied with the project on 2026-11-08. No separate license file came with them. They are AI-upscaled artwork for Laden OS. Do not describe them as native 8K or native 4K captures. Do not treat them as MIT-licensed merely because this file exists.
+"Original work" includes Laden-written packaging scripts, meta-packages,
+configs, build and test scripts, documentation, laden-menu, laden-gaming-tweaks,
+and similar Laden OS tooling.
 
-Packages installed into the image keep the licenses stated by their Arch Linux package metadata.
+This root MIT grant does NOT relicense:
+
+  1. Works that keep their upstream license (see NOTICE and LICENSES/)
+     - GPL-3.0-or-later forks: laden-update, laden-scheduler, laden-kernel-manager,
+       laden-calamares (and Calamares itself)
+     - GPL-2.0-only: linux-laden (Linux kernel)
+     - GPL-3.0-or-later: archiso-derived profile layout under profile/
+     - LGPL-2.0-or-later: LadenDark.colors (adapted from KDE Breeze)
+  2. Branding and artwork under LICENSES/LicenseRef-LadenAS-Branding.txt
+     (logos, Laden OS Art wallpapers, splash/plymouth/limine art)
+  3. Third-party packages installed into an ISO or system image; each keeps
+     the license stated by its Arch/CachyOS package metadata
+  4. Any file that carries its own SPDX-License-Identifier header
+
+See NOTICE for upstream credits ("based on CachyOS and Arch Linux") and
+docs/LICENSE-AUDIT.md for the per-directory table.
 
 MIT License
+-----------
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of the original Laden OS scripts and documentation in this repository and associated documentation files, to deal in them without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

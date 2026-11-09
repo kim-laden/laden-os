@@ -1,0 +1,65 @@
+NOTICE — Laden OS credits and upstream attribution
+==================================================
+
+Laden OS is based on CachyOS and Arch Linux. It is not Arch Linux and it is
+not CachyOS. "Based on" wording is intentional; do not use those projects'
+trademarks to imply endorsement.
+
+Upstream projects (non-exhaustive)
+----------------------------------
+Arch Linux
+  https://archlinux.org/
+  Individual packages keep their own licenses.
+
+CachyOS
+  https://cachyos.org/
+  Kernel packaging, calamares packaging, update/kernel/scheduler tooling that
+  Laden forks are based on. Respect CachyOS repository usage policy: do not
+  point end-user pacman at CachyOS mirrors for a public distro release.
+
+archiso (Arch Linux)
+  GPL-3.0-or-later. Profile shape under profile/ follows releng templates.
+
+Calamares
+  https://calamares.io/ and https://github.com/CachyOS/cachyos-calamares
+  GPL-3.0-or-later. laden-calamares is a rebuild/repackage; laden-calamares-config
+  is Laden installer configuration (files currently carry SPDX GPL-3.0-or-later).
+
+cachy-update / Arch-Update
+  https://github.com/CachyOS/cachy-update
+  GPL-3.0-or-later. Forked as laden-update. Original Arch-Update by Robin Candau.
+
+scx-manager
+  https://github.com/CachyOS/scx-manager
+  GPL-3.0-or-later. Forked as laden-scheduler.
+
+cachyos-kernel-manager / kernel-manager
+  https://github.com/cachyos/kernel-manager
+  GPL-3.0-or-later. Forked as laden-kernel-manager.
+
+Linux kernel
+  GPL-2.0-only (with syscall exception as documented by the kernel).
+  linux-laden is built from CachyOS kernel sources/config under that license.
+
+KDE Plasma / Breeze color scheme contributors
+  LadenDark.colors retains SPDX LGPL-2.0-or-later and upstream copyright lines.
+
+BlackArch (optional lab packages)
+  Not bundled as a full catalogue in the published source tree. If used in an
+  image, each package keeps its own license.
+
+Artwork
+-------
+Laden OS Art and logos: see LICENSES/LicenseRef-LadenAS-Branding.txt.
+Wallpapers are AI-assisted / procedurally composed Laden artwork. Do not
+describe them as native camera captures. AI generation does not by itself
+place the art under MIT.
+
+Repo signing key
+----------------
+Public key only is shipped (packages/laden-keyring/). Fingerprint
+BE87AF39CC3C4610DEA910EC106B6FC0D1FF397F. The secret key must never enter git.
+
+Contact
+-------
+Laden AS — https://laden.no — admin@laden.no
