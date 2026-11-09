@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Laden Apps — one-click / netinstall picker for big applications.
+# Installs from pacman (and Flatpak when chosen). Needs network. No keys.
+set -euo pipefail
+export PATH="/usr/bin:$PATH"
+
+need_net() {
+  curl -fsS --max-time 8 -o /dev/null https://geo.mirror.pkgbuild.com/ \
+    || curl -fsS --max-time 8 -o /dev/null https://archlinux.org/ \
+    || { echo "Laden Apps needs an internet connection." >&2; return 1; }
+}
+
+install_pkgs() {
+  local pkgs=("$@")
+  echo "Installing: ${pkgs[*]}"
+  sudo pacman -Sy --needed --noconfirm "${pkgs[@]}"
+}
+
+pick_gui() {
+  command -v kdialog >/dev/null || return 1
+  kdialog --checklist "Laden Apps — pick what to install (needs internet):" \
+    steam "Steam" off \
+    lutris "Lutris" off \
+    heroic-games-launcher "Heroic (Epic/GOG)" off \
+    obs-studio "OBS Studio" off \
+    discord "Discord" off \
+    flatpak "Flatpak runtime" off \
+    2>/dev/null
+}
+
+pick_cli() {
+  cat <<'MENU'
+Laden Apps — enter numbers separated by spaces, then Enter:
+  1) Steam
+  2) Lutris
+  3) Heroic (Epic/GOG)
+  4) OBS Studio
+  5) Discord
+  6) Flatpak
+MENU
+  read -r -p "> " ans || true
+  out=()
+  for n in $ans; do
+    case $n in
+      1) out+=(steam) ;;
+      2) out+=(lutris) ;;
+      3) out+=(heroic-games-launcher) ;;
+      4) out+=(obs-studio) ;;
+      5) out+=(discord) ;;
+      6) out+=(flatpak) ;;
+    esac
+  done
+  printf '%s\n' "${out[@]}"
+}
+
+main() {
+  if [[ ${1:-} == steam ]]; then need_net; install_pkgs steam steam-devices; exit $?; fi
+  if [[ ${1:-} == lutris ]]; then need_net; install_pkgs lutris; exit $?; fi
+  if [[ ${1:-} == obs ]]; then need_net; install_pkgs obs-studio; exit $?; fi
+  if [[ ${1:-} == discord ]]; then need_net; install_pkgs discord; exit $?; fi
+  if [[ ${1:-} == heroic ]]; then need_net; install_pkgs heroic-games-launcher; exit $?; fi
+
+  need_net || exit 1
+  local sel
+  if sel=$(pick_gui); then
+    # kdialog returns quoted "steam" "lutris"
+    sel=${sel//\"/}
+  else
+    mapfile -t arr < <(pick_cli)
+    sel="${arr[*]}"
+  fi
+  [[ -n ${sel// /} ]] || { echo "Nothing selected."; exit 0; }
+  local pkgs=()
+  for s in $sel; do
+    case $s in
+      steam) pkgs+=(steam steam-devices) ;;
+      lutris) pkgs+=(lutris) ;;
+      heroic-games-launcher|heroic) pkgs+=(heroic-games-launcher) ;;
+      obs-studio|obs) pkgs+=(obs-studio) ;;
+      discord) pkgs+=(discord) ;;
+      flatpak) pkgs+=(flatpak) ;;
+    esac
+  done
+  (( ${#pkgs[@]} )) || { echo "Nothing to install."; exit 0; }
+  install_pkgs "${pkgs[@]}"
+  echo "Done. Open the apps from the Laden menu."
+}
+
+main "$@"

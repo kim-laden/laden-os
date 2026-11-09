@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-calamares-config
-pkgver=0.2.0
-pkgrel=3
+pkgver=1.0.0
+pkgrel=1
 pkgdesc='Laden OS installer: Calamares settings, Laden branding, slideshow and install scripts'
 arch=('any')
 url='https://laden.no'
@@ -23,6 +23,7 @@ package() {
     install -Dm0755 "${_f}/lib/${s}" "${d}/usr/lib/laden-installer/${s}"
   done
   install -Dm0644 "${_f}/systemd/laden-firstboot.service" "${d}/usr/lib/systemd/system/laden-firstboot.service"
+  install -Dm0644 "${_f}/modules-bios/laden-partition.conf" "${d}/usr/share/laden-installer/bios/laden-partition.conf"
   install -Dm0755 "${_f}/bin/laden-installer" "${d}/usr/bin/laden-installer"
   install -Dm0644 "${_f}/laden-installer.desktop" "${d}/usr/share/applications/laden-installer.desktop"
 }

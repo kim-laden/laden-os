@@ -1,0 +1,4 @@
+Welcome to the Laden OS 1.0.0 Red Team live USB (based on Arch Linux).
+Pentest tools are onboard. For tunnels: "Set up Tailscale" / "Set up RustDesk"
+(keys and passwords are created on this machine only — nothing is baked into the image).
+Install with "laden-installer" when you want a permanent system.

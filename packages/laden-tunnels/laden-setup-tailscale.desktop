@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Set up Tailscale
+Comment=Easy Tailscale tunnel (login on this machine; no baked-in keys)
+Exec=laden-setup-tailscale
+Icon=network-vpn
+Categories=Laden;Network;Security;

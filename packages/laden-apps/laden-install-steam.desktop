@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install Steam
+Comment=One-click Steam install via pacman (needs internet)
+Exec=laden-apps steam
+Icon=steam
+Categories=Laden;Game;

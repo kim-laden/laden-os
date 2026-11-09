@@ -1,0 +1,26 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-tunnels
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Laden OS easy Tailscale and RustDesk tunnel setup (keys at first use, never baked in)'
+arch=('any')
+url='https://laden.no'
+license=('MIT')
+depends=('bash')
+optdepends=('tailscale: mesh VPN tunnel'
+            'rustdesk: remote desktop tunnel'
+            'kdialog: graphical prompts')
+source=('laden-setup-tailscale' 'laden-setup-rustdesk' 'laden-tunnels-firstboot'
+        'laden-setup-tailscale.desktop' 'laden-setup-rustdesk.desktop'
+        'laden-tunnels-firstboot.service' 'LICENSE')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+  install -Dm0755 laden-setup-tailscale "${pkgdir}/usr/bin/laden-setup-tailscale"
+  install -Dm0755 laden-setup-rustdesk "${pkgdir}/usr/bin/laden-setup-rustdesk"
+  install -Dm0755 laden-tunnels-firstboot "${pkgdir}/usr/lib/laden-tunnels/laden-tunnels-firstboot"
+  install -Dm0644 laden-tunnels-firstboot.service "${pkgdir}/usr/lib/systemd/system/laden-tunnels-firstboot.service"
+  install -Dm0644 laden-setup-tailscale.desktop "${pkgdir}/usr/share/applications/laden-setup-tailscale.desktop"
+  install -Dm0644 laden-setup-rustdesk.desktop "${pkgdir}/usr/share/applications/laden-setup-rustdesk.desktop"
+  install -Dm0644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

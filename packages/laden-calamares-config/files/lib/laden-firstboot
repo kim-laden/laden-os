@@ -7,6 +7,10 @@ set -u
 command -v ssh-keygen >/dev/null && ssh-keygen -A || true
 command -v update-desktop-database >/dev/null && update-desktop-database -q || true
 command -v fc-cache >/dev/null && fc-cache -s >/dev/null 2>&1 || true
+# Optional Red Team tunnels (package may be absent on Standard)
+if [[ -x /usr/lib/laden-tunnels/laden-tunnels-firstboot ]]; then
+  /usr/lib/laden-tunnels/laden-tunnels-firstboot || true
+fi
 systemctl disable laden-firstboot.service
 rm -f /etc/systemd/system/laden-firstboot.service
 rm -rf /usr/local/lib/laden

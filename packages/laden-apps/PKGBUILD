@@ -1,0 +1,32 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-apps
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Laden OS one-click installers for Steam and other big apps (netinstall picker)'
+arch=('any')
+url='https://laden.no'
+license=('MIT')
+depends=('bash' 'sudo')
+optdepends=('kdialog: graphical picker'
+            'steam: installed by the Steam tile'
+            'flatpak: Flatpak apps from the picker'
+            'discover: Plasma software center')
+source=('laden-apps' 'laden-apps.desktop'
+        'laden-install-steam.desktop'
+        'laden-install-lutris.desktop'
+        'laden-install-obs.desktop'
+        'laden-install-discord.desktop'
+        'laden-install-heroic.desktop'
+        'LICENSE')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+  install -Dm0755 laden-apps "${pkgdir}/usr/bin/laden-apps"
+  install -Dm0644 laden-apps.desktop "${pkgdir}/usr/share/applications/laden-apps.desktop"
+  install -Dm0644 laden-install-steam.desktop "${pkgdir}/usr/share/applications/laden-install-steam.desktop"
+  install -Dm0644 laden-install-lutris.desktop "${pkgdir}/usr/share/applications/laden-install-lutris.desktop"
+  install -Dm0644 laden-install-obs.desktop "${pkgdir}/usr/share/applications/laden-install-obs.desktop"
+  install -Dm0644 laden-install-discord.desktop "${pkgdir}/usr/share/applications/laden-install-discord.desktop"
+  install -Dm0644 laden-install-heroic.desktop "${pkgdir}/usr/share/applications/laden-install-heroic.desktop"
+  install -Dm0644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

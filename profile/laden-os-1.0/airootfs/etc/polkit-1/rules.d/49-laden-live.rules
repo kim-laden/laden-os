@@ -1,0 +1,4 @@
+// Live session only (removed by the installer): no password prompts for "live".
+polkit.addRule(function(action, subject) {
+    if (subject.user == "live") { return polkit.Result.YES; }
+});

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Interactive RustDesk bring-up. Permanent password is generated on first run on THIS machine.
+set -euo pipefail
+STATE_DIR=/var/lib/laden/tunnels
+PASS_FILE=$STATE_DIR/rustdesk-password
+if ! command -v rustdesk >/dev/null; then
+  echo "Installing RustDesk…"
+  sudo pacman -Sy --needed --noconfirm rustdesk || {
+    echo "rustdesk is not in the configured repos. Install it manually, then re-run." >&2
+    exit 1
+  }
+fi
+sudo mkdir -p "$STATE_DIR"
+if [[ ! -f $PASS_FILE ]]; then
+  # 20-char random password, local only
+  pass=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 20)
+  printf '%s\n' "$pass" | sudo tee "$PASS_FILE" >/dev/null
+  sudo chmod 600 "$PASS_FILE"
+  echo "Generated a new RustDesk permanent password on this machine (not baked into any ISO)."
+else
+  pass=$(sudo cat "$PASS_FILE")
+  echo "Reusing the RustDesk password already generated on this machine."
+fi
+# Prefer rustdesk CLI if present; otherwise show the password for the UI.
+if rustdesk --password "$pass" >/dev/null 2>&1; then
+  :
+else
+  echo "Set permanent password in RustDesk UI if the CLI flag is unavailable."
+fi
+if [[ -n ${DISPLAY:-}${WAYLAND_DISPLAY:-} ]] && command -v kdialog >/dev/null; then
+  kdialog --msgbox "RustDesk permanent password (stored only under $PASS_FILE on this machine):\n\n$pass\n\nStart RustDesk from the menu to see your ID."
+else
+  echo "RustDesk permanent password: $pass"
+  echo "Stored at $PASS_FILE (root-readable). Start RustDesk from the menu for your ID."
+fi

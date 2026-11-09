@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install OBS Studio
+Comment=One-click OBS Studio install (needs internet)
+Exec=laden-apps obs
+Icon=com.obsproject.Studio
+Categories=Laden;AudioVideo;

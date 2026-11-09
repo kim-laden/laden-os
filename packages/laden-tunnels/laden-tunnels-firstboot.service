@@ -1,0 +1,12 @@
+[Unit]
+Description=Laden OS tunnel helpers (enable only; no keys)
+After=local-fs.target
+ConditionPathExists=!/var/lib/laden/tunnels/.firstboot-done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laden-tunnels/laden-tunnels-firstboot
+ExecStartPost=/usr/bin/touch /var/lib/laden/tunnels/.firstboot-done
+
+[Install]
+WantedBy=multi-user.target

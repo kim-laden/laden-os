@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Laden Apps
+Comment=Install Steam and other big apps (needs internet)
+Exec=laden-apps
+Icon=laden-os
+Categories=Laden;Settings;PackageManager;
+Keywords=steam;install;apps;

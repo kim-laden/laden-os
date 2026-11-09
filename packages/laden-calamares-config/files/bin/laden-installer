@@ -6,5 +6,15 @@ if ! grep -qw avx2 /proc/cpuinfo || ! grep -qw bmi2 /proc/cpuinfo; then
     exit 1
 fi
 log=/tmp/laden-installer.log
-exec sudo --preserve-env=WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DISPLAY,XAUTHORITY,QT_QPA_PLATFORM,XDG_SESSION_TYPE \
+# BIOS boot: Limine needs a FAT32 /boot, so use the BIOS partition layout.
+if [[ ! -d /sys/firmware/efi ]]; then
+    sudo install -m0644 /usr/share/laden-installer/bios/laden-partition.conf \
+        /etc/calamares/modules/laden-partition.conf
+fi
+# Calamares runs as root. Give it the KDE platform theme and let it read (not
+# write) the live user's colour scheme, so the installer is dark and readable.
+export QT_QPA_PLATFORMTHEME="${QT_QPA_PLATFORMTHEME:-kde}"
+export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-KDE}" KDE_FULL_SESSION=true KDE_SESSION_VERSION=6
+export XDG_CONFIG_DIRS="$HOME/.config:${XDG_CONFIG_DIRS:-/etc/xdg}"
+exec sudo --preserve-env=WAYLAND_DISPLAY,XDG_RUNTIME_DIR,DISPLAY,XAUTHORITY,QT_QPA_PLATFORM,XDG_SESSION_TYPE,QT_QPA_PLATFORMTHEME,XDG_CURRENT_DESKTOP,KDE_FULL_SESSION,KDE_SESSION_VERSION,XDG_CONFIG_DIRS \
     /usr/bin/calamares "$@" >"$log" 2>&1

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install Lutris
+Comment=One-click Lutris install (needs internet)
+Exec=laden-apps lutris
+Icon=lutris
+Categories=Laden;Game;

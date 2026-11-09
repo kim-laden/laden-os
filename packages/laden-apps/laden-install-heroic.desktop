@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install Heroic Games Launcher
+Comment=One-click Heroic install for Epic/GOG (needs internet)
+Exec=laden-apps heroic
+Icon=heroic
+Categories=Laden;Game;

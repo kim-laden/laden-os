@@ -5,3 +5,13 @@ QPushButton { background-color: #13231e; color: #e9fff5; border: 1px solid #1f60
 QPushButton:hover { border-color: #39ffb0; }
 QPushButton:default { background-color: #39ffb0; color: #050b09; }
 QProgressBar::chunk { background-color: #39ffb0; }
+/* Qt does not pass "color" from #mainApp down to child widgets, so set it on each kind. */
+#mainApp QLabel, #mainApp QCheckBox, #mainApp QRadioButton, #mainApp QGroupBox, #mainApp QToolButton { color: #e9fff5; }
+#mainApp QListView, #mainApp QTreeView, #mainApp QTableView, #mainApp QTextBrowser, #mainApp QPlainTextEdit {
+    background-color: #0f1d18; color: #e9fff5; alternate-background-color: #13231e;
+    selection-background-color: #39ffb0; selection-color: #050b09; border: 1px solid #1f6050; }
+#mainApp QLineEdit, #mainApp QComboBox, #mainApp QSpinBox {
+    background-color: #0f1d18; color: #e9fff5; border: 1px solid #1f6050; border-radius: 4px; padding: 3px;
+    selection-background-color: #39ffb0; selection-color: #050b09; }
+#mainApp QComboBox QAbstractItemView { background-color: #0f1d18; color: #e9fff5; selection-background-color: #39ffb0; selection-color: #050b09; }
+#mainApp QHeaderView::section { background-color: #13231e; color: #e9fff5; border: 0; padding: 3px; }

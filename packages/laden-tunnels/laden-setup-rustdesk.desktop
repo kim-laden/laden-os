@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Set up RustDesk
+Comment=Easy RustDesk tunnel (password generated on first use)
+Exec=laden-setup-rustdesk
+Icon=preferences-desktop-remote-desktop
+Categories=Laden;Network;Security;

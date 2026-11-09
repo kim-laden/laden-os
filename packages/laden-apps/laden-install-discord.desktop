@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install Discord
+Comment=One-click Discord install (needs internet)
+Exec=laden-apps discord
+Icon=discord
+Categories=Laden;Network;

@@ -1,0 +1,97 @@
+# Laden OS 1.0.0 Standard edition. One package per line.
+# --- base, kernel, firmware
+base
+linux-laden
+linux-laden-headers
+linux-firmware
+sof-firmware
+intel-ucode
+amd-ucode
+mkinitcpio
+mkinitcpio-archiso
+syslinux
+limine
+limine-entry-tool
+efibootmgr
+dkms
+# --- keyrings and repositories
+archlinux-keyring
+cachyos-keyring
+laden-keyring
+cachyos-mirrorlist
+cachyos-v3-mirrorlist
+laden-mirrorlist
+pacman-contrib
+rate-mirrors
+# --- Laden OS desktop (KDE Plasma, branding, Laden tools, menu, apps picker)
+laden-desktop
+laden-apps
+chwd
+cachyos-settings
+power-profiles-daemon
+# --- installer
+laden-calamares
+laden-calamares-config
+kdialog
+# --- apps
+firefox
+wezterm
+kate
+gwenview
+okular
+partitionmanager
+plasma-systemmonitor
+xdg-user-dirs
+bluez
+bluez-utils
+# --- disks and filesystems
+btrfs-progs
+dosfstools
+e2fsprogs
+exfatprogs
+ntfs-3g
+xfsprogs
+f2fs-tools
+cryptsetup
+lvm2
+gptfdisk
+parted
+os-prober
+# --- graphics: Intel + AMD open stack (always present)
+mesa
+lib32-mesa
+vulkan-intel
+lib32-vulkan-intel
+vulkan-radeon
+lib32-vulkan-radeon
+intel-media-driver
+libva-mesa-driver
+xf86-video-amdgpu
+# --- graphics: NVIDIA open DKMS + userspace (builds for linux-laden on the ISO)
+nvidia-open-dkms
+nvidia-utils
+lib32-nvidia-utils
+nvidia-settings
+nvidia-prime
+opencl-nvidia
+lib32-opencl-nvidia
+libva-nvidia-driver
+qt6-wayland
+xorg-xwayland
+# --- shell and tools
+sudo
+nano
+vim
+less
+man-db
+htop
+usbutils
+pciutils
+dmidecode
+wget
+curl
+rsync
+git
+openssl
+openssh
+which

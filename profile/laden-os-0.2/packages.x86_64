@@ -80,3 +80,5 @@ rsync
 git
 openssl
 
+openssh
+which

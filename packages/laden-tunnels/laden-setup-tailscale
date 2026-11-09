@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Interactive Tailscale bring-up. Never ships auth keys; login happens on this machine.
+set -euo pipefail
+if ! command -v tailscale >/dev/null; then
+  echo "Installing Tailscale…"
+  sudo pacman -Sy --needed --noconfirm tailscale
+fi
+sudo systemctl enable --now tailscaled.service
+echo "Opening Tailscale login (browser or one-time URL). No key is stored in the image."
+if [[ -n ${DISPLAY:-}${WAYLAND_DISPLAY:-} ]] && command -v kdialog >/dev/null; then
+  kdialog --msgbox "Tailscale will print a login URL in the next step. Open it in a browser and approve this machine."
+fi
+sudo tailscale up
+tailscale status || true
+echo "Done. Use 'tailscale status' anytime."

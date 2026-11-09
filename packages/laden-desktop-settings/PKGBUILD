@@ -1,11 +1,11 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=5
+pkgrel=7
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
-license=('LicenseRef-LadenAS')
+license=('MIT')
 depends=('laden-branding' 'bash')
 optdepends=('plasma-desktop: Laden look-and-feel'
             'fish: Laden shell config'
@@ -32,6 +32,8 @@ package() {
   # XDG defaults for new users / fallbacks
   install -Dm0644 "${_assets}/xdg/kdeglobals" "${d}/etc/xdg/kdeglobals"
   install -Dm0644 "${_assets}/xdg/ksplashrc"  "${d}/etc/xdg/ksplashrc"
+  # SDDM greeter theme (without this SDDM falls back to its built-in theme)
+  install -Dm0644 "${_assets}/sddm/10-laden-theme.conf" "${d}/etc/sddm.conf.d/10-laden-theme.conf"
 
   # fish
   install -Dm0644 laden-config.fish "${d}/usr/share/laden/fish/laden-config.fish"

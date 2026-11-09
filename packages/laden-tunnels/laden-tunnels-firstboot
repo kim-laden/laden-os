@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Optional first-boot helper for Red Team live/install: enable services only.
+# Does NOT generate Tailscale auth keys or ship presets. RustDesk password is
+# created the first time the user runs laden-setup-rustdesk.
+set -u
+mkdir -p /var/lib/laden/tunnels
+chmod 700 /var/lib/laden/tunnels
+if command -v tailscaled >/dev/null; then
+  systemctl enable tailscaled.service || true
+fi
+# Leave a short README for the live user
+cat > /var/lib/laden/tunnels/README.txt <<'TXT'
+Laden tunnels
+=============
+- Tailscale: run "laden-setup-tailscale" (browser login; no auth key in the image).
+- RustDesk: run "laden-setup-rustdesk" (password is generated on this machine only).
+Nothing sensitive is baked into the ISO.
+TXT
+chmod 644 /var/lib/laden/tunnels/README.txt
+exit 0
