@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# laden-menu-apply: switch this user's panel to the Laden menu (Kickoff, Meta) + Laden
+# Dashboard (fullscreen, Meta+Shift+Space). Backs up the Plasma config first.
+#   laden-menu-apply             apply (backup in ~/.local/share/laden-backups/menu-<ts>)
+#   laden-menu-apply --rollback  restore the newest backup
+#   laden-menu-apply --rollback <dir>
+set -euo pipefail
+SHARE=/usr/share/laden/menu
+BK="$HOME/.local/share/laden-backups"
+FILES=(plasma-org.kde.plasma.desktop-appletsrc plasmashellrc kglobalshortcutsrc kactivitymanagerd-statsrc)
+restart_shell() { systemctl --user restart plasma-plasmashell.service 2>/dev/null || { kquitapp6 plasmashell || true; (setsid plasmashell >/dev/null 2>&1 &); }; }
+
+if [[ ${1:-} == --rollback ]]; then
+  dir=${2:-$(ls -1d "$BK"/menu-* 2>/dev/null | sort | tail -1)}
+  [[ -d $dir ]] || { echo "no backup found in $BK" >&2; exit 1; }
+  echo "restoring $dir"
+  systemctl --user stop plasma-plasmashell.service 2>/dev/null || kquitapp6 plasmashell || true
+  for f in "${FILES[@]}"; do [[ -f $dir/$f ]] && cp -a "$dir/$f" "$HOME/.config/$f"; done
+  if [[ -d $dir/kactivitymanagerd ]]; then
+    systemctl --user stop plasma-kactivitymanagerd.service 2>/dev/null || true
+    rm -rf "$HOME/.local/share/kactivitymanagerd.laden-replaced"
+    mv "$HOME/.local/share/kactivitymanagerd" "$HOME/.local/share/kactivitymanagerd.laden-replaced" 2>/dev/null || true
+    cp -a "$dir/kactivitymanagerd" "$HOME/.local/share/kactivitymanagerd"
+    systemctl --user start plasma-kactivitymanagerd.service 2>/dev/null || true
+  fi
+  systemctl --user start plasma-plasmashell.service 2>/dev/null || (setsid plasmashell >/dev/null 2>&1 &)
+  echo "done. (The menu categories stay Laden while laden-menu is installed.)"
+  exit 0
+fi
+
+ts=$(date +%Y%m%d-%H%M%S); dir="$BK/menu-$ts"; mkdir -p "$dir"
+for f in "${FILES[@]}"; do [[ -f $HOME/.config/$f ]] && cp -a "$HOME/.config/$f" "$dir/"; done
+[[ -d $HOME/.local/share/kactivitymanagerd ]] && cp -a "$HOME/.local/share/kactivitymanagerd" "$dir/"
+echo "backup: $dir"
+# drop Plasma's stock favourites (Kontact, Discover, browser placeholder) so the Laden row is clean
+agent=org.kde.plasma.favorites.applications
+act=$(qdbus6 org.kde.ActivityManager /ActivityManager/Activities CurrentActivity 2>/dev/null || true)
+for r in preferred://browser applications:org.kde.kontact.desktop applications:org.kde.discover.desktop applications:systemsettings.desktop; do
+  for a in :global "$act"; do [[ -n $a ]] && qdbus6 org.kde.ActivityManager /ActivityManager/Resources/Linking \
+     org.kde.ActivityManager.ResourcesLinking.UnlinkResourceFromActivity "$agent" "$r" "$a" >/dev/null 2>&1 || true; done
+done
+# link the Laden favourites (KActivities stats is where Kickoff keeps them)
+FAVS=$(sed -n 's/^var LADEN_FAVORITES = \[\(.*\)\];/\1/p' "$SHARE/launchers.js" | tr -d '"' | sed 's/, /\n/g')
+while IFS= read -r f; do [[ -z $f ]] && continue
+  for a in :global "$act"; do [[ -n $a ]] && qdbus6 org.kde.ActivityManager /ActivityManager/Resources/Linking \
+     org.kde.ActivityManager.ResourcesLinking.LinkResourceToActivity "$agent" "applications:$f" "$a" >/dev/null 2>&1 || true; done
+done <<< "$FAVS"
+ordering=$(while IFS= read -r f; do [[ -n $f ]] && printf 'applications:%s\n' "$f"; done <<< "$FAVS" | paste -sd,)
+kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
+js=$(cat "$SHARE/launchers.js" "$SHARE/apply.js")
+out=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "$js")
+echo "$out" | grep -v ^LADEN_ORDER || true
+sleep 2
+# Plasma keeps the panel order in memory, so set it while plasmashell is stopped
+read -r _ pid order < <(echo "$out" | grep ^LADEN_ORDER || true)
+if [[ -n ${pid:-} ]]; then
+  systemctl --user stop plasma-plasmashell.service 2>/dev/null || kquitapp6 plasmashell || true
+  sleep 1
+  kwriteconfig6 --file plasma-org.kde.plasma.desktop-appletsrc --group Containments --group "$pid" --group General --key AppletOrder "$order"
+  kid=${order%%;*}; rest=${order#*;}; did=${rest%%;*}
+  for a in global "$act"; do [[ -n $a ]] || continue
+    kwriteconfig6 --file kactivitymanagerd-statsrc --group "Favorites-org.kde.plasma.kickoff.favorites.instance-$kid-$a" --key ordering "$ordering"
+    kwriteconfig6 --file kactivitymanagerd-statsrc --group "Favorites-org.kde.plasma.kicker.favorites.instance-$did-$a" --key ordering "$ordering"
+  done
+  systemctl --user start plasma-plasmashell.service 2>/dev/null || (setsid plasmashell >/dev/null 2>&1 &)
+fi
+echo "Laden menu applied. Meta opens it, Meta+Shift+Space opens the Laden Dashboard."
+echo "Undo: laden-menu-apply --rollback $dir"

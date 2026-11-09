@@ -1,0 +1,36 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-menu
+pkgver=2026.11.09
+pkgrel=3
+pkgdesc='Laden OS application menu: Laden categories (Gaming, Create, Stream, Red Team ...), Laden icons, Red Team terminal launchers, Laden menu + Dashboard panel layout'
+arch=('any')
+url='https://laden.no'
+license=('LicenseRef-LadenAS')
+depends=('plasma-workspace' 'plasma-desktop' 'qt6-tools' 'bash')
+optdepends=('wezterm: terminal for Red Team launchers (Konsole is the fallback)'
+            'konsole: fallback terminal')
+makedepends=('python')
+install=laden-menu.install
+source=(menu-spec.py gen.py launchers.js apply.js laden-rt-run laden-menu-apply README.md)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+
+build() { python3 gen.py; }
+
+package() {
+  local o="$srcdir/out"
+  install -Dm644 "$o/menus/laden.menu" "$pkgdir/etc/xdg/menus/applications-merged/laden.menu"
+  install -Dm644 -t "$pkgdir/usr/share/desktop-directories" "$o"/desktop-directories/*.directory
+  install -Dm644 -t "$pkgdir/usr/share/icons/hicolor/scalable/categories" "$o"/icons/laden-category-*.svg "$o"/icons/laden-redteam-*.svg
+  install -Dm644 -t "$pkgdir/usr/share/icons/hicolor/scalable/apps" "$o"/icons/laden-menu.svg "$o"/icons/laden-dashboard.svg
+  install -Dm644 -t "$pkgdir/usr/share/applications" "$o"/applications/*.desktop
+  install -Dm755 laden-rt-run      "$pkgdir/usr/bin/laden-rt-run"
+  install -Dm755 laden-menu-apply  "$pkgdir/usr/bin/laden-menu-apply"
+  install -Dm644 -t "$pkgdir/usr/share/laden/menu" "$o/share/launchers.js" "$o/share/apply.js"
+  local t="$pkgdir/usr/share/plasma/layout-templates/org.laden.desktop.defaultPanel"
+  install -Dm644 "$o/layout-template/org.laden.desktop.defaultPanel/metadata.json" "$t/metadata.json"
+  install -Dm644 "$o/layout-template/org.laden.desktop.defaultPanel/contents/layout.js" "$t/contents/layout.js"
+  # default layout for NEW users of the Laden look-and-feel (laden-desktop-settings must not ship this file)
+  install -Dm644 "$o/share/org.kde.plasma.desktop-layout.js" \
+    "$pkgdir/usr/share/plasma/look-and-feel/org.laden.os/contents/layouts/org.kde.plasma.desktop-layout.js"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

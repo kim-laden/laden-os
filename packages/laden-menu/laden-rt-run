@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# laden-rt-run: open a Red Team tool in a terminal (WezTerm, else Konsole/kitty/xterm).
+#   laden-rt-run <tool> [help args...]   show the tool's help, then leave you in a shell
+#   laden-rt-run --interactive <tool>    start the tool itself (msfconsole, sliver ...)
+#   laden-rt-run --overview              Red Team Shell: list the installed tools
+set -uo pipefail
+if [[ ${LADEN_RT_INNER:-} != 1 ]]; then
+  export LADEN_RT_INNER=1
+  self=$(readlink -f "$0")
+  if command -v wezterm >/dev/null; then exec wezterm start --always-new-process --cwd "$HOME" -- "$self" "$@"
+  elif command -v konsole >/dev/null; then exec konsole --workdir "$HOME" -e "$self" "$@"
+  elif command -v kitty >/dev/null; then exec kitty -d "$HOME" "$self" "$@"
+  else exec xterm -e "$self" "$@"; fi
+fi
+G=$'\e[38;2;57;255;176m'; W=$'\e[1;38;2;244;255;249m'; D=$'\e[2m'; R=$'\e[0m'
+banner() { printf '%s  ▌ %sLADEN RED TEAM%s  %s%s%s\n' "$G" "$W" "$R" "$D" "$1" "$R"
+           printf '%s  ▙▄▄ %sOnly test systems you own or have written permission to test.%s\n\n' "$G" "$D" "$R"; }
+shell_now() { cd "$HOME" || true; exec "${SHELL:-/bin/bash}" -l; }
+case "${1:-}" in
+  --overview)
+    banner "installed tools"
+    for f in /usr/share/applications/laden-rt-*.desktop; do
+      b=$(sed -n 's/^TryExec=//p' "$f"); command -v "$b" >/dev/null || continue
+      c=$(sed -n 's/^Categories=.*X-Laden-RedTeam-\([a-z]*\);.*/\1/p' "$f")
+      printf '%s%-10s%s %-18s %s%s%s\n' "$G" "$c" "$R" "$b" "$D" "$(sed -n 's/^Comment=//p' "$f")" "$R"
+    done | sort
+    echo; shell_now ;;
+  --interactive)
+    shift; banner "$1"; "$@"; echo; printf '%s%s exited. You are in a shell now.%s\n' "$D" "$1" "$R"; shell_now ;;
+  "") shell_now ;;
+  *)
+    tool=$1; shift; banner "$tool"
+    if [[ $# -gt 0 ]]; then "$tool" "$@" 2>&1 | head -n 70; fi
+    printf '\n%sType %s%s ...%s%s to run it. man %s for the full manual.%s\n' "$D" "$W" "$tool" "$R" "$D" "$tool" "$R"
+    shell_now ;;
+esac

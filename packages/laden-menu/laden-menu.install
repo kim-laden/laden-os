@@ -1,0 +1,5 @@
+post_install() {
+  echo ":: Laden menu categories are active after kbuildsycoca6 (runs on next login, or now:"
+  echo "::   kbuildsycoca6 --noincremental). Panel launcher for existing users: laden-menu-apply"
+}
+post_upgrade() { :; }
