@@ -169,7 +169,7 @@ os.makedirs(os.path.join(T, "contents"))
 json.dump({"KPackageStructure": "Plasma/LayoutTemplate",
            "KPlugin": {"Id": "org.laden.desktop.defaultPanel", "Name": "Laden Panel",
                        "Description": "Laden menu, Laden Dashboard, task manager and system tray",
-                       "Authors": [{"Name": "Laden AS", "Email": "admin@laden.no"}], "License": "LicenseRef-LadenAS",
+                       "Authors": [{"Name": "Laden AS", "Email": "admin@laden.no"}], "License": "MIT",
                        "Website": "https://laden.no", "EnabledByDefault": True},
            "X-Plasma-ContainmentCategories": ["panel"], "X-Plasma-Shell": "plasmashell"},
           open(os.path.join(T, "metadata.json"), "w"), indent=2)

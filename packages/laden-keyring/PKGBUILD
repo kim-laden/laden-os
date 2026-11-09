@@ -1,11 +1,11 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-keyring
 pkgver=2026.11.09
-pkgrel=1
+pkgrel=2
 pkgdesc='Laden OS repository signing key (public key only)'
 arch=('any')
 url='https://laden.no'
-license=('LicenseRef-LadenAS')
+license=('MIT')
 install="${pkgname}.install"
 source=('laden.gpg' 'laden-trusted' 'laden-revoked')
 sha256sums=('SKIP' 'SKIP' 'SKIP')

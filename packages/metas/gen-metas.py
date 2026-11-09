@@ -112,7 +112,7 @@ pkgrel={RELS.get(k, REL)}
 pkgdesc='{desc}'
 arch=('any')
 url='https://laden.no'
-license=('LicenseRef-LadenAS')
+license=('MIT')
 groups=('laden-meta')
 depends=({arr(["'%s'"%x for x in deps],9)})
 """

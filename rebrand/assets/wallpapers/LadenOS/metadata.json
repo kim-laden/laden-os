@@ -2,7 +2,7 @@
     "KPlugin": {
         "Authors": [ { "Name": "Laden AS", "Email": "admin@laden.no" } ],
         "Id": "LadenOS",
-        "License": "LicenseRef-LadenAS",
+        "License": "LicenseRef-LadenAS-Branding",
         "Name": "Laden OS",
         "Description": "Let's do it! — default Laden OS wallpapers (v4 grid tunnel)"
     }

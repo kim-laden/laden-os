@@ -1,11 +1,11 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-gaming-tweaks
 pkgver=2026.11.09
-pkgrel=5
+pkgrel=6
 pkgdesc='Laden OS game mode: GameMode hooks, power profile, sched-ext gaming scheduler, adaptive laptop CPU limit, NVIDIA shader cache, KWin dGPU selection'
 arch=('any')
 url='https://laden.no'
-license=('LicenseRef-LadenAS')
+license=('MIT')
 depends=('bash' 'gamemode' 'power-profiles-daemon' 'scx-scheds' 'scx-tools' 'sudo' 'util-linux')
 optdepends=('nvidia-utils: GPU temperature for the adaptive CPU limit'
             'libnotify: game mode notifications')
