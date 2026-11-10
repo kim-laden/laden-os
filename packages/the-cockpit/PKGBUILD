@@ -1,0 +1,45 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+# The CockPit (c) 2026 Laden AS, MIT. Built from the 1.1.0 Linux release tarball
+# (kept in build/cache, not in git). The bundled WezTerm AppImage is NOT shipped:
+# Laden OS uses the distro wezterm package.
+pkgname=the-cockpit
+pkgver=1.1.0
+pkgrel=1
+pkgdesc='The CockPit: emerald terminal cockpit built on WezTerm (Laden OS LCP)'
+arch=('any')
+url='https://laden.no'
+license=('MIT')
+depends=('bash' 'wezterm')
+optdepends=('fish: default CockPit shell'
+            'python: hardware overview and IPython helper'
+            'openssh: SSH connections from connections.lua'
+            'laden-terminal: Laden OS theme (lcp launcher)')
+source=("the-cockpit-${pkgver}-linux-x86_64.tar.gz")
+sha256sums=('72349d6983827d6a50acbdb5850b46aaa30213e9ecc8bb89f1e57c1d00943eb1')
+noextract=()
+
+package() {
+  local s="${srcdir}/the-cockpit-${pkgver}-linux-x86_64"
+  local app="${pkgdir}/usr/share/the-cockpit"
+  install -dm0755 "${app}" "${pkgdir}/usr/bin"
+  cp -R --no-preserve=ownership "${s}/bin" "${s}/config" "${s}/docs" "${s}/tools" "${s}/assets" "${s}/licenses" "${app}/"
+  rm -f "${app}/bin/cockpit.ps1" "${app}/assets/icons/the-cockpit.icns" "${app}/assets/icons/the-cockpit.ico"
+  install -m0644 "${s}/LICENSE" "${s}/README.md" "${s}/CHANGELOG.md" "${s}/THIRD_PARTY_NOTICES.md" "${s}/VERSION" "${app}/"
+  find "${app}" -type d -exec chmod 0755 {} +
+  find "${app}" -type f -exec chmod 0644 {} +
+  chmod 0755 "${app}/bin/cockpit" "${app}/tools/cockpit-hardware.py" "${app}/tools/cockpit-journal" "${app}/tools/cockpit-ipython"
+  ln -s /usr/share/the-cockpit/bin/cockpit "${pkgdir}/usr/bin/cockpit"
+  ln -s /usr/share/the-cockpit/tools/cockpit-journal "${pkgdir}/usr/bin/cockpit-journal"
+  ln -s /usr/share/the-cockpit/tools/cockpit-ipython "${pkgdir}/usr/bin/cockpit-ipython"
+  local size
+  for size in 16 24 32 48 64 128 256 512; do
+    install -Dm0644 "${s}/assets/icons/the-cockpit-${size}.png" \
+      "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/the-cockpit.png"
+  done
+  install -dm0755 "${pkgdir}/usr/share/applications"
+  sed "s|@EXEC@|/usr/bin/cockpit|g" "${s}/packaging/linux/the-cockpit.desktop" \
+    > "${pkgdir}/usr/share/applications/the-cockpit.desktop"
+  chmod 0644 "${pkgdir}/usr/share/applications/the-cockpit.desktop"
+  install -Dm0644 "${s}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm0644 -t "${pkgdir}/usr/share/licenses/${pkgname}" "${s}"/licenses/*
+}

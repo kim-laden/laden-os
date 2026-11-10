@@ -34,3 +34,6 @@ packages/laden-kernel-manager/kernel-manager/
 # 32K wallpaper masters (shipped via local [laden] package, not git)
 branding/*30720x17280*
 branding/*-deep-*.png
+
+# The CockPit release tarball (build/cache), symlinked for makepkg
+packages/the-cockpit/*.tar.gz
