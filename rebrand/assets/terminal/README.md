@@ -8,7 +8,7 @@ Status: tried on ladenx first (per-user). Not wired into any package yet.
 
 | File | Installed to (per user) | What it does |
 |---|---|---|
-| `fastfetch/config.jsonc` | `~/.config/fastfetch/config.jsonc` | Compact emerald "L" mark, grouped sections (system / hardware / displays / storage & power), short keys with Nerd Font icons, bars for memory/disk/battery. Info lines stay <= 51 columns. |
+| `fastfetch/config.jsonc` | `~/.config/fastfetch/config.jsonc` | Compact emerald "L" mark, grouped sections (system / hardware / displays / storage & power), short keys with Nerd Font icons, bars for memory/disk/battery. Info lines stay <= 53 columns. |
 | `fish/functions/laden_greeting.fish` | `~/.config/fish/functions/` | Responsive greeting: logo beside info at >= 78 cols, logo on top at 56-77, info only at 40-55, one line below 40. Then one short Laden line. `set -gx LADEN_QUIET 1` turns it off. |
 | `fish/functions/fish_greeting.fish` | `~/.config/fish/functions/` | Replaces "Welcome to fish" with `laden_greeting`. |
 | `fish/functions/fish_prompt.fish` | `~/.config/fish/functions/` | Two-line emerald prompt: `lz`, path, git branch/state, exit status only when non-zero, duration when >= 2 s, ROOT badge, host only over SSH. WezTerm/CockPit only (or `set -gx LADEN_PROMPT 1`); other terminals keep their stock prompt. |
