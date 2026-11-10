@@ -18,3 +18,10 @@ ISO *build-time* `profile/*/pacman.conf` lists HTTPS first and `file:///srv/lade
 ## Ops
 
 After `bash packages/build-selected.sh … && sudo bash packages/publish-local-repo.sh`, copy the new `.pkg.tar.zst` + `.sig` files (and refreshed `laden.db*` / `laden.files*`) to the server under `/repo/x86_64/`. Do not rsync from ladenx with the laden_vps key unless that access is authorized.
+
+## ISO build-time vs live
+
+- **Build-time** `profile/*/pacman.conf` uses `file:///srv/laden-repo/$arch` so mkarchiso
+  can pacstrap packages that were just built locally and are not on the VPS yet.
+- **Live/installed** systems use `Include = /etc/pacman.d/laden-mirrorlist`, where
+  HTTPS is the only active Server.
