@@ -1,15 +1,15 @@
 #!/bin/bash
 # Start the Laden OS installer (Calamares) from the live session.
 if ! grep -qw avx2 /proc/cpuinfo || ! grep -qw bmi2 /proc/cpuinfo; then
-    msg="Laden OS 0.2.0 needs an x86-64-v3 CPU (AVX2), like Intel Haswell / AMD Zen or newer."
+    msg="Laden OS 1.0.0 needs an x86-64-v3 CPU (AVX2), like Intel Haswell / AMD Zen or newer."
     command -v kdialog >/dev/null && kdialog --error "$msg" || echo "$msg" >&2
     exit 1
 fi
 log=/tmp/laden-installer.log
-# BIOS boot: Limine needs a FAT32 /boot, so use the BIOS partition layout.
-if [[ ! -d /sys/firmware/efi ]]; then
-    sudo install -m0644 /usr/share/laden-installer/bios/laden-partition.conf \
-        /etc/calamares/modules/laden-partition.conf
+# BIOS boot: Limine needs a FAT32 /boot. Also applied at live boot by
+# laden-firmware-partition.service so a direct calamares launch still works.
+if [[ -x /usr/lib/laden-installer/apply-firmware-partition-config ]]; then
+    sudo /usr/lib/laden-installer/apply-firmware-partition-config
 fi
 # Calamares runs as root. Give it the KDE platform theme and let it read (not
 # write) the live user's colour scheme, so the installer is dark and readable.

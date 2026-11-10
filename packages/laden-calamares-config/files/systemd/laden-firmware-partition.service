@@ -1,0 +1,15 @@
+[Unit]
+Description=Select the Laden OS BIOS partition layout for Calamares
+ConditionPathExists=!/sys/firmware/efi
+ConditionPathExists=/usr/share/laden-installer/bios/laden-partition.conf
+ConditionPathExists=/etc/calamares/modules/laden-partition.conf
+After=local-fs.target
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laden-installer/apply-firmware-partition-config
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

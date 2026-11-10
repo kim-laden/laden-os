@@ -24,6 +24,7 @@ the ISO; the others download from the repos when the network is up.
 - **Laden Apps** (`laden-apps`): one-click / checklist installer for Steam, Lutris, Heroic, OBS, Discord and Flatpak.
 - **Laden Tunnels** (`laden-tunnels`): easy Tailscale login and RustDesk password generation on first use.
 - Installer fixes for BIOS Limine layout, dark Calamares theme, and Limine menu default entry.
+- BIOS installer: replace limine-entry-tool with limine-mkinitcpio-hook without a pacman conflict, write /etc/default/limine so the hook targets the **Laden OS** menu, and install limine-bios.sys plus `limine bios-install` on a FAT32 /boot (Limine cannot read btrfs).
 - License prep: Laden original work under MIT © Laden AS; GPL forks stay GPL; branding reserved.
 
 ## Requirements

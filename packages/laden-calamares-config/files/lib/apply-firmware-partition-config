@@ -1,0 +1,10 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# On a BIOS live session, install the Calamares partition layout that gives
+# Limine a FAT32 /boot (Limine's BIOS stage cannot read btrfs). No-op on UEFI.
+set -euo pipefail
+src=/usr/share/laden-installer/bios/laden-partition.conf
+dst=/etc/calamares/modules/laden-partition.conf
+[[ -d /sys/firmware/efi ]] && exit 0
+[[ -f $src && -e $dst ]] || exit 0
+install -m0644 "$src" "$dst"

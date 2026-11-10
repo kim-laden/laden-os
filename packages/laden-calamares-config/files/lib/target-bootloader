@@ -1,15 +1,21 @@
 #!/bin/bash
-# Runs in the target after the bootloader module.
-# Limine: rename the menu section to Laden OS, switch to the mkinitcpio hook
-# (so kernel updates refresh the menu) and generate the entries.
-set -u
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Runs in the target after the Calamares bootloader module.
+# Limine: name the menu "Laden OS", replace limine-entry-tool with the
+# mkinitcpio hook (so kernel updates refresh the menu), and on BIOS install
+# limine-bios.sys plus the MBR/VBR stages.
+set -euo pipefail
 log() { echo "laden-installer: $*"; }
+
 conf=""
-for c in /boot/limine.conf /boot/EFI/limine/limine.conf; do [[ -f $c ]] && conf=$c && break; done
+for c in /boot/limine.conf /boot/limine/limine.conf /boot/EFI/limine/limine.conf; do
+    [[ -f $c ]] && conf=$c && break
+done
 if [[ -z $conf ]]; then
     log "no limine.conf: systemd-boot install, nothing to do"
     exit 0
 fi
+
 sed -i -e 's|^/+CachyOS$|/+Laden OS|' \
        -e 's|^# CachyOS Limine theme$|# Laden OS Limine theme|' \
        -e '/^# Author: diegons490/d' \
@@ -17,19 +23,74 @@ sed -i -e 's|^/+CachyOS$|/+Laden OS|' \
        -e 's|^term_palette: .*|term_palette: 050b09;ff5f5f;39ffb0;f9e2af;5fafff;f5c2e7;94e2d5;e9fff5|' \
        -e 's|^term_foreground: .*|term_foreground: e9fff5|' "$conf"
 
-pkg=$(ls /usr/share/laden-installer/pkgs/limine-mkinitcpio-hook-*.pkg.tar.zst 2>/dev/null | head -1)
-if [[ -n $pkg ]] && ! pacman -Q limine-mkinitcpio-hook >/dev/null 2>&1; then
-    # --ask 4 answers yes only to "remove conflicting limine-entry-tool?"
-    pacman -U --noconfirm --ask 4 "$pkg"
+# Point both limine-entry-tool and limine-mkinitcpio-hook at the Laden OS
+# entry and at /boot (ESP on UEFI, FAT32 boot partition on BIOS). Written
+# here so it survives removal of the installer package.
+install -d /etc/default
+cat > /etc/default/limine << 'LIMINE_DEFAULT'
+# Written by the Laden OS installer. Overrides /etc/limine-entry-tool.conf.
+TARGET_OS_NAME="Laden OS"
+ESP_PATH="/boot"
+LIMINE_DEFAULT
+
+# Swap limine-entry-tool for limine-mkinitcpio-hook.
+# pacman --noconfirm answers "no" to "remove the conflicting package?", so
+# --ask 4 is not enough; remove the conflicting package first, then install
+# the bundled hook offline. Never use pacman -Rns.
+if ! pacman -Q limine-mkinitcpio-hook >/dev/null 2>&1; then
+    pkg=""
+    for f in /usr/share/laden-installer/pkgs/limine-mkinitcpio-hook-*.pkg.tar.zst; do
+        [[ -f $f ]] && pkg=$f && break
+    done
+    [[ -n $pkg ]] || { log "ERROR: bundled limine-mkinitcpio-hook package missing"; exit 1; }
+    # Only remove the real package, not a provider (the hook Provides the same name).
+    inst=$(pacman -Qq limine-entry-tool 2>/dev/null || true)
+    if [[ $inst == limine-entry-tool ]]; then
+        log "removing conflicting limine-entry-tool"
+        pacman -Rdd --noconfirm limine-entry-tool
+    fi
+    log "installing $pkg"
+    pacman -U --noconfirm "$pkg"
+    pacman -Q limine-mkinitcpio-hook >/dev/null
 fi
-# Kernels live in the ESP under the machine-id once the hook is in place.
+
+# BIOS: Limine stage 1/2 go on the disk; stage 3 (limine-bios.sys) must sit
+# on a FAT filesystem Limine can read (/boot).
+if [[ ! -d /sys/firmware/efi ]]; then
+    datadir=$(limine --print-datadir)
+    [[ -f $datadir/limine-bios.sys ]] || { log "ERROR: $datadir/limine-bios.sys missing"; exit 1; }
+    install -Dm0644 "$datadir/limine-bios.sys" /boot/limine-bios.sys
+    install -Dm0644 "$datadir/limine-bios.sys" /boot/limine/limine-bios.sys
+    bootdev=$(findmnt -no SOURCE /boot 2>/dev/null || findmnt -no SOURCE /)
+    pk=$(lsblk -no PKNAME "$bootdev" 2>/dev/null | head -1)
+    if [[ -z $pk && -b $bootdev && $(lsblk -no TYPE "$bootdev") == disk ]]; then
+        pk=${bootdev#/dev/}
+    fi
+    [[ -n $pk && -b /dev/$pk ]] || { log "ERROR: cannot find disk for limine bios-install (bootdev=$bootdev)"; exit 1; }
+    log "limine bios-install /dev/$pk"
+    limine bios-install "/dev/$pk"
+fi
+
+# Kernels live in the ESP / FAT /boot under the machine-id once the hook is in place.
 rm -f /boot/vmlinuz-linux-laden /boot/initramfs-linux-laden.img /boot/initramfs-linux-laden-fallback.img
 limine-update
-# limine-entry-tool adds its own "/+Laden OS <version>" section. Drop the empty
-# one the bootloader module wrote, otherwise default_entry lands on a folder and
-# the menu never boots on its own.
+
+# limine-entry-tool / the hook may add "/+Laden OS <version>". Drop the empty
+# "/+Laden OS" folder the bootloader module wrote, otherwise default_entry
+# lands on a folder and the menu never boots on its own.
 if grep -q '^/+Laden OS .' "$conf"; then
     sed -i '/^\/+Laden OS$/d' "$conf"
 fi
+# Re-resolve conf in case limine-update rewrote a canonical path.
+for c in /boot/limine.conf /boot/limine/limine.conf /boot/EFI/limine/limine.conf; do
+    [[ -f $c ]] && conf=$c && break
+done
 grep -q 'linux-laden' "$conf" || { log "ERROR: no linux-laden entry in $conf"; exit 1; }
+
+if [[ ! -d /sys/firmware/efi ]]; then
+    if [[ ! -f /boot/limine-bios.sys && ! -f /boot/limine/limine-bios.sys ]]; then
+        log "ERROR: limine-bios.sys missing from /boot after install"
+        exit 1
+    fi
+fi
 log "limine menu ready"
