@@ -136,7 +136,8 @@ grep -q 'linux-laden' "$conf" || { log "ERROR: no linux-laden entry in $conf"; e
 if [[ ! -d /sys/firmware/efi ]]; then
     # Limine BIOS reads limine.conf, limine-bios.sys and the kernels from the
     # same FAT partition, so they must all be on the /boot filesystem.
-    if ! ls /boot/*/vmlinuz-linux-laden /boot/vmlinuz-linux-laden >/dev/null 2>&1; then
+    # limine-update copies it to /boot/<machine-id>/linux-laden/vmlinuz.
+    if ! find /boot -maxdepth 3 \( -path "*/linux-laden/vmlinuz" -o -name vmlinuz-linux-laden \) | grep -q .; then
         log "ERROR: no linux-laden kernel on /boot after limine-update"
         exit 1
     fi
