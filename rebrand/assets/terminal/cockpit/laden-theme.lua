@@ -2,8 +2,18 @@
 -- LadenDark palette + spacing for the CockPit (LCP) WezTerm window.
 -- Loaded at the end of ~/.config/cockpit/wezterm.lua:
 --   pcall(function() dofile(wezterm.home_dir .. "/.config/cockpit/laden-theme.lua")(c) end)
--- Skipped when COCKPIT_SCHEME / COLOR_SCHEME picks another scheme. Font size is not touched.
+-- Colours are skipped when COCKPIT_SCHEME / COLOR_SCHEME picks another scheme.
+-- Font: CockPit's FONT_SIZE (cockpit.conf -> COCKPIT_FONT_SIZE) wins; without it the
+-- default is 14.5 pt (= 12 pt + two Ctrl+= steps, 12 x 1.1 x 1.1, rounded to 0.5).
 return function(c)
+  if not tonumber(os.getenv("COCKPIT_FONT_SIZE") or "") then c.font_size = 14.5 end
+  -- initial_cols/rows (96x54) were sized for 12 pt; scale them so a bigger font
+  -- keeps about the same window size in pixels instead of growing off-screen.
+  local k = 12 / (c.font_size or 12)
+  if k < 1 then
+    c.initial_cols = math.floor((c.initial_cols or 96) * k + 0.5)
+    c.initial_rows = math.floor((c.initial_rows or 54) * k + 0.5)
+  end
   if (os.getenv("COCKPIT_SCHEME") or "") ~= "" then return c end
   local old = c.colors or {}
   c.colors = {

@@ -13,7 +13,7 @@ Status: tried on ladenx first (per-user). Not wired into any package yet.
 | `fish/functions/fish_greeting.fish` | `~/.config/fish/functions/` | Replaces "Welcome to fish" with `laden_greeting`. |
 | `fish/functions/fish_prompt.fish` | `~/.config/fish/functions/` | Two-line emerald prompt: `lz`, path, git branch/state, exit status only when non-zero, duration when >= 2 s, ROOT badge, host only over SSH. WezTerm/CockPit only (or `set -gx LADEN_PROMPT 1`); other terminals keep their stock prompt. |
 | `fish/conf.d/00-laden-config.fish` | `~/.config/fish/conf.d/` | Shadows `/etc/fish/conf.d/00-laden-config.fish` for this user: loads the same system config but stops its unconditional `fastfetch`, so the greeting prints it once, sized to the pane. |
-| `cockpit/laden-theme.lua` | `~/.config/cockpit/laden-theme.lua` | LadenDark 16-colour palette (green = LadenDark #39DC9A), cursor, selection, padding. Hooked at the end of `~/.config/cockpit/wezterm.lua`. Skipped when CockPit `COLOR_SCHEME` is set. Font size untouched. |
+| `cockpit/laden-theme.lua` | `~/.config/cockpit/laden-theme.lua` | LadenDark 16-colour palette (green = LadenDark #39DC9A), cursor, selection, padding. Hooked at the end of `~/.config/cockpit/wezterm.lua`. Colours skipped when CockPit `COLOR_SCHEME` is set. Default font 14.5 pt (12 pt + two Ctrl+= steps) unless cockpit.conf `FONT_SIZE` is set; `install-user.sh` moves `FONT_SIZE=11/12` to 14.5. The 96x54 start size (cells, sized for 12 pt) is scaled by 12/font so the window keeps about the same pixel size (79x45 at 14.5 pt -> side-by-side logo). |
 
 Install / restore:
 

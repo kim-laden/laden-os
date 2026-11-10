@@ -61,6 +61,15 @@ open(p, "w", encoding="utf-8").write(s)
 PY
   echo "hooked laden-theme.lua into $cw"
 fi
+# CockPit default font: 12 pt + two Ctrl+= steps = 14.5 pt (window stays 960x1024 px).
+cc="$cfg/cockpit/cockpit.conf"
+if [ -f "$cc" ] && grep -Eq '^FONT_SIZE=(11|12)$' "$cc"; then
+  mkdir -p "$bk/orig/cockpit"
+  cp -a "$cc" "$bk/orig/cockpit/cockpit.conf"
+  echo "cp -a '$bk/orig/cockpit/cockpit.conf' '$cc'" >> "$restore"
+  sed -i -E 's/^FONT_SIZE=(11|12)$/FONT_SIZE=14.5/' "$cc"
+  echo "set FONT_SIZE=14.5 in $cc"
+fi
 chmod +x "$restore"
 echo
 echo "Backup : $bk"
