@@ -13,7 +13,7 @@ bootmodes=('bios.syslinux' 'uefi.systemd-boot')
 arch="x86_64"
 pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
-airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '15' '-b' '1M' '-processors' '8')
+airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '12' '-b' '1M' '-processors' '4')
 kernel_params_x86_64="cow_spacesize=4G console=ttyS0,115200 console=tty0"
 file_permissions=(
   ["/etc/sudoers.d"]="0:0:750"

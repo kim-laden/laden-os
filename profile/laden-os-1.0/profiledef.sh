@@ -16,7 +16,7 @@ arch="x86_64"
 pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
 # Cap mksquashfs at 8 threads to keep host CPU cooler during release builds.
-airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '15' '-b' '1M' '-processors' '8')
+airootfs_image_tool_options=('-comp' 'zstd' '-Xcompression-level' '12' '-b' '1M' '-processors' '4')
 # tty0 last so it is /dev/console; ttyS0 gives a serial log for VM tests.
 kernel_params_x86_64="cow_spacesize=4G console=ttyS0,115200 console=tty0"
 file_permissions=(
