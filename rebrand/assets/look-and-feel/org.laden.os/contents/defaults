@@ -1,8 +1,16 @@
 [kdeglobals][KDE]
 LookAndFeelPackage=org.laden.os
+widgetStyle=Breeze
 
 [ksplashrc][KSplash]
 Theme=org.laden.os
 
 [kdeglobals][General]
 ColorScheme=LadenDark
+
+[kdeglobals][Icons]
+Theme=breeze-dark
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.kwin.aurorae.v2
+theme=__aurorae__svg__exposeairdark

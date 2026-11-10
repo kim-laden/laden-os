@@ -1,0 +1,23 @@
+{
+    "KPackageStructure": "Plasma/Theme",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "phobian@tutanota.com",
+                "Name": "Mark Whittaker"
+            }
+        ],
+        "Category": "Plasma Theme",
+        "ServiceTypes": [
+            "Plasma/Theme"
+        ],
+        "EnabledByDefault": true,
+        "Name": "Expose Air Dark",
+        "Description": "Aero for the Expose series",
+        "Id": "exposeairdark",
+        "Version": "2.0",
+        "License": "GPL-2.0+",
+        "X-KPackage-Dependencies": [
+        ]
+    }
+}

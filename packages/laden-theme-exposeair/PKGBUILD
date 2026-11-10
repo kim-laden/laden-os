@@ -1,0 +1,26 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+# Expose Air Dark by Mark Whittaker (phob1an), GPL-2.0-or-later,
+# https://store.kde.org/p/2357388 / https://www.opencode.net/phob1an/expose-air
+# Unmodified copy of the window decoration, Plasma style and colour scheme used on ladenx.
+pkgname=laden-theme-exposeair
+pkgver=2.1
+pkgrel=1
+pkgdesc='Expose Air Dark window decoration (Laden OS default), Plasma style and colour scheme'
+arch=('any')
+url='https://store.kde.org/p/2357388'
+license=('GPL-2.0-or-later')
+depends=('kwin')
+source=()
+sha256sums=()
+
+package() {
+  local f="${startdir}/files" d="${pkgdir}/usr/share"
+  install -dm0755 "${d}/aurorae/themes" "${d}/plasma/desktoptheme" "${d}/color-schemes"
+  cp -R --no-preserve=ownership "${f}/aurorae/exposeairdark" "${d}/aurorae/themes/"
+  cp -R --no-preserve=ownership "${f}/desktoptheme/exposeairdark" "${d}/plasma/desktoptheme/"
+  install -m0644 "${f}/color-schemes/ExposeAirDark.colors" "${d}/color-schemes/"
+  find "${d}" -type d -exec chmod 0755 {} +
+  find "${d}" -type f -exec chmod 0644 {} +
+  install -Dm0644 "${f}/aurorae/exposeairdark/LICENSE" "${d}/licenses/${pkgname}/LICENSE"
+  install -Dm0644 "${startdir}/README.md" "${d}/doc/${pkgname}/README.md"
+}

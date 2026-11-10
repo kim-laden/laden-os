@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Expose Air Dark
+Comment=Aero for my Expose series
+X-KDE-PluginInfo-Author=Mark Whittaker
+X-KDE-PluginInfo-Email=phobian@tutanota.com
+X-KDE-PluginInfo-Name=exposeairdark
+X-KDE-PluginInfo-Version=2.1
+X-KDE-PluginInfo-Category=Plasma 6 Window Decorations
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL-2.0+
+X-KDE-PluginInfo-EnabledByDefault=true

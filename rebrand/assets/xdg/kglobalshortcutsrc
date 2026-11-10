@@ -1,0 +1,5 @@
+[services][lcp.desktop]
+_launch=Meta+Return\tCtrl+Alt+T
+
+[services][org.kde.konsole.desktop]
+_launch=none

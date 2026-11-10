@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="57"
+   height="32"
+   viewBox="0 0 57 32.000001"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="applications.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#d1d1d1"
+     bordercolor="#111111"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="6.9547696"
+     inkscape:cx="30.698357"
+     inkscape:cy="43.639116"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     showguides="true">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="4.2824806e-07"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+    <sodipodi:guide
+       position="16,29.000002"
+       orientation="1,0"
+       id="guide5"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="applications-other">
+      <rect
+         style="fill:none;fill-opacity:0.186364;stroke-width:2.00001;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect5"
+         width="32"
+         height="32"
+         x="0"
+         y="-4.2824806e-07" />
+      <rect
+         style="fill:#e0573b;fill-opacity:1;stroke-width:2.00001;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect1"
+         width="10"
+         height="10"
+         x="5"
+         y="4.9999995" />
+      <rect
+         style="fill:#91cf18;fill-opacity:1;stroke-width:2.00001;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect2"
+         width="10"
+         height="10"
+         x="17"
+         y="4.999999" />
+      <rect
+         style="fill:#84b1de;fill-opacity:1;stroke-width:2.00001;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect3"
+         width="10"
+         height="10"
+         x="5"
+         y="17" />
+      <rect
+         style="fill:#f5d126;fill-opacity:1;stroke-width:2.00001;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect4"
+         width="10"
+         height="10"
+         x="17"
+         y="17" />
+    </g>
+    <g
+       id="22-22-applications-other"
+       transform="matrix(0.6875,0,0,0.6875,35,2.9442054e-7)"
+       style="stroke-width:1.45455">
+      <rect
+         style="fill:none;fill-opacity:0.186364;stroke-width:2.9091;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect6"
+         width="32"
+         height="32"
+         x="0"
+         y="-4.2824806e-07" />
+      <rect
+         style="fill:#e0573b;fill-opacity:1;stroke-width:2.9091;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect7"
+         width="10.181818"
+         height="10.181818"
+         x="4.3636365"
+         y="4.363636" />
+      <rect
+         style="fill:#91cf18;fill-opacity:1;stroke-width:2.9091;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect8"
+         width="10.181818"
+         height="10.181818"
+         x="17.454546"
+         y="4.363636" />
+      <rect
+         style="fill:#84b1de;fill-opacity:1;stroke-width:2.9091;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect9"
+         width="10.181818"
+         height="10.181818"
+         x="4.3636365"
+         y="17.454544" />
+      <rect
+         style="fill:#f5d126;fill-opacity:1;stroke-width:2.9091;stroke-linecap:square;paint-order:markers stroke fill"
+         id="rect10"
+         width="10.181818"
+         height="10.181818"
+         x="17.454546"
+         y="17.454544" />
+    </g>
+  </g>
+</svg>

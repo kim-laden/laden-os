@@ -1,16 +1,16 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=8
+pkgrel=9
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
 license=('MIT')
-depends=('laden-branding' 'bash' 'laden-terminal')
+depends=('laden-branding' 'bash' 'laden-terminal' 'laden-theme-exposeair')
 optdepends=('plasma-desktop: Laden look-and-feel'
             'fish: Laden shell config'
             'laden-update: Laden Update tray updater')
-backup=('etc/xdg/kdeglobals' 'etc/xdg/ksplashrc')
+backup=('etc/xdg/kdeglobals' 'etc/xdg/ksplashrc' 'etc/xdg/kwinrc' 'etc/xdg/kglobalshortcutsrc')
 source=('laden-config.fish' 'laden-colors.fish' 'laden-os.fish'
         '00-laden-config.fish' 'compat-laden-config.fish')
 sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
@@ -32,6 +32,10 @@ package() {
   # XDG defaults for new users / fallbacks
   install -Dm0644 "${_assets}/xdg/kdeglobals" "${d}/etc/xdg/kdeglobals"
   install -Dm0644 "${_assets}/xdg/ksplashrc"  "${d}/etc/xdg/ksplashrc"
+  # Expose Air Dark window decoration (laden-theme-exposeair), as on ladenx
+  install -Dm0644 "${_assets}/xdg/kwinrc"     "${d}/etc/xdg/kwinrc"
+  # LCP is the default terminal: Meta+Enter / Ctrl+Alt+T open lcp, not Konsole
+  install -Dm0644 "${_assets}/xdg/kglobalshortcutsrc" "${d}/etc/xdg/kglobalshortcutsrc"
   # SDDM greeter theme (without this SDDM falls back to its built-in theme)
   install -Dm0644 "${_assets}/sddm/10-laden-theme.conf" "${d}/etc/sddm.conf.d/10-laden-theme.conf"
 

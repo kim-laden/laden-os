@@ -1,5 +1,11 @@
 [General]
 ColorScheme=LadenDark
+TerminalApplication=lcp
+TerminalService=lcp.desktop
+
+[Icons]
+Theme=breeze-dark
 
 [KDE]
 LookAndFeelPackage=org.laden.os
+widgetStyle=Breeze
