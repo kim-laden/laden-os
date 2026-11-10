@@ -99,3 +99,18 @@ laden-pentest
 laden-tunnels
 tailscale
 # rustdesk: not in repos at build time; install later via laden-setup-rustdesk
+# --- provider pins (unattended pacstrap)
+iptables-nft
+libisl
+libtool
+tevent
+qt6-multimedia-ffmpeg
+pipewire-jack
+libvpl
+sdl2-compat
+zimg
+l-smash
+noto-fonts-emoji
+tesseract-data-eng
+fmt
+spdlog

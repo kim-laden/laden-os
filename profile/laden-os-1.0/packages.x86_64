@@ -94,3 +94,18 @@ git
 openssl
 openssh
 which
+# --- provider pins (unattended pacstrap)
+iptables-nft
+libisl
+libtool
+tevent
+qt6-multimedia-ffmpeg
+pipewire-jack
+libvpl
+sdl2-compat
+zimg
+l-smash
+noto-fonts-emoji
+tesseract-data-eng
+fmt
+spdlog
