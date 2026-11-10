@@ -12,6 +12,11 @@ for c in /boot/limine.conf /boot/limine/limine.conf /boot/EFI/limine/limine.conf
     [[ -f $c ]] && conf=$c && break
 done
 if [[ -z $conf ]]; then
+    if [[ ! -d /sys/firmware/efi ]]; then
+        # systemd-boot is UEFI-only, so a BIOS install must have Limine on /boot.
+        log "ERROR: BIOS install but no limine.conf on /boot (found: $(ls /boot/efi/limine.conf 2>/dev/null || echo none))"
+        exit 1
+    fi
     log "no limine.conf: systemd-boot install, nothing to do"
     exit 0
 fi
@@ -129,6 +134,12 @@ done
 grep -q 'linux-laden' "$conf" || { log "ERROR: no linux-laden entry in $conf"; exit 1; }
 
 if [[ ! -d /sys/firmware/efi ]]; then
+    # Limine BIOS reads limine.conf, limine-bios.sys and the kernels from the
+    # same FAT partition, so they must all be on the /boot filesystem.
+    if ! ls /boot/*/vmlinuz-linux-laden /boot/vmlinuz-linux-laden >/dev/null 2>&1; then
+        log "ERROR: no linux-laden kernel on /boot after limine-update"
+        exit 1
+    fi
     if [[ ! -f /boot/limine-bios.sys && ! -f /boot/limine/limine-bios.sys ]]; then
         log "ERROR: limine-bios.sys missing from /boot after install"
         exit 1

@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-calamares-config
 pkgver=1.0.0
-pkgrel=4
+pkgrel=5
 pkgdesc='Laden OS installer: Calamares settings, Laden branding, slideshow and install scripts'
 arch=('any')
 url='https://laden.no'
