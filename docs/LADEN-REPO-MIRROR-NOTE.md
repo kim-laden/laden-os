@@ -1,25 +1,20 @@
-# `[laden]` repo URL — change needed for v1 (do not apply yet)
+# `[laden]` repo URL
 
-## Current (ladenx and packages)
+## Current
 
-`/etc/pacman.d/laden-mirrorlist` and `packages/laden-mirrorlist/laden-mirrorlist`:
+`/etc/pacman.d/laden-mirrorlist` (package `laden-mirrorlist`):
 
 ```
-Server = file:///srv/laden-repo/$arch
-#Server = https://laden.no/repo/$arch
+Server = https://laden.no/repo/$arch
+#Server = file:///srv/laden-repo/$arch
 ```
 
-Also referenced by `profile/laden-os-0.2/pacman.conf` as
-`Server = file:///srv/laden-repo/$arch` for local ISO builds.
+Public mirror: https://laden.no/repo/x86_64/ (signed DB; public key via `laden-keyring`, fingerprint `BE87AF39CC3C4610DEA910EC106B6FC0D1FF397F`).
 
-## Required for public v1
+## Local builds
 
-1. Host a signed package mirror over **HTTPS** (planned: `https://laden.no/repo/$arch`).
-2. Flip `laden-mirrorlist` so the https Server is active and the file:// line is
-   local-dev only (or behind an install-time toggle).
-3. Rebuild/publish `laden-mirrorlist` and ensure installed systems
-   `pacman -Syu` pick it up.
-4. Keep SigLevel = Required DatabaseRequired; only the **public** key ships in
-   `laden-keyring`.
+ISO *build-time* `profile/*/pacman.conf` lists HTTPS first and `file:///srv/laden-repo/$arch` second so a release candidate can pacstrap packages that were just built on ladenx before they are uploaded to the VPS. The mirrorlist **inside** the image (via `Include = /etc/pacman.d/laden-mirrorlist`) is HTTPS-only with file:// commented.
 
-**This prep intentionally does not change those files.**
+## Ops
+
+After `bash packages/build-selected.sh … && sudo bash packages/publish-local-repo.sh`, copy the new `.pkg.tar.zst` + `.sig` files (and refreshed `laden.db*` / `laden.files*`) to the server under `/repo/x86_64/`. Do not rsync from ladenx with the laden_vps key unless that access is authorized.

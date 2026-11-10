@@ -1,9 +1,11 @@
 ##
 ## Laden OS repository mirrorlist
 ##
-## Local repo on this machine (published by packages/publish-local-repo.sh
-## to /srv/laden-repo; pacman's sandboxed download user cannot read /home).
-Server = file:///srv/laden-repo/$arch
 
-## Future online mirror (NOT live yet; uncomment when https://laden.no/repo is up)
-#Server = https://laden.no/repo/$arch
+## Public signed mirror
+Server = https://laden.no/repo/$arch
+
+## Dev fallback on a build machine that publishes to /srv/laden-repo
+## (pacman's sandboxed download user cannot read /home). Keep commented
+## on installed systems that should only use the public mirror.
+#Server = file:///srv/laden-repo/$arch
