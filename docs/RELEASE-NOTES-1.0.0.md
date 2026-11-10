@@ -24,7 +24,7 @@ the ISO; the others download from the repos when the network is up.
 - **Laden Apps** (`laden-apps`): one-click / checklist installer for Steam, Lutris, Heroic, OBS, Discord and Flatpak.
 - **Laden Tunnels** (`laden-tunnels`): easy Tailscale login and RustDesk password generation on first use.
 - Installer fixes for BIOS Limine layout, dark Calamares theme, and Limine menu default entry.
-- BIOS installer: replace limine-entry-tool with limine-mkinitcpio-hook without a pacman conflict, write /etc/default/limine (TARGET_OS_NAME, ESP_PATH, and KERNEL_CMDLINE with the root UUID) so the hook targets the **Laden OS** menu and can generate linux-laden entries in a Calamares chroot, and install limine-bios.sys plus `limine bios-install` on a FAT32 /boot (Limine cannot read btrfs).
+- BIOS installer: replace limine-entry-tool with limine-mkinitcpio-hook without a pacman conflict, write /etc/default/limine (TARGET_OS_NAME, ESP_PATH, and KERNEL_CMDLINE with the root UUID) so the hook targets the **Laden OS** menu and can generate linux-laden entries in a Calamares chroot, and install limine-bios.sys plus `limine bios-install` on a FAT32 /boot (Limine cannot read btrfs). The BIOS partition layout is only that FAT32 /boot plus the root filesystem (and the 1 MiB bios_grub partition Calamares adds on GPT)—it must not also create an ESP mounted at /boot.
 - License prep: Laden original work under MIT © Laden AS; GPL forks stay GPL; branding reserved.
 
 ## Requirements
