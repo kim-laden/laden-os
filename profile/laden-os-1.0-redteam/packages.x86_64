@@ -1,4 +1,4 @@
-# Laden OS 1.0.0 Standard edition. One package per line.
+# Laden OS 1.0.0 (Red Team, the one edition). One package per line.
 # --- base, kernel, firmware
 base
 linux-laden
@@ -27,6 +27,9 @@ rate-mirrors
 laden-desktop
 laden-apps
 laden-terminal
+the-cockpit
+laden-theme-exposeair
+laden-gaming-tweaks
 chwd
 cachyos-settings
 power-profiles-daemon
@@ -37,6 +40,8 @@ kdialog
 # --- apps
 firefox
 wezterm
+ttf-jetbrains-mono
+ttf-meslo-nerd
 kate
 gwenview
 okular
