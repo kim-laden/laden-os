@@ -2,7 +2,7 @@
 # Assets come from the project tree (rebrand/assets, branding/), not duplicated here.
 pkgname=laden-branding
 pkgver=2026.11.09
-pkgrel=7
+pkgrel=8
 pkgdesc='Laden OS identity, logos, Limine splash, Plymouth theme, wallpapers and fastfetch logo'
 arch=('any')
 url='https://laden.no'
@@ -12,7 +12,6 @@ optdepends=('plymouth: Laden boot animation'
             'fastfetch: Laden logo in fastfetch'
             'limine: Laden boot splash'
             'laden-wallpapers-32k: optional 32K deep-zoom wallpaper master')
-backup=('etc/xdg/fastfetch/config.jsonc')
 install="${pkgname}.install"
 source=('laden-apply-branding'
         '50-laden-identity.hook'
@@ -90,6 +89,6 @@ type=image
 SDDM
 
   install -Dm0644 logo.txt     "${d}/usr/share/laden/fastfetch/logo.txt"
+  # Legacy/simple fastfetch layout kept under share; LCP default is laden-terminal → /etc/xdg
   install -Dm0644 config.jsonc "${d}/usr/share/laden/fastfetch/config.jsonc"
-  install -Dm0644 config.jsonc "${d}/etc/xdg/fastfetch/config.jsonc"
 }

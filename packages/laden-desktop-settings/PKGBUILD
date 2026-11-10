@@ -1,12 +1,12 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=7
+pkgrel=8
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
 license=('MIT')
-depends=('laden-branding' 'bash')
+depends=('laden-branding' 'bash' 'laden-terminal')
 optdepends=('plasma-desktop: Laden look-and-feel'
             'fish: Laden shell config'
             'laden-update: Laden Update tray updater')

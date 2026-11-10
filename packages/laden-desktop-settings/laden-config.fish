@@ -33,7 +33,5 @@ end
 alias update 'sudo pacman -Syu'
 alias mirror 'sudo cachyos-rate-mirrors'
 
-# Fastfetch on interactive shells (uses /etc/xdg/fastfetch/config.jsonc → Laden logo)
-if status is-interactive; and type -q fastfetch
-    fastfetch
-end
+# Fastfetch is printed by laden_greeting (package laden-terminal), sized to the pane.
+# Do not call fastfetch here — that would double-print and ignore column width.

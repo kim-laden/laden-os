@@ -1,0 +1,43 @@
+# Maintainer: Laden OS Repo <admin@laden.no>
+pkgname=laden-terminal
+pkgver=1.0.0
+pkgrel=2
+pkgdesc='Laden OS LCP/CockPit terminal look: fish greeting/prompt, fastfetch, LadenDark theme'
+arch=('any')
+url='https://laden.no'
+license=('MIT' 'LicenseRef-LadenAS-Branding')
+depends=('fish')
+optdepends=('fastfetch: greeting layout'
+            'the-cockpit: LCP / CockPit WezTerm UI'
+            'wezterm: terminal that loads the CockPit theme')
+conflicts=('laden-branding<2026.11.09-8')
+backup=('etc/xdg/fastfetch/config.jsonc')
+source=()
+sha256sums=()
+
+package() {
+  local d="${pkgdir}"
+  local s="${startdir}"
+
+  install -Dm0644 "${s}/fastfetch/config.jsonc" "${d}/etc/xdg/fastfetch/config.jsonc"
+  install -Dm0644 "${s}/fastfetch/config.jsonc" "${d}/usr/share/laden/terminal/fastfetch/config.jsonc"
+
+  # Dedicated path so we do not overwrite fish-pure-prompt's vendor fish_prompt.fish
+  install -Dm0644 "${s}/fish/functions/fish_prompt.fish" \
+    "${d}/usr/share/laden/fish/functions/fish_prompt.fish"
+  install -Dm0644 "${s}/fish/functions/fish_greeting.fish" \
+    "${d}/usr/share/laden/fish/functions/fish_greeting.fish"
+  install -Dm0644 "${s}/fish/functions/laden_greeting.fish" \
+    "${d}/usr/share/laden/fish/functions/laden_greeting.fish"
+  install -Dm0644 "${s}/fish/conf.d/laden-terminal.fish" \
+    "${d}/usr/share/fish/vendor_conf.d/laden-terminal.fish"
+
+  install -Dm0644 "${s}/cockpit/laden-theme.lua" \
+    "${d}/usr/share/laden/terminal/cockpit/laden-theme.lua"
+  install -Dm0644 "${s}/skel/.config/cockpit/laden-theme.lua" \
+    "${d}/etc/skel/.config/cockpit/laden-theme.lua"
+  install -Dm0644 "${s}/skel/.config/cockpit/wezterm.lua" \
+    "${d}/etc/skel/.config/cockpit/wezterm.lua"
+
+  install -Dm0644 "${s}/LICENSE" "${d}/usr/share/licenses/${pkgname}/LICENSE"
+}

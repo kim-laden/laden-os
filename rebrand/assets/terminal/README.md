@@ -4,7 +4,7 @@ SPDX-License-Identifier: MIT (c) Laden AS. The Laden "L" mark inside
 `fastfetch/config.jsonc` (`logo.source`) is Laden AS branding
 (`LICENSES/LicenseRef-LadenAS-Branding.txt`).
 
-Status: tried on ladenx first (per-user). Not wired into any package yet.
+Status: tried on ladenx first (per-user). Shipped by package `laden-terminal` (system default + /etc/skel for new users).
 
 | File | Installed to (per user) | What it does |
 |---|---|---|

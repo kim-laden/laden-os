@@ -63,8 +63,12 @@ trap 'kill $WD 2>/dev/null || true' EXIT
 export SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-$(date +%s)}
 set +e
 # Feed empty answers so pacman provider prompts take the default (first) choice.
+set +o pipefail
 yes '' 2>/dev/null | nice -n 19 ionice -c3 mkarchiso -v -w "$WORK" -o "$OUT" "$PROF" 2>&1 | tee -a "$LOG"
-st=${PIPESTATUS[0]}
+st=${PIPESTATUS[1]}
+set -o pipefail
+# yes(1) exits 141 (SIGPIPE) after mkarchiso closes stdin; ignore that.
+[[ $st -eq 141 ]] && st=0
 set -e
 grep -q 'Failed to install packages to new root' "$LOG" && { echo "pacstrap failed" >&2; exit 1; }
 (( st == 0 )) || { echo "mkarchiso failed ($st)" >&2; exit "$st"; }

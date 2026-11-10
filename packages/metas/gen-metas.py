@@ -9,7 +9,7 @@ B = "[blackarch]"
 M = {
  "desktop": ("Laden OS base desktop: KDE Plasma, Laden branding, tools and audio", [
    "laden-branding","laden-desktop-settings","laden-keyring","laden-mirrorlist",
-   "laden-update","laden-kernel-manager","laden-scheduler","laden-menu",
+   "laden-update","laden-kernel-manager","laden-scheduler","laden-menu","laden-terminal",
    "plasma-desktop","plasma-workspace","sddm","sddm-kcm","plasma-nm","plasma-pa","bluedevil",
    "powerdevil","kscreen","kde-gtk-config","breeze-gtk","xdg-desktop-portal-kde",
    "dolphin","konsole","ark","spectacle","networkmanager",

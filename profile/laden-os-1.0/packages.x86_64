@@ -26,6 +26,7 @@ rate-mirrors
 # --- Laden OS desktop (KDE Plasma, branding, Laden tools, menu, apps picker)
 laden-desktop
 laden-apps
+laden-terminal
 chwd
 cachyos-settings
 power-profiles-daemon
