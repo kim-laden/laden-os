@@ -1,0 +1,58 @@
+// Laden OS - LCP / CockPit terminal fastfetch layout
+// SPDX-License-Identifier: MIT  (c) Laden AS - https://laden.no
+// Installed per user to ~/.config/fastfetch/config.jsonc by rebrand/assets/terminal/install-user.sh.
+// Every info line stays under 56 columns, so the side-by-side layout fits 78+ columns
+// and laden_greeting switches to logo-on-top (or no logo) on narrower panes.
+// The Laden "L" mark in logo.source is Laden AS branding (LICENSES/LicenseRef-LadenAS-Branding.txt);
+// the rest of this file is MIT.
+// Palette (LadenDark): emerald #39DC9A, bright #5DFFC0, mint #8AFFD6, deep #145C3A, pearl #D7F6EA.
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "data",
+    "source": "$1 ▄▄▄▄\n$1 ████       $6╺━━$7●\n$2 ████\n$3 ████\n$4 ████\n$5 ████▄▄▄▄▄▄▄▄\n$5 ████████████\n$6  ▀▀▀▀▀▀▀▀▀▀▀▀\n$8   LADEN OS",
+    "color": {
+      "1": "38;2;138;255;214",
+      "2": "38;2;93;255;192",
+      "3": "38;2;57;240;170",
+      "4": "38;2;57;220;154",
+      "5": "38;2;40;190;128",
+      "6": "38;2;20;92;58",
+      "7": "38;2;93;255;192",
+      "8": "1;38;2;57;220;154"
+    },
+    "padding": { "top": 1, "left": 2, "right": 4 }
+  },
+  "display": {
+    "separator": " ",
+    "color": { "keys": "38;2;57;220;154", "title": "1;38;2;93;255;192", "output": "38;2;215;246;234", "separator": "38;2;20;92;58" },
+    "key": { "width": 13 },
+    "bar": { "width": 10, "char": { "elapsed": "▰", "total": "▱" }, "border": { "left": "", "right": "" }, "color": { "elapsed": "38;2;57;220;154", "total": "38;2;42;90;68" } },
+    "percent": { "type": ["bar", "num"], "color": { "green": "38;2;93;255;192", "yellow": "38;2;230;211;106", "red": "38;2;255;92;122" } },
+    "size": { "binaryPrefix": "iec", "ndigits": 1 },
+    "freq": { "ndigits": 1 }
+  },
+  "modules": [
+    { "type": "title", "format": "{user-name}{#38;2;20;92;58}@{#1;38;2;93;255;192}{host-name}", "color": { "user": "1;38;2;93;255;192" } },
+    { "type": "custom", "format": "{#38;2;20;92;58}──{#38;2;57;220;154} system {#38;2;20;92;58}──────────────────────────────────" },
+    { "type": "os",       "key": "  os",      "format": "{name} {version-id} {#38;2;109;154;134}· {arch}" },
+    { "type": "kernel",   "key": "󰒓  kernel",  "format": "{release}" },
+    { "type": "uptime",   "key": "󰅐  uptime" },
+    { "type": "packages", "key": "󰏖  pkgs",    "format": "{pacman} pacman {#38;2;109;154;134}· {flatpak-system} flatpak" },
+    { "type": "shell",    "key": "󰆍  shell",   "format": "{pretty-name} {version}" },
+    { "type": "de",       "key": "󰕮  desktop", "format": "Plasma {version} {#38;2;109;154;134}· Wayland" },
+    { "type": "custom", "format": "{#38;2;20;92;58}──{#38;2;57;220;154} hardware {#38;2;20;92;58}────────────────────────────────" },
+    { "type": "host",     "key": "󰌢  host",    "format": "{name}" },
+    { "type": "command",  "key": "󰘚  cpu",     "shell": "/bin/sh",
+      "text": "n=$(sed -n 's/^model name[^:]*: *//p' /proc/cpuinfo | head -n1 | sed -E 's/\\((R|TM|r|tm)\\)//g; s/ CPU//; s/ @.*//; s/ [0-9]+-Core Processor//; s/^Intel //; s/^AMD //; s/  +/ /g'); echo \"$n · $(nproc) threads\"" },
+    { "type": "gpu",      "key": "󰢮  gpu {index}", "format": "{name} {#38;2;109;154;134}· {type}" },
+    { "type": "memory",   "key": "󰍛  memory",  "format": "{percentage-bar} {used}/{total} {#38;2;109;154;134}{percentage}" },
+    { "type": "custom", "format": "{#38;2;20;92;58}──{#38;2;57;220;154} displays {#38;2;20;92;58}────────────────────────────────" },
+    { "type": "display",  "key": "󰍹  {name}",  "format": "{width}×{height} {#38;2;109;154;134}· {refresh-rate} Hz · {inch}\"" },
+    { "type": "custom", "format": "{#38;2;20;92;58}──{#38;2;57;220;154} storage & power {#38;2;20;92;58}─────────────────────────" },
+    { "type": "disk",     "key": "󰋊  root",    "folders": "/", "format": "{size-percentage-bar} {size-used}/{size-total} {#38;2;109;154;134}{size-percentage}" },
+    { "type": "battery",  "key": "󰁹  battery", "format": "{capacity-bar} {capacity} {#38;2;109;154;134}· {status}" },
+    "break",
+    { "type": "colors", "symbol": "circle", "paddingLeft": 1 }
+  ]
+}
