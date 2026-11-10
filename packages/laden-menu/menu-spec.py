@@ -132,7 +132,7 @@ LADEN = """arch-update.desktop org.laden.KernelManager.desktop org.laden.Schedul
 cockpit.desktop cockpit-hp.desktop systemsettings.desktop btrfs-assistant.desktop limine-snapper-restore.desktop
 io.github.ilya_zlobintsev.LACT.desktop nvidia-settings.desktop org.kde.plasma-welcome.desktop
 """.split()
-TERMINALS = """org.wezfurlong.wezterm.desktop org.kde.konsole.desktop kitty.desktop Alacritty.desktop
+TERMINALS = """lcp.desktop the-cockpit.desktop org.wezfurlong.wezterm.desktop org.kde.konsole.desktop kitty.desktop Alacritty.desktop
 org.kde.yakuake.desktop org.gnome.Console.desktop""".split()
 
 # Top level, in order: id, name, comment, rules (python dict consumed by gen.py)
@@ -161,4 +161,4 @@ TOP = [
   ("help","Help","Guides and documentation", {"cats_any":["Documentation"], "not_cats":["System"]}),
 ]
 FAVORITES = ["steam.desktop","Counter-Strike 2.desktop","com.obsproject.Studio.desktop","org.kde.kdenlive.desktop",
-             "blender.desktop","org.wezfurlong.wezterm.desktop","firefox.desktop","org.kde.dolphin.desktop","arch-update.desktop"]
+             "blender.desktop","lcp.desktop","firefox.desktop","org.kde.dolphin.desktop","arch-update.desktop"]

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# laden-rt-run: open a Red Team tool in a terminal (WezTerm, else Konsole/kitty/xterm).
+# laden-rt-run: open a Red Team tool in a terminal (LCP, else WezTerm/Konsole/kitty/xterm).
 #   laden-rt-run <tool> [help args...]   show the tool's help, then leave you in a shell
 #   laden-rt-run --interactive <tool>    start the tool itself (msfconsole, sliver ...)
 #   laden-rt-run --overview              Red Team Shell: list the installed tools
@@ -7,7 +7,8 @@ set -uo pipefail
 if [[ ${LADEN_RT_INNER:-} != 1 ]]; then
   export LADEN_RT_INNER=1
   self=$(readlink -f "$0")
-  if command -v wezterm >/dev/null; then exec wezterm start --always-new-process --cwd "$HOME" -- "$self" "$@"
+  if command -v lcp >/dev/null; then exec lcp --workdir "$HOME" -e "$self" "$@"
+  elif command -v wezterm >/dev/null; then exec wezterm start --always-new-process --cwd "$HOME" -- "$self" "$@"
   elif command -v konsole >/dev/null; then exec konsole --workdir "$HOME" -e "$self" "$@"
   elif command -v kitty >/dev/null; then exec kitty -d "$HOME" "$self" "$@"
   else exec xterm -e "$self" "$@"; fi
