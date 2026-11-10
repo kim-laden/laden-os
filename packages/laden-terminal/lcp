@@ -1,0 +1,48 @@
+#!/bin/sh
+# SPDX-License-Identifier: MIT  (c) Laden AS - https://laden.no
+# Laden CockPit (LCP) launcher, the Laden OS default terminal.
+# Prefers The CockPit when it is installed; otherwise opens WezTerm with the
+# Laden theme. Understands the usual terminal options so it can stand in for
+# Konsole as $TERMINAL / KDE TerminalApplication:
+#   lcp                        open a shell
+#   lcp -e CMD [ARGS]          run CMD (also -x, --command, --)
+#   lcp --workdir DIR          start in DIR (also --working-directory, -d)
+set -eu
+cwd=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --workdir|--working-directory|-d) cwd="${2:-}"; shift 2 || shift ;;
+    --workdir=*|--working-directory=*) cwd="${1#*=}"; shift ;;
+    -e|-x|--command|--) shift; break ;;
+    --hold|--noclose|--separate|--new-window|--nofork|--new-tab) shift ;;
+    -h|--help) sed -n '3,9p' "$0"; exit 0 ;;
+    *) break ;;
+  esac
+done
+[ -n "$cwd" ] && [ -d "$cwd" ] || cwd=""
+
+if [ -x /usr/bin/cockpit ] && [ "${LCP_NO_COCKPIT:-}" != 1 ]; then
+  cockpit_real=$(readlink -f /usr/bin/cockpit 2>/dev/null || echo /usr/bin/cockpit)
+  self_real=$(readlink -f "$0" 2>/dev/null || echo "$0")
+  if [ "$cockpit_real" != "$self_real" ]; then
+    if [ $# -gt 0 ]; then
+      [ -n "$cwd" ] && cd "$cwd"
+      exec /usr/bin/cockpit -- "$@"
+    elif [ -n "$cwd" ] && [ -x /usr/bin/fish ]; then
+      # The CockPit always starts in $HOME; let fish change into DIR.
+      export LCP_CWD="$cwd"
+      exec /usr/bin/cockpit -- /usr/bin/fish -l -C 'cd -- $LCP_CWD; set -e LCP_CWD'
+    else
+      exec /usr/bin/cockpit
+    fi
+  fi
+fi
+
+cfgdir="${XDG_CONFIG_HOME:-$HOME/.config}"
+set -- start --always-new-process --class the-cockpit ${cwd:+--cwd "$cwd"} ${1+--} "$@"
+for cfg in "$cfgdir/cockpit/wezterm.lua" /usr/share/laden/terminal/wezterm.lua; do
+  if [ -f "$cfg" ]; then
+    exec wezterm --config-file "$cfg" "$@"
+  fi
+done
+exec wezterm "$@"

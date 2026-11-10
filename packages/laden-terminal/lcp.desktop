@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Laden CockPit
+GenericName=LCP Terminal
+Comment=Laden OS terminal with the default fetch greeting and LadenDark look
+Exec=lcp
+TryExec=wezterm
+Icon=laden-os
+Terminal=false
+Categories=System;TerminalEmulator;
+Keywords=terminal;shell;wezterm;fish;lcp;cockpit;
+StartupWMClass=the-cockpit
+StartupNotify=true
+X-KDE-Shortcuts=Meta+Return,Ctrl+Alt+T

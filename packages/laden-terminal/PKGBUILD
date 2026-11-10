@@ -1,15 +1,13 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-terminal
 pkgver=1.0.0
-pkgrel=2
+pkgrel=4
 pkgdesc='Laden OS LCP/CockPit terminal look: fish greeting/prompt, fastfetch, LadenDark theme'
 arch=('any')
 url='https://laden.no'
 license=('MIT' 'LicenseRef-LadenAS-Branding')
-depends=('fish')
-optdepends=('fastfetch: greeting layout'
-            'the-cockpit: LCP / CockPit WezTerm UI'
-            'wezterm: terminal that loads the CockPit theme')
+depends=('fish' 'fastfetch' 'wezterm' 'ttf-jetbrains-mono' 'ttf-meslo-nerd')
+optdepends=('the-cockpit: The CockPit UI; lcp uses it when installed')
 conflicts=('laden-branding<2026.11.09-8')
 backup=('etc/xdg/fastfetch/config.jsonc')
 source=()
@@ -34,10 +32,21 @@ package() {
 
   install -Dm0644 "${s}/cockpit/laden-theme.lua" \
     "${d}/usr/share/laden/terminal/cockpit/laden-theme.lua"
+  install -Dm0644 "${s}/wezterm.lua" \
+    "${d}/usr/share/laden/terminal/wezterm.lua"
+  install -Dm0755 "${s}/lcp" "${d}/usr/bin/lcp"
+  install -Dm0644 "${s}/lcp.desktop" \
+    "${d}/usr/share/applications/lcp.desktop"
+
+  # New users only (/etc/skel). Existing homes are never overwritten.
   install -Dm0644 "${s}/skel/.config/cockpit/laden-theme.lua" \
     "${d}/etc/skel/.config/cockpit/laden-theme.lua"
   install -Dm0644 "${s}/skel/.config/cockpit/wezterm.lua" \
     "${d}/etc/skel/.config/cockpit/wezterm.lua"
+  install -Dm0644 "${s}/skel/.config/wezterm/wezterm.lua" \
+    "${d}/etc/skel/.config/wezterm/wezterm.lua"
+  install -Dm0644 "${s}/skel/.config/the-cockpit/local.lua" \
+    "${d}/etc/skel/.config/the-cockpit/local.lua"
 
   install -Dm0644 "${s}/LICENSE" "${d}/usr/share/licenses/${pkgname}/LICENSE"
 }
