@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Laden OS 1.0.0 Red Team live USB (based on Arch Linux).
+# Laden OS 1.0.1 Red Team live USB (based on Arch Linux).
 iso_name="laden-os"
-iso_label="LADEN_100_RT"
+iso_label="LADEN_101_RT"
 iso_publisher="Laden OS <https://laden.no>"
-iso_application="Laden OS 1.0.0 Red Team live/installer"
-iso_version="1.0.0-redteam"
+iso_application="Laden OS 1.0.1 Red Team live/installer"
+iso_version="1.0.1-redteam"
 install_dir="laden"
 buildmodes=('iso')
 bootmodes=('bios.syslinux' 'uefi.systemd-boot')
