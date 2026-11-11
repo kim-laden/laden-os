@@ -13,9 +13,9 @@ navigation: widget
 strings:
     productName:         "Laden OS"
     shortProductName:    "Laden OS"
-    version:             "1.0.0"
-    shortVersion:        "1.0.0"
-    versionedName:       "Laden OS 1.0.0"
+    version:             "1.0.1"
+    shortVersion:        "1.0.1"
+    versionedName:       "Laden OS 1.0.1"
     shortVersionedName:  "Laden OS 1.0"
     bootloaderEntryName: "Laden OS"
     productUrl:          "https://laden.no"
