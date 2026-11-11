@@ -175,7 +175,10 @@ json.dump({"KPackageStructure": "Plasma/LayoutTemplate",
           open(os.path.join(T, "metadata.json"), "w"), indent=2)
 open(os.path.join(T, "contents", "layout.js"), "w").write(lj + """
 var panel = new Panel;
-panel.height = 2 * Math.ceil(gridUnit * 2.5 / 2);
+// Same as the Laden OS reference desktop (ladenx): solid top bar, 34 px, not floating.
+panel.location = "top";
+panel.height = 34;
+panel.floating = false;
 const maximumAspectRatio = 21/9;
 if (panel.formFactor === "horizontal") {
     const geo = screenGeometry(panel.screen);
@@ -188,7 +191,17 @@ panel.addWidget("org.kde.plasma.pager");
 panel.addWidget("org.kde.plasma.icontasks");
 panel.addWidget("org.kde.plasma.marginsseparator");
 panel.addWidget("org.kde.plasma.systemtray");
-panel.addWidget("org.kde.plasma.digitalclock");
+var clock = panel.addWidget("org.kde.plasma.digitalclock");
+clock.currentConfigGroup = ["Appearance"];
+clock.writeConfig("autoFontAndSize", false);
+clock.writeConfig("boldText", true);
+clock.writeConfig("fontFamily", "Adwaita Mono");
+clock.writeConfig("fontSize", 12);
+clock.writeConfig("fontWeight", 700);
+clock.writeConfig("fontStyleName", "Bold");
+clock.writeConfig("dateFormat", "isoDate");
+clock.writeConfig("customDateFormat", "dddd d | w");
+clock.writeConfig("use24hFormat", 2);
 panel.addWidget("org.kde.plasma.showdesktop");
 """)
 open(os.path.join(OUT, "share", "org.kde.plasma.desktop-layout.js"), "w").write("""// Laden OS default desktop layout (new users): Laden panel + Laden OS wallpaper.
