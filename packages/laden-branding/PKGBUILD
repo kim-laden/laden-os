@@ -2,7 +2,7 @@
 # Assets come from the project tree (rebrand/assets, branding/), not duplicated here.
 pkgname=laden-branding
 pkgver=2026.11.09
-pkgrel=8
+pkgrel=9
 pkgdesc='Laden OS identity, logos, Limine splash, Plymouth theme, wallpapers and fastfetch logo'
 arch=('any')
 url='https://laden.no'
@@ -49,7 +49,7 @@ package() {
   cp -a --no-preserve=ownership "${_assets}/plymouth/laden/." "${d}/usr/share/plymouth/themes/laden/"
   find "${d}/usr/share/plymouth/themes/laden" -type f -exec chmod 0644 {} +
 
-  # Wallpapers: v1 + v2 + v3 + v4 (exclude 32K deep master — optional package)
+  # Wallpapers: v1-v5, older art kept (exclude 32K deep master — optional package)
   local f bn
   for f in "${_walls}"/laden-os-lets-do-it-*.png; do
     bn=$(basename "$f")
