@@ -202,6 +202,8 @@ clock.writeConfig("fontStyleName", "Bold");
 clock.writeConfig("dateFormat", "isoDate");
 clock.writeConfig("customDateFormat", "dddd d | w");
 clock.writeConfig("use24hFormat", 2);
+clock.writeConfig("showLocalTimezone", true);
+clock.writeConfig("displayTimezoneFormat", "FullText");
 panel.addWidget("org.kde.plasma.showdesktop");
 """)
 open(os.path.join(OUT, "share", "org.kde.plasma.desktop-layout.js"), "w").write("""// Laden OS default desktop layout (new users): Laden panel + Laden OS wallpaper.

@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=10
+pkgrel=11
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
@@ -10,7 +10,7 @@ depends=('laden-branding' 'bash' 'laden-terminal' 'laden-theme-exposeair')
 optdepends=('plasma-desktop: Laden look-and-feel'
             'fish: Laden shell config'
             'laden-update: Laden Update tray updater')
-backup=('etc/xdg/kdeglobals' 'etc/xdg/ksplashrc' 'etc/xdg/kwinrc' 'etc/xdg/kglobalshortcutsrc')
+backup=('etc/xdg/kdeglobals' 'etc/xdg/ksplashrc' 'etc/xdg/kwinrc' 'etc/xdg/kglobalshortcutsrc' 'etc/xdg/kscreenlockerrc')
 source=('laden-config.fish' 'laden-colors.fish' 'laden-os.fish'
         '00-laden-config.fish' 'compat-laden-config.fish')
 sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
@@ -34,6 +34,8 @@ package() {
   install -Dm0644 "${_assets}/xdg/ksplashrc"  "${d}/etc/xdg/ksplashrc"
   # Expose Air Dark window decoration (laden-theme-exposeair), as on ladenx
   install -Dm0644 "${_assets}/xdg/kwinrc"     "${d}/etc/xdg/kwinrc"
+  # Lock screen shows the Laden OS art (v5), as on ladenx
+  install -Dm0644 "${_assets}/xdg/kscreenlockerrc" "${d}/etc/xdg/kscreenlockerrc"
   # Shortcuts: Alt+T plain WezTerm, Alt+Q and Meta+Enter LCP, Konsole unbound.
   # kglobalaccel ignores /etc/xdg for service launchers, so new users get the
   # same file in /etc/skel (existing homes are never touched).
