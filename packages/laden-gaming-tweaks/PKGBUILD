@@ -1,20 +1,21 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-gaming-tweaks
 pkgver=2026.11.09
-pkgrel=6
+pkgrel=7
 pkgdesc='Laden OS game mode: GameMode hooks, power profile, sched-ext gaming scheduler, adaptive laptop CPU limit, NVIDIA shader cache, KWin dGPU selection'
 arch=('any')
 url='https://laden.no'
 license=('MIT')
 depends=('bash' 'gamemode' 'power-profiles-daemon' 'scx-scheds' 'scx-tools' 'sudo' 'util-linux')
-optdepends=('nvidia-utils: GPU temperature for the adaptive CPU limit'
+optdepends=('mangohud: FPS/frametime overlay (defaults in /etc/skel)'
+            'nvidia-utils: GPU temperature for the adaptive CPU limit'
             'libnotify: game mode notifications')
 backup=('etc/gamemode.ini' 'etc/laden/gaming.conf')
 install=laden-gaming-tweaks.install
 source=(common.sh laden-perf-helper laden-perf-guard laden-perf-guard.service
         laden-perf-on laden-perf-off gamemode.ini gaming.conf hw-acer-predator.conf
-        sudoers 60-laden-gaming.conf laden-kwin-gpu.sh README.md)
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+        sudoers 60-laden-gaming.conf laden-kwin-gpu.sh README.md MangoHud.conf)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 
 package() {
   install -Dm644 common.sh               "$pkgdir/usr/lib/laden/gaming/common.sh"
@@ -24,6 +25,8 @@ package() {
   install -Dm755 laden-perf-on           "$pkgdir/usr/bin/laden-perf-on"
   install -Dm755 laden-perf-off          "$pkgdir/usr/bin/laden-perf-off"
   install -Dm644 gamemode.ini            "$pkgdir/etc/gamemode.ini"
+  # MangoHud overlay defaults for new users (as on the Laden reference desktop)
+  install -Dm644 MangoHud.conf           "$pkgdir/etc/skel/.config/MangoHud/MangoHud.conf"
   install -Dm644 gaming.conf             "$pkgdir/etc/laden/gaming.conf"
   install -Dm644 hw-acer-predator.conf   "$pkgdir/usr/share/laden/gaming/hw/acer-predator.conf"
   install -dm750 "$pkgdir/etc/sudoers.d"
