@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-terminal
 pkgver=1.0.0
-pkgrel=4
+pkgrel=5
 pkgdesc='Laden OS LCP/CockPit terminal look: fish greeting/prompt, fastfetch, LadenDark theme'
 arch=('any')
 url='https://laden.no'
@@ -43,8 +43,6 @@ package() {
     "${d}/etc/skel/.config/cockpit/laden-theme.lua"
   install -Dm0644 "${s}/skel/.config/cockpit/wezterm.lua" \
     "${d}/etc/skel/.config/cockpit/wezterm.lua"
-  install -Dm0644 "${s}/skel/.config/wezterm/wezterm.lua" \
-    "${d}/etc/skel/.config/wezterm/wezterm.lua"
   install -Dm0644 "${s}/skel/.config/the-cockpit/local.lua" \
     "${d}/etc/skel/.config/the-cockpit/local.lua"
 

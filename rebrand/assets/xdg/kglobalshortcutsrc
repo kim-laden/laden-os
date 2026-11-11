@@ -1,5 +1,8 @@
 [services][lcp.desktop]
-_launch=Meta+Return\tCtrl+Alt+T
+_launch=Meta+Return\tAlt+Q
+
+[services][org.wezfurlong.wezterm.desktop]
+_launch=Alt+T
 
 [services][org.kde.konsole.desktop]
 _launch=none

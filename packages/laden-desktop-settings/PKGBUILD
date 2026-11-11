@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-desktop-settings
 pkgver=2026.11.09
-pkgrel=9
+pkgrel=10
 pkgdesc='Laden OS KDE Plasma look-and-feel, color scheme, XDG defaults and fish config'
 arch=('any')
 url='https://laden.no'
@@ -34,8 +34,11 @@ package() {
   install -Dm0644 "${_assets}/xdg/ksplashrc"  "${d}/etc/xdg/ksplashrc"
   # Expose Air Dark window decoration (laden-theme-exposeair), as on ladenx
   install -Dm0644 "${_assets}/xdg/kwinrc"     "${d}/etc/xdg/kwinrc"
-  # LCP is the default terminal: Meta+Enter / Ctrl+Alt+T open lcp, not Konsole
+  # Shortcuts: Alt+T plain WezTerm, Alt+Q and Meta+Enter LCP, Konsole unbound.
+  # kglobalaccel ignores /etc/xdg for service launchers, so new users get the
+  # same file in /etc/skel (existing homes are never touched).
   install -Dm0644 "${_assets}/xdg/kglobalshortcutsrc" "${d}/etc/xdg/kglobalshortcutsrc"
+  install -Dm0644 "${_assets}/xdg/kglobalshortcutsrc" "${d}/etc/skel/.config/kglobalshortcutsrc"
   # SDDM greeter theme (without this SDDM falls back to its built-in theme)
   install -Dm0644 "${_assets}/sddm/10-laden-theme.conf" "${d}/etc/sddm.conf.d/10-laden-theme.conf"
 

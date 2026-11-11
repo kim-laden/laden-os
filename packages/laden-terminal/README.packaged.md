@@ -8,7 +8,6 @@ System default Laden OS LCP/CockPit terminal look.
   (opacity 0.86 so the Laden OS wallpaper shows through, emerald border, JetBrains Mono + Nerd Font).
 - Launcher: `/usr/bin/lcp` (uses The CockPit when installed, otherwise WezTerm + the Laden theme).
 - New users (`/etc/skel` only; existing homes are never overwritten):
-  - `.config/wezterm/wezterm.lua`
   - `.config/cockpit/{wezterm.lua,laden-theme.lua}`
   - `.config/the-cockpit/local.lua`
 
@@ -17,4 +16,6 @@ fetch greeting (hostname, CPU, GPU, memory, displays) are detected live.
 
 `lcp` is the Plasma default terminal (`TerminalApplication=lcp`, set by laden-desktop-settings)
 and takes the usual terminal options: `lcp -e CMD`, `lcp --workdir DIR`. Meta+Enter and
-Ctrl+Alt+T open it (`X-KDE-Shortcuts` in `lcp.desktop`).
+Alt+Q open it (`X-KDE-Shortcuts` in `lcp.desktop`, plus the skel `kglobalshortcutsrc` from
+laden-desktop-settings). Alt+T opens plain upstream WezTerm (no Laden config in
+`~/.config/wezterm`; `wezterm-laden-theme.example.lua` shows how to opt in).
