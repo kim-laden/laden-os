@@ -27,7 +27,7 @@ rm -rf /home/live
 # Fresh pacman keyring for this machine (generated now, on the target).
 rm -rf /etc/pacman.d/gnupg
 pacman-key --init
-pacman-key --populate archlinux cachyos laden
+pacman-key --populate archlinux cachyos laden blackarch
 
 # Live-only packages. Plain -R: nothing else is removed with them.
 for p in mkinitcpio-archiso; do

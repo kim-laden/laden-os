@@ -9,7 +9,7 @@ Before=archlinux-keyring-wkd-sync.service
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/pacman-key --init
-ExecStart=/usr/bin/pacman-key --populate archlinux cachyos laden
+ExecStart=/usr/bin/pacman-key --populate archlinux cachyos laden blackarch
 
 [Install]
 WantedBy=multi-user.target
