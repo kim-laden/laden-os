@@ -130,6 +130,7 @@ G = {
  "learn": f'<path {S} d="M10 26l22-10 22 10-22 10z"/><path {E} d="M20 31v10c6 5 18 5 24 0V31M54 26v12"/>',
  "help": f'<circle {S} cx="32" cy="32" r="18"/><path {E} d="M26 27a6 6 0 1 1 8 6c-2 1-2 2-2 4"/><circle cx="32" cy="43" r="2" fill="{EM}"/>',
  "more": f'<circle cx="20" cy="32" r="4" fill="{FG}"/><circle cx="32" cy="32" r="4" fill="{EM}"/><circle cx="44" cy="32" r="4" fill="{FG}"/>',
+ "redteam-osint": f'<circle {S} cx="26" cy="28" r="14"/><path {S} d="M12 28h28M26 14c-5 6-5 22 0 28M26 14c5 6 5 22 0 28"/><circle {E} cx="40" cy="42" r="7"/><path {E} d="M45 47l7 7"/>',
  "redteam-recon": f'<circle {S} cx="32" cy="32" r="18"/><circle {S} cx="32" cy="32" r="9"/><path {E} d="M32 32l12-12"/><circle cx="40" cy="38" r="2.5" fill="{EM}"/>',
  "redteam-web": f'<rect {S} x="12" y="16" width="40" height="32" rx="4"/><path {S} d="M12 24h40"/><path {E} d="M27 31l-5 5 5 5M37 31l5 5-5 5"/>',
  "redteam-wireless": f'<path {S} d="M14 28a26 26 0 0 1 36 0M20 35a17 17 0 0 1 24 0"/><path {E} d="M26 42a8 8 0 0 1 12 0"/><circle cx="32" cy="48" r="2.6" fill="{EM}"/>',

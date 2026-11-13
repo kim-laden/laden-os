@@ -104,6 +104,10 @@ which
 laden-pentest
 laden-tunnels
 tailscale
+# OSINT tools (spiderfoot, theharvester, sherlock, maigret, recon-ng, amass,
+# holehe) exist only in [blackarch], which is not enabled on this ISO. Menu
+# launchers ship in laden-menu and appear once the packages are installed.
+# Do not add [blackarch] to the ISO without approval.
 # rustdesk: not in repos at build time; install later via laden-setup-rustdesk
 # --- provider pins (unattended pacstrap)
 iptables-nft

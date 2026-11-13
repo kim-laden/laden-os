@@ -4,7 +4,7 @@ Hard depends = small essentials (all resolvable from the configured repos);
 everything big or optional goes to optdepends.  Edit the lists here, re-run."""
 import os
 VER, REL = "2026.11.09", "1"
-RELS = {"desktop": "2", "gaming": "2", "streaming": "2"}  # per-meta pkgrel bumps
+RELS = {"desktop": "4", "gaming": "2", "streaming": "2", "pentest": "2"}  # per-meta pkgrel bumps
 B = "[blackarch]"
 M = {
  "desktop": ("Laden OS base desktop: KDE Plasma, Laden branding, tools and audio", [
@@ -92,7 +92,10 @@ M = {
    ("feroxbuster",f"content discovery {B}"),("dirb",f"content discovery {B}"),
    ("wfuzz",f"web fuzzer {B}"),("amass",f"subdomain enum {B}"),("subfinder",f"subdomain enum {B}"),
    ("nuclei",f"vuln scanner {B}"),("whatweb",f"web fingerprint {B}"),
-   ("theharvester",f"OSINT {B}"),("enum4linux-ng",f"SMB enum {B}"),("smbmap",f"SMB enum {B}"),
+   ("theharvester",f"OSINT {B}"),("spiderfoot",f"OSINT automation {B}"),
+   ("sherlock",f"username OSINT {B}"),("maigret",f"username OSINT {B}"),
+   ("recon-ng",f"recon framework {B}"),("holehe",f"email OSINT {B}"),
+   ("enum4linux-ng",f"SMB enum {B}"),("smbmap",f"SMB enum {B}"),
    ("evil-winrm",f"WinRM shell {B}"),("proxychains-ng","proxy chains"),("kismet","wireless IDS"),
    ("mdk4","wireless testing"),("sslscan","TLS scanner"),("testssl.sh","TLS scanner"),
    ("lynis","hardening audit"),("rkhunter","rootkit check"),("whois","whois client")]),

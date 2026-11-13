@@ -34,12 +34,17 @@ RT_GUI = {
 # Red Team terminal launchers: (submenu, binary, display name, comment, help args)
 # Only tools that are installed show up (TryExec).
 RT_CLI = [
+  ("osint","spiderfoot","SpiderFoot","Open source OSINT automation (web UI)","-h"),
+  ("osint","theharvester","theHarvester","E-mails, names and hosts from OSINT","-h"),
+  ("osint","sherlock","Sherlock","Find usernames across social networks","-h"),
+  ("osint","maigret","Maigret","Collect a dossier on a person by username","-h"),
+  ("osint","recon-ng","Recon-ng","Web reconnaissance framework","-h"),
+  ("osint","amass","Amass","Attack surface and subdomain mapping","-h"),
+  ("osint","holehe","holehe","Find sites where an email is registered","-h"),
   ("recon","nmap","Nmap","Network scanner and port mapper","--help"),
   ("recon","rustscan","RustScan","Very fast port scanner","--help"),
   ("recon","masscan","Masscan","Internet-scale port scanner","--help"),
-  ("recon","amass","Amass","Attack surface and subdomain mapping","-h"),
   ("recon","subfinder","Subfinder","Passive subdomain discovery","-h"),
-  ("recon","theHarvester","theHarvester","E-mails, names and hosts from OSINT","-h"),
   ("recon","dnsrecon","DNSRecon","DNS enumeration","-h"),
   ("recon","whatweb","WhatWeb","Identify web technologies","--help"),
   ("recon","enum4linux-ng","enum4linux-ng","SMB/Windows enumeration","-h"),
@@ -108,6 +113,7 @@ RT_CLI = [
 ]
 
 RT_SUBS = [  # id, name, comment
+  ("osint","OSINT","Open-source intelligence and username/email lookup"),
   ("recon","Recon","Scanning, OSINT and enumeration"),
   ("web","Web","Web application testing"),
   ("wireless","Wireless & Hardware","Wi-Fi, radio and hardware tools"),

@@ -1,7 +1,7 @@
 # Maintainer: Laden OS Repo <admin@laden.no>
 pkgname=laden-menu
 pkgver=2026.11.09
-pkgrel=7
+pkgrel=8
 pkgdesc='Laden OS application menu: Laden categories (Gaming, Create, Stream, Red Team ...), Laden icons, Red Team terminal launchers, Laden menu + Dashboard panel layout'
 arch=('any')
 url='https://laden.no'
